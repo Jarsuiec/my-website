@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PC Master Warszawa — компьютерная помощь на русском и украинском</title>
+  <meta name="description" content="Ремонт и настройка компьютеров и ноутбуков в Варшаве и Прушкуве. Переустановка Windows, чистка, SSD, сборка ПК, удалённая помощь. Говорим по-русски и по-украински.">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="top">
+    <div class="wrap top__row">
+      <a class="logo" href="#">PC Master <span>Warszawa</span></a>
+      <nav class="nav">
+        <a href="#services" data-i18n="nav.services">Услуги</a>
+        <a href="#how" data-i18n="nav.how">Как работаю</a>
+        <a href="#faq" data-i18n="nav.faq">Вопросы</a>
+        <a href="#contact" class="btn btn--small" data-i18n="nav.contact">Оставить заявку</a>
+      </nav>
+      <div class="lang" role="group" aria-label="Language">
+        <button type="button" data-lang="ru">RU</button>
+        <button type="button" data-lang="uk">UA</button>
+        <button type="button" data-lang="pl">PL</button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="wrap">
+        <p class="hero__tag" data-i18n="hero.tag">Варшава · Прушкув · удалённо по всей Польше</p>
+        <h1 data-i18n="hero.title">Компьютер тормозит, греется или не включается? Помогу — на понятном вам языке.</h1>
+        <p class="hero__sub" data-i18n="hero.sub">Переустановка Windows, чистка и замена термопасты, установка SSD, сборка и настройка игровых ПК. Объясняю, что сломалось и сколько стоит, до начала работы.</p>
+        <div class="hero__cta">
+          <a href="#contact" class="btn" data-i18n="hero.cta">Описать проблему</a>
+          <a href="#" class="btn btn--ghost js-telegram" hidden>Telegram</a>
+          <a href="#" class="btn btn--ghost js-whatsapp" hidden>WhatsApp</a>
+          <a href="#" class="btn btn--ghost js-phone" hidden></a>
+        </div>
+        <ul class="hero__facts">
+          <li data-i18n="hero.f1">Опыт сервисного мастера с 2021 года</li>
+          <li data-i18n="hero.f2">Русский, українська, polski</li>
+          <li data-i18n="hero.f3">Цена согласуется до начала работы</li>
+        </ul>
+      </div>
+    </section>
+
+    <section id="services" class="section">
+      <div class="wrap">
+        <h2 data-i18n="services.title">Услуги и ориентировочные цены</h2>
+        <p class="muted" data-i18n="services.note">Точная цена зависит от модели и состояния устройства. Запчасти оплачиваются отдельно по чеку.</p>
+        <div class="grid" id="price-list"></div>
+      </div>
+    </section>
+
+    <section id="how" class="section section--alt">
+      <div class="wrap">
+        <h2 data-i18n="how.title">Как это работает</h2>
+        <ol class="steps">
+          <li><strong data-i18n="how.s1t">Заявка</strong><span data-i18n="how.s1">Напишите, что случилось: форма ниже или мессенджер.</span></li>
+          <li><strong data-i18n="how.s2t">Предварительная оценка</strong><span data-i18n="how.s2">Задам пару вопросов и назову ориентировочную цену и срок.</span></li>
+          <li><strong data-i18n="how.s3t">Работа</strong><span data-i18n="how.s3">Удалённо, с выездом или вы привозите устройство — как удобнее.</span></li>
+          <li><strong data-i18n="how.s4t">Проверка и оплата</strong><span data-i18n="how.s4">Тестируем вместе, объясняю, что было сделано. Оплата после результата.</span></li>
+        </ol>
+      </div>
+    </section>
+
+    <section id="faq" class="section">
+      <div class="wrap">
+        <h2 data-i18n="faq.title">Частые вопросы</h2>
+        <details><summary data-i18n="faq.q1">Можно ли решить проблему удалённо?</summary><p data-i18n="faq.a1">Многие программные проблемы — да: настройка Windows, драйверы, программы, медленная работа. Нужен интернет и бесплатная программа удалённого доступа, которую я помогу установить. Вы видите всё, что я делаю.</p></details>
+        <details><summary data-i18n="faq.q2">Сохранятся ли мои файлы при переустановке Windows?</summary><p data-i18n="faq.a2">Перед переустановкой обсуждаем, какие данные важны, и сохраняем их. Если диск повреждён, честно скажу об этом заранее.</p></details>
+        <details><summary data-i18n="faq.q3">Что вы не делаете?</summary><p data-i18n="faq.a3">Не меняю матрицы (экраны) и не занимаюсь пайкой материнских плат. В таких случаях подскажу, куда обратиться.</p></details>
+        <details><summary data-i18n="faq.q4">Помогаете выбрать компьютер или комплектующие?</summary><p data-i18n="faq.a4">Да. Подберу конфигурацию под ваш бюджет и задачи (работа, учёба, игры, стриминг), проверю совместимость и могу собрать ПК.</p></details>
+      </div>
+    </section>
+
+    <section id="contact" class="section section--alt">
+      <div class="wrap wrap--narrow">
+        <h2 data-i18n="form.title">Оставить заявку</h2>
+        <p class="muted" data-i18n="form.sub">Отвечаю обычно в течение дня. Вечером и в выходные — тоже.</p>
+
+        <form name="zayavka" method="POST" data-netlify="true" netlify-honeypot="bot-field" class="form" id="lead-form">
+          <input type="hidden" name="form-name" value="zayavka">
+          <input type="hidden" name="lang" value="ru">
+          <p hidden><label>Не заполняйте: <input name="bot-field"></label></p>
+
+          <label><span data-i18n="form.name">Имя</span>
+            <input name="name" required autocomplete="given-name"></label>
+
+          <label><span data-i18n="form.contact">Телефон или Telegram</span>
+            <input name="contact" required autocomplete="tel"></label>
+
+          <label><span data-i18n="form.service">Что нужно сделать</span>
+            <select name="service" id="service-select"></select></label>
+
+          <label><span data-i18n="form.where">Где удобно</span>
+            <select name="where">
+              <option value="remote" data-i18n="form.w1">Удалённо</option>
+              <option value="visit" data-i18n="form.w2">Выезд (Варшава / Прушкув)</option>
+              <option value="bring" data-i18n="form.w3">Привезу сам(а)</option>
+            </select></label>
+
+          <label><span data-i18n="form.desc">Опишите проблему и модель устройства</span>
+            <textarea name="description" rows="4" data-i18n-ph="form.descPh" placeholder="Например: ноутбук Lenovo, после включения долго грузится и шумит"></textarea></label>
+
+          <label class="check"><input type="checkbox" name="consent" required>
+            <span data-i18n="form.consent">Согласен(на) на обработку моих данных для ответа на заявку.</span></label>
+
+          <button class="btn" type="submit" data-i18n="form.send">Отправить заявку</button>
+          <p class="form__status" id="form-status" role="status"></p>
+        </form>
+        <p class="small muted" data-i18n="form.privacy">Данные из формы используются только для связи по вашей заявке, не передаются третьим лицам для рекламы и удаляются по вашей просьбе.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="foot">
+    <div class="wrap">
+      <p>PC Master Warszawa · <span data-i18n="foot.area">Варшава, Прушкув и окрестности</span></p>
+    </div>
+  </footer>
+
+  <script src="config.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
