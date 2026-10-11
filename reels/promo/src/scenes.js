@@ -21,8 +21,7 @@ export function buildScenes({ cfg, W, env, layers }) {
   // =====================================================================================
   {
     const [A, B] = T.intro;
-    const city = document.createElement('canvas'); city.width = 1080; city.height = 1920;
-    drawWarsaw(city.getContext('2d'));
+    const warsaw = buildWarsaw(), city = warsaw.el;
     const layer = mkLayer(`
       <div class="fill" id="cityWrap" style="overflow:hidden">
         <div class="fill" id="cityCan"></div>
@@ -37,7 +36,7 @@ export function buildScenes({ cfg, W, env, layers }) {
         <div class="kicker" id="i_city" style="margin-top:22px;font-size:30px;color:#bfefff;letter-spacing:.2em">${esc(cfg.cities)}</div>
       </div>`);
     layer.querySelector('#cityCan').appendChild(city);
-    city.style.cssText = 'position:absolute;inset:0;transform-origin:70.5% 38%';
+    city.style.cssText = 'position:absolute;inset:0;transform-origin:72% 40%';
     const bokeh = [...layer.querySelectorAll('.bokeh')];
     const { scene, camera } = new3d(40);
     const pc = makeGamingPC(); scene.add(pc);
@@ -49,13 +48,14 @@ export function buildScenes({ cfg, W, env, layers }) {
     scene.fog = new THREE.FogExp2(0x07090c, .045);
     const tName = W('Ярослав'), tCity = W('Варшаве');
     scenes.push({
-      id: 'intro', t: [A, B], layer, scene3d: scene, camera, bloom: .6,
+      id: 'intro', t: [A, B], layer, scene3d: scene, camera, bloom: .6, tint: ['46,139,255', '34,228,212', '120,170,255'],
       update(t, lt) {
         const cityOn = t < 2.12;
         const z = lerp(1, 1.1, easeInOut(prog(t, 0, 1.75))) * lerp(1, 7, easeIn(prog(t, 1.72, 2.12)));
         set(layer.querySelector('#cityWrap'), cityOn ? 1 : 0);
         city.style.transform = `scale(${z}) translateY(${-prog(t, 0, 1.75) * 30}px)`;
         city.style.filter = t > 1.72 ? `blur(${prog(t, 1.72, 2.12) * 18}px)` : 'none';
+        if (cityOn) warsaw.update(t);
         bokeh.forEach((b, i) => { const x = rnd(i + 7) * 1080, y = 1100 + rnd(i + 11) * 800;
           b.style.transform = `translate(${x - 80 + Math.sin(t * .6 + i) * 30 - t * 40 * (i % 3 + 1)}px, ${y + Math.cos(t * .5 + i) * 20}px) scale(${z * .6 + .4})`; });
         set(layer.querySelector('#i_k1'), win(t, .25, 1.7, .4, .3));
@@ -129,11 +129,12 @@ export function buildScenes({ cfg, W, env, layers }) {
     const rw = [...layer.querySelectorAll('.rw')];
     const screenState = { clock: '14:02' };
     scenes.push({
-      id: 'plane', t: [A, B], layer, scene3d: d1.scene, camera: d1.camera, bloom: .8,
+      id: 'plane', t: [A, B], layer, scene3d: d1.scene, camera: d1.camera, bloom: .8, extraScenes: [d2.scene], tint: ['255,122,47', '255,170,90', '46,139,255'],
       update(t, lt) {
         const turbOn = t >= tTurbIn && t < tTurbOut, screenOn = t >= tTurbOut;
         this.scene3d = turbOn ? d2.scene : d1.scene; this.camera = turbOn ? d2.camera : d1.camera;
         this.bloom = turbOn ? .4 : .7; this.exposure = turbOn ? .8 : 1;
+        this.warm = turbOn ? 1 : prog(t, tNoise - .2, tNoise + .4) * .8;
         // --- desk: calm → noise ---
         const noise = prog(t, tNoise - .15, tNoise + .3);
         const [sx, sy] = shake(t, .012 * noise);
@@ -234,11 +235,12 @@ export function buildScenes({ cfg, W, env, layers }) {
     const chips = [...layer.querySelectorAll('.d_c')];
     const tChips = [tDust - 1.0, tDust - .5, tDust];
     scenes.push({
-      id: 'dust', t: [A, B], layer, scene3d: d1.scene, camera: d1.camera, bloom: .9,
+      id: 'dust', t: [A, B], layer, scene3d: d1.scene, camera: d1.camera, bloom: .9, extraScenes: [d2.scene],
       update(t, lt) {
         const cpuOn = t >= tCpuIn && t < tRig2;
         this.scene3d = cpuOn ? d2.scene : d1.scene; this.camera = cpuOn ? d2.camera : d1.camera;
         const clean = prog(t, tClean, tNew), cool01 = easeInOut(clean);
+        this.warm = 1 - cool01; this.tint = cool01 > .5 ? ['34,228,212', '54,242,139', '46,139,255'] : ['255,122,47', '255,90,60', '255,170,90'];
         // rig (dirty → cleaned)
         const fanSpin = t < tClean ? t * 2.2 : t > tNew - .3 ? (t - tNew) * 9 : 0; // fan stopped while cleaning (device off)
         rig.userData.fan.userData.rotor.rotation.z = fanSpin;
@@ -318,7 +320,7 @@ export function buildScenes({ cfg, W, env, layers }) {
       <div class="abs center-x note" id="s_note" style="top:1212px">Результат зависит от характеристик компьютера</div>`);
     const L = layer.querySelector('#s_l'), R = layer.querySelector('#s_r');
     scenes.push({
-      id: 'ssd', t: [A, B], layer, scene3d: scene, camera, bloom: 1.0,
+      id: 'ssd', t: [A, B], layer, scene3d: scene, camera, bloom: 1.0, tint: ['34,228,212', '46,139,255', '255,122,47'],
       update(t, lt) {
         const out = easeIn(prog(t, tSSD - .1, tSSD + .3)), inn = expoOut(prog(t, tSSD + .1, tSSD + .55));
         hdd.userData.platters.forEach(p => p.rotation.y = t * 30);
@@ -469,7 +471,7 @@ export function buildScenes({ cfg, W, env, layers }) {
       <div class="abs kicker" id="g_parts" style="left:90px;top:250px;line-height:2;color:#9fdcff"></div>`);
     const partNames = ['CPU', 'COOLER', 'RAM', 'RAM', 'GPU'];
     scenes.push({
-      id: 'gaming', t: [A, B], layer, scene3d: scene, camera, bloom: .7,
+      id: 'gaming', t: [A, B], layer, scene3d: scene, camera, bloom: .7, tint: ['46,139,255', '34,228,212', '160,110,255'],
       update(t, lt) {
         const fly = (obj, from, to, at) => { const k = expoOut(prog(t, at, at + .38)); obj.position.lerpVectors(from, to, k); obj.visible = t >= at - .02; return k; };
         fly(P.cpu, home.cpu.clone().add(new THREE.Vector3(3, 1.5, 0)), home.cpu, steps[0][1]);
@@ -559,7 +561,7 @@ export function buildScenes({ cfg, W, env, layers }) {
       <div class="abs center-x" id="t_save" style="top:1060px"><div class="display" style="font-size:52px;line-height:1.2;color:#f2f5f7">Может, его ещё<br><span style="color:#5dffa6">можно спасти?</span></div></div>
       <div class="fill" id="t_lines" style="background:repeating-linear-gradient(0deg, rgba(255,255,255,.06) 0 2px, transparent 2px 7px);mix-blend-mode:screen"></div>`);
     scenes.push({
-      id: 'trash', t: [A, B], layer, scene3d: scene, camera, bloom: .7,
+      id: 'trash', t: [A, B], layer, scene3d: scene, camera, bloom: .7, tint: ['46,139,255', '255,122,47', '120,170,255'],
       update(t, lt) {
         // throw: A → tStop (frozen at k≈.72), rewind: back to start
         let k;
@@ -619,7 +621,7 @@ export function buildScenes({ cfg, W, env, layers }) {
       </div>`);
     const rows = [...layer.querySelectorAll('.f_row')];
     scenes.push({
-      id: 'final', t: [A, B], layer, scene3d: scene, camera, bloom: .65,
+      id: 'final', t: [A, B], layer, scene3d: scene, camera, bloom: .65, tint: ['34,228,212', '46,139,255', '120,170,255'],
       update(t, lt) {
         const a = (t - A) * .6;
         sweepL.position.set(Math.cos(a) * 6, 5, Math.sin(a) * 6 + 2);
@@ -647,43 +649,103 @@ export function buildScenes({ cfg, W, env, layers }) {
   return scenes;
 }
 
-// ---------- Warsaw skyline (stylised, drawn once) ----------
-function drawWarsaw(c) {
-  const w = 1080, h = 1920, hz = 1240;
-  const sky = c.createLinearGradient(0, 0, 0, hz);
-  sky.addColorStop(0, '#03050a'); sky.addColorStop(.55, '#0a1a2e'); sky.addColorStop(1, '#1a4a5c');
-  c.fillStyle = sky; c.fillRect(0, 0, w, hz);
-  for (let i = 0; i < 160; i++) { c.fillStyle = `rgba(255,255,255,${.2 + rnd(i) * .6})`; c.fillRect(rnd(i + 1) * w, rnd(i + 2) * 700, 1.5 + rnd(i + 3) * 1.5, 1.5 + rnd(i + 3) * 1.5); }
-  const glow = c.createRadialGradient(540, hz, 50, 540, hz, 700); glow.addColorStop(0, 'rgba(60,180,200,.35)'); glow.addColorStop(1, 'rgba(60,180,200,0)');
-  c.fillStyle = glow; c.fillRect(0, 0, w, hz);
-  // far layer
-  for (let i = 0; i < 40; i++) { const bw = 40 + rnd(i) * 70, bh = 60 + rnd(i + 1) * 200, x = rnd(i + 2) * w; c.fillStyle = '#0b1726'; c.fillRect(x, hz - bh, bw, bh); }
-  const windows = (x, y, bw, bh, cols, rows, seed, warm = .5) => {
-    for (let r = 0; r < rows; r++) for (let k = 0; k < cols; k++) { if (rnd(seed + r * 31 + k) > .55) continue;
-      c.fillStyle = rnd(seed + r + k * 7) < warm ? `rgba(255,206,120,${.5 + rnd(r + k) * .5})` : `rgba(150,210,255,${.4 + rnd(r * k + 1) * .5})`;
-      c.fillRect(x + 8 + k * (bw - 16) / cols, y + 10 + r * (bh - 20) / rows, (bw - 16) / cols * .55, (bh - 20) / rows * .45); }
+// ---------- Warsaw at night: layered parallax skyline (drawn once) + animated traffic and shimmer ----------
+function buildWarsaw() {
+  const W = 1080, H = 1920, HZ = 1230;
+  const mk = () => { const c = document.createElement('canvas'); c.width = W; c.height = H; c.style.cssText = 'position:absolute;inset:0'; return c; };
+  const sky = mk(), far = mk(), mid = mk(), water = mk(), traffic = mk();
+  // sky: gradient, stars, moon, clouds
+  let c = sky.getContext('2d');
+  let g = c.createLinearGradient(0, 0, 0, HZ); g.addColorStop(0, '#02040a'); g.addColorStop(.5, '#081627'); g.addColorStop(.85, '#123049'); g.addColorStop(1, '#1d5466');
+  c.fillStyle = g; c.fillRect(0, 0, W, H);
+  for (let i = 0; i < 220; i++) { const a = .15 + rnd(i) * .7; c.fillStyle = `rgba(220,235,255,${a * (1 - rnd(i + 2) * .7)})`; const r = .6 + rnd(i + 3) * 1.4; c.beginPath(); c.arc(rnd(i + 1) * W, rnd(i + 2) * 760, r, 0, 7); c.fill(); }
+  g = c.createRadialGradient(180, 560, 0, 180, 560, 260); g.addColorStop(0, 'rgba(200,225,255,.35)'); g.addColorStop(1, 'rgba(200,225,255,0)'); c.fillStyle = g; c.fillRect(0, 200, W, 700);
+  c.fillStyle = '#e8f1ff'; c.shadowColor = 'rgba(200,225,255,.9)'; c.shadowBlur = 40; c.beginPath(); c.arc(180, 560, 34, 0, 7); c.fill(); c.shadowBlur = 0;
+  c.filter = 'blur(26px)';
+  for (let i = 0; i < 9; i++) { c.fillStyle = `rgba(90,120,150,${.10 + rnd(i + 40) * .12})`; c.beginPath(); c.ellipse(rnd(i + 41) * W, 180 + rnd(i + 42) * 420, 220 + rnd(i + 43) * 260, 40 + rnd(i + 44) * 50, 0, 0, 7); c.fill(); }
+  c.filter = 'none';
+  g = c.createRadialGradient(560, HZ, 30, 560, HZ, 820); g.addColorStop(0, 'rgba(70,190,210,.45)'); g.addColorStop(1, 'rgba(70,190,210,0)'); c.fillStyle = g; c.fillRect(0, 0, W, HZ);
+  // shared building painter: gradient body, rim light, glowing windows
+  const building = (ctx, x, top, w, base, seed, opt = {}) => {
+    const bg = ctx.createLinearGradient(x, top, x + w, base); bg.addColorStop(0, opt.c1 || '#17263b'); bg.addColorStop(1, opt.c2 || '#0a1220');
+    ctx.fillStyle = bg;
+    if (opt.path) { ctx.beginPath(); opt.path(ctx); ctx.fill(); } else ctx.fillRect(x, top, w, base - top);
+    ctx.fillStyle = `rgba(120,220,235,${opt.rim ?? .22})`; ctx.fillRect(x, top, 2, base - top);
+    const cols = Math.max(2, Math.round(w / (opt.cw || 20))), rows = Math.round((base - top) / (opt.rh || 24));
+    const cw = (w - 12) / cols, rh = (base - top - 16) / rows;
+    for (let r = 0; r < rows; r++) {
+      const floorLit = rnd(seed + r * 3.1) < (opt.floor ?? .12);
+      for (let k = 0; k < cols; k++) {
+        const on = floorLit || rnd(seed + r * 31 + k * 7) < (opt.lit ?? .38); if (!on) continue;
+        const warm = rnd(seed + r + k * 13) < (opt.warm ?? .6);
+        ctx.fillStyle = warm ? `rgba(255,${190 + rnd(r + k) * 40 | 0},120,${.55 + rnd(seed + r * k) * .45})` : `rgba(150,215,255,${.45 + rnd(seed + k * r + 2) * .45})`;
+        ctx.shadowColor = ctx.fillStyle; ctx.shadowBlur = 8;
+        ctx.fillRect(x + 6 + k * cw + cw * .2, top + 10 + r * rh + rh * .25, cw * .6, rh * .45);
+      }
+    }
+    ctx.shadowBlur = 0;
   };
-  const tower = (x, top, bw, col, seed, warm) => { c.fillStyle = col; c.fillRect(x, top, bw, hz - top); windows(x, top, bw, hz - top, Math.round(bw / 22), Math.round((hz - top) / 26), seed, warm); };
-  tower(120, 640, 120, '#0e1a2b', 11, .7); tower(250, 760, 90, '#0c1828', 12, .6);
-  // Palace of Culture and Science (stepped tower + spire)
-  const px = 470, tiers = [[300, 150], [230, 150], [170, 170], [120, 150], [86, 120], [56, 80]];
-  let y = hz; c.fillStyle = '#101c2c';
-  tiers.forEach(([tw, th], i) => { y -= th; c.fillRect(px - tw / 2, y, tw, th); windows(px - tw / 2, y, tw, th, Math.round(tw / 26), Math.round(th / 30), 40 + i, .9); c.fillStyle = '#101c2c'; });
-  c.beginPath(); c.moveTo(px - 20, y); c.lineTo(px, y - 190); c.lineTo(px + 20, y); c.fill();
-  c.fillStyle = '#101c2c'; c.fillRect(px - 210, hz - 120, 60, 120); c.fillRect(px + 150, hz - 120, 60, 120);
-  // Złota 44 style curve
-  c.fillStyle = '#0f1d30'; c.beginPath(); c.moveTo(600, hz); c.lineTo(600, 560); c.quadraticCurveTo(650, 470, 700, 600); c.lineTo(700, hz); c.fill(); windows(600, 600, 100, hz - 600, 4, 24, 77, .3);
-  // Varso-like tower with spire
-  c.fillStyle = '#0d1b2e'; c.fillRect(720, 380, 120, hz - 380);
-  c.beginPath(); c.moveTo(740, 380); c.lineTo(780, 150); c.lineTo(820, 380); c.fill(); windows(720, 390, 120, hz - 390, 5, 30, 91, .25);
-  tower(870, 560, 110, '#0e1a2b', 13, .4); tower(990, 700, 90, '#0c1828', 14, .5); tower(20, 820, 90, '#0c1828', 15, .6);
-  // aviation lights
-  for (const [x, yy] of [[780, 150], [px, y - 190], [650, 480]]) { c.fillStyle = '#ff3b3b'; c.beginPath(); c.arc(x, yy, 5, 0, 7); c.fill();
-    const g = c.createRadialGradient(x, yy, 0, x, yy, 30); g.addColorStop(0, 'rgba(255,60,60,.6)'); g.addColorStop(1, 'rgba(255,60,60,0)'); c.fillStyle = g; c.fillRect(x - 30, yy - 30, 60, 60); }
-  // river reflection
-  const wat = c.createLinearGradient(0, hz, 0, h); wat.addColorStop(0, '#0b2230'); wat.addColorStop(1, '#03060a');
-  c.fillStyle = wat; c.fillRect(0, hz, w, h - hz);
-  for (let i = 0; i < 260; i++) { const x = rnd(i + 50) * w, yy = hz + 10 + rnd(i + 51) * 500, len = 20 + rnd(i + 52) * 90;
-    c.fillStyle = rnd(i + 53) < .6 ? `rgba(255,200,120,${.08 + rnd(i) * .2})` : `rgba(140,210,255,${.06 + rnd(i) * .18})`; c.fillRect(x, yy, len, 2); }
-  c.fillStyle = '#05080d'; c.fillRect(0, hz - 4, w, 8);
+  // far layer: hazy city
+  c = far.getContext('2d');
+  for (let i = 0; i < 46; i++) { const w = 40 + rnd(i) * 80, h = 80 + rnd(i + 1) * 240, x = rnd(i + 2) * W - 30;
+    building(c, x, HZ - h, w, HZ, 300 + i, { c1: '#162a3c', c2: '#0d1a29', rim: .08, lit: .22, cw: 16, rh: 20 }); }
+  g = c.createLinearGradient(0, HZ - 360, 0, HZ); g.addColorStop(0, 'rgba(40,110,130,0)'); g.addColorStop(1, 'rgba(40,110,130,.35)'); c.fillStyle = g; c.fillRect(0, HZ - 360, W, 360);
+  // mid layer: landmarks
+  c = mid.getContext('2d');
+  building(c, 60, 700, 130, HZ, 11, { warm: .7 }); building(c, 200, 820, 100, HZ, 12, { warm: .5 });
+  // Palace of Culture and Science
+  const px = 470, tiers = [[310, 150], [236, 150], [176, 170], [126, 150], [90, 120], [60, 80]];
+  let y = HZ;
+  tiers.forEach(([tw, th], i) => { y -= th; building(c, px - tw / 2, y, tw, y + th, 40 + i * 9, { warm: .92, lit: .5, floor: .2, rim: .3 });
+    c.fillStyle = '#1b2c42'; for (let k = 0; k < 5; k++) c.fillRect(px - tw / 2 + k * (tw - 8) / 4, y - 14, 8, 14); });
+  c.fillStyle = '#1b2c42'; c.beginPath(); c.moveTo(px - 22, y); c.lineTo(px, y - 200); c.lineTo(px + 22, y); c.fill();
+  c.fillStyle = 'rgba(255,214,140,.9)'; c.shadowColor = '#ffcf7a'; c.shadowBlur = 20; c.beginPath(); c.arc(px, y + 40, 12, 0, 7); c.fill(); c.shadowBlur = 0;
+  building(c, px - 220, HZ - 130, 64, HZ, 61, { warm: .9 }); building(c, px + 156, HZ - 130, 64, HZ, 62, { warm: .9 });
+  // Złota 44-like curve
+  building(c, 610, 560, 100, HZ, 77, { warm: .25, lit: .45, path: k => { k.moveTo(610, HZ); k.lineTo(610, 600); k.quadraticCurveTo(660, 480, 710, 610); k.lineTo(710, HZ); } });
+  // Varso-like tower with lit spire
+  building(c, 730, 380, 124, HZ, 91, { warm: .2, lit: .5, floor: .25, c1: '#1a2d46' });
+  c.strokeStyle = 'rgba(120,230,240,.9)'; c.lineWidth = 3; c.shadowColor = '#22e4d4'; c.shadowBlur = 16;
+  c.beginPath(); c.moveTo(750, 380); c.lineTo(792, 150); c.lineTo(834, 380); c.stroke(); c.shadowBlur = 0;
+  building(c, 880, 560, 112, HZ, 13, { warm: .4 }); building(c, 1000, 690, 90, HZ, 14, { warm: .5 }); building(c, -10, 830, 80, HZ, 15, { warm: .6 });
+  for (const [x, yy] of [[792, 150], [px, y - 200], [660, 488], [125, 700]]) { const gg = c.createRadialGradient(x, yy, 0, x, yy, 34);
+    gg.addColorStop(0, 'rgba(255,60,60,.9)'); gg.addColorStop(1, 'rgba(255,60,60,0)'); c.fillStyle = gg; c.fillRect(x - 34, yy - 34, 68, 68); }
+  // bridge deck
+  c.fillStyle = '#060a10'; c.fillRect(0, HZ - 6, W, 22);
+  for (let i = 0; i < 24; i++) { c.fillStyle = 'rgba(255,200,120,.8)'; c.shadowColor = '#ffc97a'; c.shadowBlur = 14; c.beginPath(); c.arc(20 + i * 46, HZ - 14, 3, 0, 7); c.fill(); }
+  c.shadowBlur = 0;
+  // water: blurred reflection of the skyline + streaks
+  c = water.getContext('2d');
+  g = c.createLinearGradient(0, HZ, 0, H); g.addColorStop(0, '#0b2231'); g.addColorStop(1, '#02050a'); c.fillStyle = g; c.fillRect(0, HZ + 16, W, H);
+  c.save(); c.globalAlpha = .38; c.filter = 'blur(6px)'; c.translate(0, 2 * HZ + 32); c.scale(1, -1); c.drawImage(far, 0, 0); c.drawImage(mid, 0, 0); c.restore();
+  g = c.createLinearGradient(0, HZ, 0, H); g.addColorStop(0, 'rgba(2,5,10,0)'); g.addColorStop(.6, 'rgba(2,5,10,.85)'); c.fillStyle = g; c.fillRect(0, HZ + 16, W, H);
+  const streaks = mk(); const sc = streaks.getContext('2d');
+  for (let i = 0; i < 320; i++) { const x = rnd(i + 50) * W, yy = HZ + 24 + Math.pow(rnd(i + 51), 1.6) * 560, len = 16 + rnd(i + 52) * 90;
+    sc.fillStyle = rnd(i + 53) < .6 ? `rgba(255,200,120,${.10 + rnd(i) * .25})` : `rgba(140,215,255,${.08 + rnd(i) * .22})`; sc.fillRect(x, yy, len, 2); }
+  const el = document.createElement('div'); el.className = 'fill';
+  const wrap = n => { const d = document.createElement('div'); d.className = 'fill'; d.appendChild(n); el.appendChild(d); return d; };
+  const L = { sky: wrap(sky), far: wrap(far), mid: wrap(mid), water: wrap(water), streaks: wrap(streaks), traffic: wrap(traffic) };
+  const tc = traffic.getContext('2d');
+  return {
+    el,
+    update(t) {
+      L.sky.style.transform = `translateY(${t * 4}px)`;
+      L.far.style.transform = `translateY(${-t * 6}px) scale(${1 + t * .004})`;
+      L.mid.style.transform = `translateY(${-t * 12}px) scale(${1 + t * .01})`;
+      L.streaks.style.transform = `translateX(${Math.sin(t * 2.2) * 6}px)`;
+      L.streaks.style.opacity = .75 + Math.sin(t * 3.1) * .25;
+      // light trails on the bridge (white one way, red the other)
+      tc.clearRect(0, 0, W, H);
+      for (let i = 0; i < 14; i++) {
+        const dir = i % 2 ? 1 : -1, sp = 220 + rnd(i) * 160, x = ((rnd(i + 9) * 1400 + dir * t * sp) % 1400 + 1400) % 1400 - 160;
+        const gr = tc.createLinearGradient(x, 0, x + 140 * dir, 0);
+        const col = dir > 0 ? '255,240,220' : '255,70,60';
+        gr.addColorStop(0, `rgba(${col},0)`); gr.addColorStop(1, `rgba(${col},.95)`);
+        tc.fillStyle = gr; tc.shadowColor = `rgb(${col})`; tc.shadowBlur = 10;
+        tc.fillRect(Math.min(x, x + 140 * dir), HZ - 2 + (dir > 0 ? 0 : 6), 140, 3);
+      }
+      tc.shadowBlur = 0;
+      L.traffic.style.transform = L.mid.style.transform;
+    },
+  };
 }

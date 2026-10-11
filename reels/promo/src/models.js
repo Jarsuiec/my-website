@@ -180,7 +180,7 @@ export function drawPaste({ ctx, tex }, cleanK, cracks) {
   const w = 512;
   ctx.clearRect(0, 0, w, w);
   const old = `rgb(${120 - cleanK * 0},${116},${104})`;
-  ctx.fillStyle = cleanK > .5 ? '#d8dbd4' : old; ctx.fillRect(0, 0, w, w);
+  ctx.fillStyle = cleanK > .5 ? '#b9bdb8' : old; ctx.fillRect(0, 0, w, w);
   if (cleanK <= .5) {
     ctx.strokeStyle = 'rgba(40,36,30,.85)'; ctx.lineWidth = 6; ctx.lineCap = 'round';
     for (let i = 0; i < 18; i++) { const n = Math.floor(cracks * 18); if (i >= n) break;
@@ -239,7 +239,7 @@ export function makeGamingPC() {
   gpu.add(box(1.0, .5, 2.9, mat.dark(0x15191f, .35), .04));
   for (let i = 0; i < 3; i++) { const f = makeFan(.36, 11, 0x20252c); f.rotation.x = Math.PI / 2; f.position.set(0, -.26, -.95 + i * .95); gpu.add(f); gpu.userData['f' + i] = f; }
   const gm = mat.glow(COL.cyan, 1.3); rgbMats.push(gm);
-  const gstrip = box(1.02, .05, 2.6, gm); gstrip.position.y = .26; gpu.add(gstrip);
+  const gstrip = box(.02, .05, 2.6, gm); gstrip.position.set(.51, .2, 0); gpu.add(gstrip);
   parts.gpu = gpu;
   // PSU shroud + front fans
   const shroud = box(W - .1, .7, D - .1, mat.dark(0x0f1318, .6)); shroud.position.set(0, -H / 2 + .4, 0); g.add(shroud);
@@ -249,6 +249,15 @@ export function makeGamingPC() {
     f.rotation.y = 0; g.add(f); rgbMats.push(f.userData.ringMat); parts.fans.push(f);
   }
   const rear = makeFan(.5, 9, 0x1b2026, COL.cyan); rear.position.set(0, 1.4, -D / 2 + .15); g.add(rear); rgbMats.push(rear.userData.ringMat); parts.fans.push(rear);
+  // detail: VRM + chipset heatsinks, M.2 shield, sleeved cables
+  const hs = mat.metal(0x3a4048, .35);
+  for (const [y, z, h, d] of [[1.55, -.3, .22, 1.0], [.95, -1.0, .9, .22], [-.55, .9, .5, .5]]) { const b2 = box(.12, h, d, hs, .02); b2.position.set(mx + .02, y, z); g.add(b2); }
+  for (let i = 0; i < 9; i++) { const fin = box(.13, .2, .02, hs); fin.position.set(mx + .03, 1.55, -.75 + i * .11); g.add(fin); }
+  const m2 = box(.05, .16, .9, mat.metal(0x2a3038, .3)); m2.position.set(mx + .03, .1, .2); g.add(m2);
+  const cable = (pts, color, r = .045) => { const tube = new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts.map(p => new THREE.Vector3(...p))), 40, r, 10), mat.plastic(color, .7)); g.add(tube); };
+  for (let i = 0; i < 4; i++) cable([[-.2, -H / 2 + .75, 1.5 + i * .08], [-.4, -.9, 1.7 + i * .08], [mx + .08, .2, 1.45 + i * .06]], i % 2 ? 0x1a1d22 : 0x2a2f36);
+  for (let i = 0; i < 2; i++) cable([[0, -H / 2 + .75, -.4 + i * .1], [.3, -.85, -.5 + i * .1], [mx + .6, -.12, -1.3 + i * .1]], 0xd9dde2, .04);
+  cable([[-.3, H / 2 - .2, -1.6], [mx + .1, 1.75, -1.2]], 0x1a1d22, .05);
   const glass = box(.02, H - .1, D - .1, mat.glass()); glass.position.x = W / 2; g.add(glass);
   // glass edge light strip
   const edgeMat = mat.glow(COL.blue, 1.2); rgbMats.push(edgeMat);

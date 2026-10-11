@@ -15,6 +15,7 @@ const RFPS = 60, FPS = 30, WORKERS = +arg('--workers', 3);
 const FROM = +arg('--from', 0), TO = Math.min(TOTAL, +arg('--to', TOTAL));
 const BUILD = path.join(DIR, 'build'); mkdirSync(BUILD, { recursive: true });
 const OUT = path.resolve(DIR, arg('--out', 'build/pc-master-promo.mp4'));
+const TAG = arg('--tag', ''); // render in parts: --tag A --from 0 --to 28 --frames-only, then --segs A,B --mix-only
 const clipsPresent = cfg.scenes.map(s => !!(s.clip && existsSync(path.resolve(DIR, s.clip))));
 const anyClip = clipsPresent.some(Boolean);
 const GL_ARGS = ['--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'];
@@ -26,7 +27,7 @@ const t0 = Date.now();
 async function worker(w) {
   const a = f0 + w * per, b = Math.min(f1, a + per);
   if (a >= b) return null;
-  const seg = path.join(BUILD, `seg_${w}.${anyClip ? 'mov' : 'mp4'}`);
+  const seg = path.join(BUILD, `seg_${TAG}${w}.${anyClip ? 'mov' : 'mp4'}`);
   const browser = await chromium.launch({ args: GL_ARGS });
   const page = await browser.newPage({ viewport: { width: 1080, height: 1920 } });
   page.on('pageerror', e => console.log(`[w${w}] PAGE ERROR:`, e.message));
@@ -50,17 +51,36 @@ async function worker(w) {
 const MIX_ONLY = process.argv.includes('--mix-only'); // reuse frames from the previous run
 if (!MIX_ONLY) {
   const segs = (await Promise.all(Array.from({ length: WORKERS }, (_, w) => worker(w)))).filter(Boolean);
-  writeFileSync(path.join(BUILD, 'segs.txt'), segs.map(s => `file '${s}'`).join('\n'));
+  writeFileSync(path.join(BUILD, `segs${TAG}.txt`), segs.map(s => `file '${s}'`).join('\n'));
 }
 close();
+if (process.argv.includes('--frames-only')) { console.log(`frames ${TAG} done in ${((Date.now() - t0) / 1000).toFixed(0)}s`); process.exit(0); }
+if (arg('--segs')) writeFileSync(path.join(BUILD, 'segs.txt'), arg('--segs').split(',').map(tg => readFileSync(path.join(BUILD, `segs${tg}.txt`), 'utf8').trim()).join('\n'));
 console.log(`frames done in ${((Date.now() - t0) / 1000).toFixed(0)}s, mixing…`);
 
 // ---- final mix ----
 const voice = path.resolve(DIR, 'assets/voice.mp3'), music = path.join(BUILD, 'music.wav'), sfx = path.join(BUILD, 'sfx.wav');
 if (!existsSync(music)) spawnSync('python3', [path.join(DIR, 'audio.py')], { stdio: 'inherit' });
 const dur = TO - FROM;
-const inputs = ['-f', 'concat', '-safe', '0', '-i', path.join(BUILD, 'segs.txt'),
-  '-ss', String(FROM), '-t', String(dur), '-i', voice, '-ss', String(FROM), '-t', String(dur), '-i', music, '-ss', String(FROM), '-t', String(dur), '-i', sfx];
+// audio: static gains from measured loudness (dynamic loudnorm produced NaN dropouts on quiet passages)
+const lufs = (inArgs, filter) => {
+  const res = spawnSync('ffmpeg', ['-hide_banner', '-nostats', ...inArgs, '-filter_complex', `${filter},ebur128=framelog=quiet`, '-f', 'null', '-'], { encoding: 'utf8' });
+  const m = [...res.stderr.matchAll(/I:\s+(-?[\d.]+) LUFS/g)].at(-1);
+  if (!m) throw new Error('loudness measurement failed'); return +m[1];
+};
+const cut = f => ['-ss', String(FROM), '-t', String(dur), '-i', f];
+const VOICE_CHAIN = 'aformat=sample_rates=48000:channel_layouts=stereo,highpass=f=70,acompressor=threshold=-20dB:ratio=2.5:attack=10:release=160';
+const vGain = -16 - lufs(cut(voice), `[0:a]${VOICE_CHAIN}`);
+const mixWav = path.join(BUILD, 'mix.wav');
+const mixGraph = [`[0:a]${VOICE_CHAIN},volume=${vGain.toFixed(2)}dB,asplit=2[voice][key]`,
+  `[1:a]aformat=sample_rates=48000:channel_layouts=stereo,volume=${cfg.musicVolume ?? .3}[m0];[m0][key]sidechaincompress=threshold=0.025:ratio=7:attack=25:release=380[music]`,
+  `[2:a]aformat=sample_rates=48000:channel_layouts=stereo,volume=${cfg.sfxVolume ?? .9}[sfx]`,
+  `[voice][music][sfx]amix=inputs=3:normalize=0:duration=longest,atrim=duration=${dur},alimiter=limit=0.9[a]`].join(';');
+const mx = spawnSync('ffmpeg', ['-y', '-loglevel', 'error', ...cut(voice), ...cut(music), ...cut(sfx), '-filter_complex', mixGraph, '-map', '[a]', '-ar', '48000', '-c:a', 'pcm_f32le', mixWav], { stdio: 'inherit' });
+if (mx.status) process.exit(mx.status);
+const fGain = -14 - lufs(['-i', mixWav], '[0:a]anull');
+console.log(`voice gain ${vGain.toFixed(1)} dB, master gain ${fGain.toFixed(1)} dB`);
+const inputs = ['-f', 'concat', '-safe', '0', '-i', path.join(BUILD, 'segs.txt'), '-i', mixWav];
 const fc = [];
 let vIn = '[0:v]';
 if (anyClip) {
@@ -78,10 +98,7 @@ if (anyClip) {
   fc.push(`[bgv][0:v]overlay=format=auto[comp]`); vIn = '[comp]';
 }
 fc.push(`${vIn}tmix=frames=2:weights='1 1',fps=${FPS},format=yuv420p[vout]`);
-fc.push(`[1:a]aformat=sample_rates=48000:channel_layouts=stereo,highpass=f=70,acompressor=threshold=-20dB:ratio=2.5:attack=10:release=160,loudnorm=I=-16:TP=-2:LRA=9,asplit=2[voice][key]`);
-fc.push(`[2:a]aformat=sample_rates=48000:channel_layouts=stereo,volume=${cfg.musicVolume ?? .3}[m0];[m0][key]sidechaincompress=threshold=0.025:ratio=7:attack=25:release=380[music]`);
-fc.push(`[3:a]aformat=sample_rates=48000:channel_layouts=stereo,volume=${cfg.sfxVolume ?? .9}[sfx]`);
-fc.push(`[voice][music][sfx]amix=inputs=3:normalize=0:duration=longest,atrim=duration=${dur},alimiter=limit=0.9,loudnorm=I=-14:TP=-1.5:LRA=11[aout]`);
+fc.push(`[1:a]volume=${fGain.toFixed(2)}dB,alimiter=limit=0.84:level=false[aout]`);
 const r = spawnSync('ffmpeg', ['-y', '-loglevel', 'error', ...inputs, '-filter_complex', fc.join(';'), '-map', '[vout]', '-map', '[aout]', '-t', String(dur),
   '-c:v', 'libx264', '-profile:v', 'high', '-crf', '18', '-preset', 'slow', '-r', String(FPS), '-pix_fmt', 'yuv420p',
   '-c:a', 'aac', '-b:a', '256k', '-ar', '48000', '-movflags', '+faststart', OUT], { stdio: 'inherit' });
