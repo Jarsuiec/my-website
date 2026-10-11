@@ -1,0 +1,250 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<style>
+  :root { --bg:#0a0a0b; --lime:#d4ff3a; --dim:#2a2d22; --txt:#f2f2ee; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html, body { width:1080px; height:1920px; background:var(--bg); overflow:hidden; }
+  body { font-family:"Inter","Inter Display",sans-serif; color:var(--txt); }
+  #stage { position:absolute; inset:0; overflow:hidden; }
+  .abs { position:absolute; }
+  .center { left:50%; top:50%; transform:translate(-50%,-50%); }
+  .grid {
+    inset:0;
+    background-image:
+      linear-gradient(rgba(212,255,58,.045) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(212,255,58,.045) 1px, transparent 1px);
+    background-size:60px 60px;
+  }
+  .vignette { inset:0; background:radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,.75) 100%); }
+  .corner { width:46px; height:46px; border-color:rgba(212,255,58,.55); border-style:solid; border-width:0; }
+  .hud { font-family:"DejaVu Sans Mono",monospace; font-size:20px; color:rgba(242,242,238,.35); letter-spacing:2px; }
+  .word { font-weight:900; text-transform:uppercase; white-space:nowrap; }
+  .tag {
+    display:inline-block; background:var(--lime); color:#0a0a0b; padding:0 .22em; border-radius:.08em;
+    box-shadow:0 0 40px rgba(212,255,58,.45), 0 .08em 0 #7d9a12;
+  }
+  .outline { display:inline-block; color:var(--lime); border:4px solid var(--lime); padding:0 .18em; border-radius:.06em; }
+  .strike { position:relative; display:inline-block; color:rgba(242,242,238,.35); }
+  .strike i { position:absolute; left:-4%; top:52%; height:.12em; background:var(--lime); box-shadow:0 0 20px var(--lime); }
+  .code {
+    font-family:"DejaVu Sans Mono",monospace; font-size:36px; line-height:1.7;
+    background:#111310; border:2px solid #23271b; border-radius:22px; padding:40px 44px; width:900px;
+    box-shadow:0 30px 80px rgba(0,0,0,.6);
+  }
+  .k { color:#8a8f80; } .p { color:var(--lime); } .n { color:#ffffff; }
+  .caret { display:inline-block; width:.55em; height:1.1em; background:var(--lime); vertical-align:-.2em; }
+  .glow { color:var(--lime); text-shadow:0 0 30px rgba(212,255,58,.8), 0 0 90px rgba(212,255,58,.45); }
+  .cell {
+    display:inline-flex; align-items:center; justify-content:center; width:92px; height:110px; margin:0 5px;
+    border:4px solid var(--lime); color:var(--lime); font-weight:900; font-size:70px; border-radius:8px;
+    box-shadow:0 0 24px rgba(212,255,58,.35) inset;
+  }
+  .grain { inset:-50%; opacity:.07; mix-blend-mode:screen; }
+</style>
+</head>
+<body>
+<div id="stage">
+  <div class="abs grid" id="grid"></div>
+
+  <!-- HUD -->
+  <div class="abs corner" style="left:50px;top:50px;border-left-width:4px;border-top-width:4px"></div>
+  <div class="abs corner" style="right:50px;top:50px;border-right-width:4px;border-top-width:4px"></div>
+  <div class="abs corner" style="left:50px;bottom:50px;border-left-width:4px;border-bottom-width:4px"></div>
+  <div class="abs corner" style="right:50px;bottom:50px;border-right-width:4px;border-bottom-width:4px"></div>
+  <div class="abs hud" style="left:120px;top:62px" id="hudFrame">КАДР 0000 / 0300</div>
+  <div class="abs hud" style="left:120px;bottom:62px">REC ● 1080×1920 · 30FPS</div>
+  <div class="abs hud" style="right:120px;bottom:62px" id="hudCode">render(t)</div>
+  <svg class="abs" style="right:90px;top:120px" width="150" height="150" viewBox="0 0 150 150">
+    <circle cx="75" cy="75" r="62" fill="none" stroke="#23271b" stroke-width="6"/>
+    <circle id="ring" cx="75" cy="75" r="62" fill="none" stroke="#d4ff3a" stroke-width="6"
+            stroke-linecap="round" transform="rotate(-90 75 75)" stroke-dasharray="389.6" stroke-dashoffset="0"/>
+    <text id="timer" x="75" y="84" text-anchor="middle" font-family="DejaVu Sans Mono" font-size="26" fill="#f2f2ee">00:10</text>
+  </svg>
+
+  <!-- Scene 1: СПОРИМ? -->
+  <div class="abs center word" id="s1" style="font-size:150px"><span class="tag">СПОРИМ?</span></div>
+
+  <!-- Scene 2: words -->
+  <div class="abs word" id="s2" style="left:0;right:0;top:700px;text-align:center;font-size:84px;line-height:1.25">
+    <div><span class="w">ЭТО</span> <span class="w">ВИДЕО</span></div>
+    <div><span class="w">СОБРАНО</span> <span class="w">БЕЗ</span></div>
+    <div style="margin-top:20px"><span class="w strike" id="ae">AFTER EFFECTS<i id="aeLine"></i></span></div>
+  </div>
+
+  <!-- Scene 3: code -->
+  <div class="abs word" id="s3title" style="left:0;right:0;top:520px;text-align:center;font-size:76px">
+    ОН ПИШЕТ <span class="outline">КОД</span>
+  </div>
+  <div class="abs code" id="s3" style="left:90px;top:760px"><div id="codeText"></div></div>
+  <svg class="abs" id="keys" style="left:90px;top:1300px" width="900" height="200"></svg>
+
+  <!-- Scene 4: CLAUDE -->
+  <div class="abs center word glow" id="s4" style="font-size:230px;letter-spacing:-4px">CLAUDE</div>
+
+  <!-- Scene 5: outro -->
+  <div class="abs" id="s5" style="left:0;right:0;top:760px;text-align:center">
+    <div id="cells"></div>
+    <div class="word" style="font-size:60px;margin-top:70px" id="s5sub">ТАК ТЕПЕРЬ И <span class="tag">РАБОТАЕМ</span></div>
+  </div>
+
+  <div class="abs vignette"></div>
+  <canvas class="abs grain" id="grain" width="540" height="960" style="width:200%;height:200%"></canvas>
+  <div class="abs" id="flash" style="inset:0;background:#d4ff3a;opacity:0;mix-blend-mode:screen"></div>
+</div>
+
+<script>
+const FPS = 30, DURATION = 10;
+const $ = id => document.getElementById(id);
+const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+const prog = (t, a, b) => clamp((t - a) / (b - a));
+const easeOut = x => 1 - Math.pow(1 - x, 3);
+const easeIn = x => x * x * x;
+const backOut = x => { const c = 2.2; return 1 + (c + 1) * Math.pow(x - 1, 3) + c * Math.pow(x - 1, 2); };
+// deterministic pseudo-random so every render of a frame is identical
+const rnd = n => { const s = Math.sin(n * 12.9898) * 43758.5453; return s - Math.floor(s); };
+
+// visibility window with fade in/out
+function win(t, a, b, fin = .15, fout = .2) {
+  if (t < a || t > b) return 0;
+  return Math.min(easeOut(prog(t, a, a + fin)), 1 - easeIn(prog(t, b - fout, b)));
+}
+function shake(t, start, amt) {
+  const k = 1 - prog(t, start, start + .35);
+  return [(rnd(Math.floor(t * 60)) - .5) * amt * k, (rnd(Math.floor(t * 60) + 7) - .5) * amt * k];
+}
+
+// --- scene 3 code & keyframes setup ---
+const CODE = [
+  ['k', 'const '], ['n', 'title'], ['k', ' = '], ['p', 'spring'], ['n', '(t, {'], ['\n'],
+  ['n', '  scale: '], ['p', '[0.6, 1]'], ['n', ','], ['\n'],
+  ['n', '  glow: '], ['p', 'stagger'], ['n', '(i, 0.05)'], ['\n'],
+  ['n', '});'], ['\n'],
+  ['k', 'camera.'], ['p', 'dolly'], ['n', '({ z: 1800 });'],
+];
+const CODE_LEN = CODE.reduce((s, c) => s + (c[0] === '\n' ? 1 : c[1].length), 0);
+function codeHTML(n) {
+  let out = '', left = n;
+  for (const c of CODE) {
+    if (left <= 0) break;
+    if (c[0] === '\n') { out += '<br>'; left--; continue; }
+    const s = c[1].slice(0, left); left -= s.length;
+    out += `<span class="${c[0]}">${s.replace(/ /g, '&nbsp;')}</span>`;
+  }
+  return out;
+}
+const keysSvg = $('keys');
+let keysMarkup = '';
+for (let r = 0; r < 4; r++) keysMarkup += `<line x1="0" x2="900" y1="${25 + r * 50}" y2="${25 + r * 50}" stroke="#23271b" stroke-width="2"/>`;
+const KEYS = [];
+for (let i = 0; i < 18; i++) KEYS.push({ x: 40 + i * 47 + rnd(i) * 20, y: 25 + Math.floor(rnd(i + 3) * 4) * 50 });
+KEYS.forEach((k, i) => keysMarkup += `<rect id="kf${i}" x="-11" y="-11" width="22" height="22" fill="#d4ff3a" transform="translate(${k.x} ${k.y}) rotate(45)"/>`);
+keysMarkup += `<line id="playhead" x1="0" x2="0" y1="0" y2="200" stroke="#d4ff3a" stroke-width="3"/>`;
+keysSvg.innerHTML = keysMarkup;
+
+// --- scene 5 cells ---
+const WORD = 'НЕЙРОКОД';
+$('cells').innerHTML = [...WORD].map((ch, i) => `<span class="cell" id="c${i}">${ch}</span>`).join('');
+
+const words = [...document.querySelectorAll('#s2 .w')];
+const grain = $('grain').getContext('2d');
+const img = grain.createImageData(540, 960);
+
+function render(t) {
+  // HUD
+  const frame = Math.round(t * FPS);
+  $('hudFrame').textContent = `КАДР ${String(frame).padStart(4, '0')} / 0300`;
+  const remain = Math.max(0, DURATION - t);
+  $('timer').textContent = `00:${String(Math.ceil(remain)).padStart(2, '0')}`;
+  $('ring').setAttribute('stroke-dashoffset', 389.6 * (1 - remain / DURATION));
+  $('grid').style.transform = `translateY(${(t * 40) % 60}px)`;
+
+  // Scene 1 — slam in, hold, fly up
+  {
+    const a = win(t, 0, 2.0, .01, .25);
+    const s = t < .4 ? backOut(prog(t, 0, .4)) * 1 : 1;
+    const startScale = 3.2 - 2.2 * s;
+    const [dx, dy] = shake(t, .32, 40);
+    const out = easeIn(prog(t, 1.75, 2.0));
+    $('s1').style.opacity = a;
+    $('s1').style.transform = `translate(calc(-50% + ${dx}px), calc(-50% + ${dy - out * 500}px)) scale(${startScale}) rotate(${-3 + 3 * s}deg)`;
+  }
+
+  // Scene 2 — staggered words, strike through AFTER EFFECTS
+  {
+    const a = win(t, 1.95, 4.6, .05, .25);
+    $('s2').style.opacity = a;
+    words.forEach((w, i) => {
+      const p = backOut(prog(t, 2.0 + i * .2, 2.0 + i * .2 + .35));
+      w.style.display = 'inline-block';
+      w.style.opacity = clamp(p * 2);
+      w.style.transform = `translateY(${(1 - p) * 80}px) scale(${.7 + .3 * p})`;
+    });
+    $('aeLine').style.width = `${easeOut(prog(t, 3.25, 3.6)) * 108}%`;
+    const [dx] = shake(t, 3.6, 30);
+    $('ae').style.transform += ` translateX(${dx}px)`;
+  }
+
+  // Scene 3 — code typing + keyframes timeline
+  {
+    const a = win(t, 4.5, 7.1, .2, .25);
+    $('s3title').style.opacity = a;
+    $('s3title').style.transform = `translateY(${(1 - easeOut(prog(t, 4.5, 4.9))) * -60}px)`;
+    $('s3').style.opacity = a;
+    $('s3').style.transform = `translateY(${(1 - easeOut(prog(t, 4.6, 5.0))) * 120}px)`;
+    const n = Math.floor(prog(t, 4.8, 6.4) * CODE_LEN);
+    const blink = Math.floor(t * 4) % 2 === 0 || n < CODE_LEN;
+    $('codeText').innerHTML = codeHTML(n) + `<span class="caret" style="opacity:${blink ? 1 : 0}"></span>`;
+    keysSvg.style.opacity = a;
+    const ph = prog(t, 5.0, 6.9) * 900;
+    $('playhead').setAttribute('x1', ph); $('playhead').setAttribute('x2', ph);
+    KEYS.forEach((k, i) => {
+      const on = easeOut(prog(t, 4.9 + i * .05, 5.1 + i * .05));
+      const hit = Math.abs(ph - k.x) < 25 ? 1.7 : 1;
+      $('kf' + i).setAttribute('transform', `translate(${k.x} ${k.y}) rotate(45) scale(${on * hit})`);
+    });
+  }
+
+  // Scene 4 — CLAUDE glow pop
+  {
+    const a = win(t, 7.0, 8.7, .02, .25);
+    const p = backOut(prog(t, 7.0, 7.35));
+    const [dx, dy] = shake(t, 7.25, 50);
+    $('s4').style.opacity = a;
+    $('s4').style.transform = `translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px)) scale(${.3 + .7 * p + prog(t, 7.35, 8.7) * .08})`;
+  }
+
+  // Scene 5 — letter cells + subtitle
+  {
+    const a = win(t, 8.6, 10.01, .1, .01);
+    $('s5').style.opacity = a;
+    [...WORD].forEach((_, i) => {
+      const p = backOut(prog(t, 8.65 + i * .06, 8.95 + i * .06));
+      const c = $('c' + i);
+      c.style.opacity = clamp(p * 2);
+      c.style.transform = `translateY(${(1 - p) * -120}px) rotate(${(1 - p) * (i % 2 ? 20 : -20)}deg)`;
+    });
+    const sp = easeOut(prog(t, 9.2, 9.5));
+    $('s5sub').style.opacity = sp;
+    $('s5sub').style.transform = `translateY(${(1 - sp) * 40}px)`;
+  }
+
+  // flashes on hard cuts
+  const flashAt = [.3, 3.6, 7.25];
+  $('flash').style.opacity = Math.max(...flashAt.map(f => Math.max(0, 1 - Math.abs(t - f) * 8))) * .35;
+
+  // film grain (seeded by frame)
+  const d = img.data;
+  for (let i = 0; i < d.length; i += 4) {
+    const v = rnd(i * .37 + frame * 911.3) * 255;
+    d[i] = d[i + 1] = d[i + 2] = v; d[i + 3] = 255;
+  }
+  grain.putImageData(img, 0, 0);
+}
+
+window.FPS = FPS; window.DURATION = DURATION; window.render = render;
+render(0);
+</script>
+</body>
+</html>
