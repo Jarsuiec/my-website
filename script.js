@@ -4,6 +4,11 @@
   // ---------- Тексты на трёх языках ----------
   var T = {
     ru: {
+      "cart.title": "Корзина", "cart.add": "В корзину", "cart.added": "В корзине ✓", "cart.remove": "Убрать",
+      "cart.empty": "Корзина пуста. Добавьте услуги из списка.", "cart.before": "Без скидки", "cart.disc": "Скидка", "cart.total": "Итого",
+      "cart.note": "Цены «от»: точную сумму согласуем до начала работы. Оплата после результата.",
+      "cart.checkout": "Оформить заказ", "cart.order": "Ваш заказ", "cart.edit": "Изменить корзину",
+      "promo": "Скидка {n}% на все услуги при заказе через сайт",
       "pr.title": "Что случилось?", "pr.slow": "Тормозит и долго грузится", "pr.hot": "Греется и шумит", "pr.boot": "Не загружается Windows", "pr.fps": "Мало FPS в играх", "pr.buy": "Хочу купить или собрать ПК", "tg.float": "Написать в Telegram",
       "nav.services": "Услуги", "nav.how": "Как работаю", "nav.faq": "Вопросы", "nav.contact": "Оставить заявку",
       "hero.tag": "Варшава · Прушкув · удалённо по всей Польше",
@@ -52,6 +57,11 @@
       "s.wifi": ["Wi‑Fi и роутер", "Настройка интернета, слабый сигнал, подключение устройств"]
     },
     uk: {
+      "cart.title": "Кошик", "cart.add": "У кошик", "cart.added": "У кошику ✓", "cart.remove": "Прибрати",
+      "cart.empty": "Кошик порожній. Додайте послуги зі списку.", "cart.before": "Без знижки", "cart.disc": "Знижка", "cart.total": "Разом",
+      "cart.note": "Ціни «від»: точну суму погоджуємо до початку роботи. Оплата після результату.",
+      "cart.checkout": "Оформити замовлення", "cart.order": "Ваше замовлення", "cart.edit": "Змінити кошик",
+      "promo": "Знижка {n}% на всі послуги при замовленні через сайт",
       "pr.title": "Що сталося?", "pr.slow": "Гальмує і довго вантажиться", "pr.hot": "Гріється і шумить", "pr.boot": "Не завантажується Windows", "pr.fps": "Мало FPS в іграх", "pr.buy": "Хочу купити або зібрати ПК", "tg.float": "Написати в Telegram",
       "nav.services": "Послуги", "nav.how": "Як працюю", "nav.faq": "Питання", "nav.contact": "Залишити заявку",
       "hero.tag": "Варшава · Прушкув · віддалено по всій Польщі",
@@ -100,6 +110,11 @@
       "s.wifi": ["Wi‑Fi і роутер", "Налаштування інтернету, слабкий сигнал, підключення пристроїв"]
     },
     pl: {
+      "cart.title": "Koszyk", "cart.add": "Do koszyka", "cart.added": "W koszyku ✓", "cart.remove": "Usuń",
+      "cart.empty": "Koszyk jest pusty. Dodaj usługi z listy.", "cart.before": "Bez rabatu", "cart.disc": "Rabat", "cart.total": "Razem",
+      "cart.note": "Ceny „od”: dokładną kwotę ustalamy przed rozpoczęciem pracy. Płatność po wykonaniu.",
+      "cart.checkout": "Złóż zamówienie", "cart.order": "Twoje zamówienie", "cart.edit": "Zmień koszyk",
+      "promo": "Rabat {n}% na wszystkie usługi przy zamówieniu przez stronę",
       "pr.title": "Co się stało?", "pr.slow": "Zwalnia i długo się uruchamia", "pr.hot": "Grzeje się i hałasuje", "pr.boot": "Windows się nie uruchamia", "pr.fps": "Mało FPS w grach", "pr.buy": "Chcę kupić lub złożyć komputer", "tg.float": "Napisz na Telegramie",
       "nav.services": "Usługi", "nav.how": "Jak pracuję", "nav.faq": "Pytania", "nav.contact": "Zostaw zgłoszenie",
       "hero.tag": "Warszawa · Pruszków · zdalnie w całej Polsce",
@@ -172,21 +187,111 @@
 
   function t(key) { return T[lang][key] !== undefined ? T[lang][key] : T.ru[key]; }
 
+  // ---------- Скидка и корзина ----------
+  var discount = Number(cfg.discount) || 0;
+  function sale(price) { return Math.round(price * (100 - discount) / 100); }
+  function money(n) { return n + " " + t("currency"); }
+  function findService(id) {
+    for (var i = 0; i < cfg.services.length; i++) if (cfg.services[i].id === id) return cfg.services[i];
+    return null;
+  }
+
+  var cart = [];
+  try { cart = JSON.parse(localStorage.getItem("cart") || "[]"); } catch (e) {}
+  if (!Array.isArray(cart)) cart = [];
+  cart = cart.filter(findService);
+
+  function toggleCart(id) {
+    var i = cart.indexOf(id);
+    if (i === -1) cart.push(id); else cart.splice(i, 1);
+    try { localStorage.setItem("cart", JSON.stringify(cart)); } catch (e) {}
+    renderServices();
+    renderCart();
+  }
+
+  function cartTotals() {
+    var before = 0, total = 0;
+    cart.forEach(function (id) { var s = findService(id); before += s.price; total += sale(s.price); });
+    return { before: before, total: total };
+  }
+
+  function fillList(ul, removable) {
+    ul.innerHTML = "";
+    cart.forEach(function (id) {
+      var s = findService(id), li = document.createElement("li");
+      var name = document.createElement("span");
+      name.textContent = t("s." + id)[0];
+      var price = document.createElement("b");
+      price.textContent = t("from") + " " + money(sale(s.price));
+      li.appendChild(name); li.appendChild(price);
+      if (removable) {
+        var x = document.createElement("button");
+        x.type = "button"; x.className = "cart__rm"; x.textContent = "×";
+        x.setAttribute("aria-label", t("cart.remove"));
+        x.addEventListener("click", function () { toggleCart(id); });
+        li.appendChild(x);
+      }
+      ul.appendChild(li);
+    });
+  }
+
+  function renderCart() {
+    var sums = cartTotals(), has = cart.length > 0;
+    var count = document.getElementById("cart-count");
+    count.textContent = cart.length; count.hidden = !has;
+    document.getElementById("cart-empty").hidden = has;
+    document.getElementById("cart-sum").hidden = !has;
+    fillList(document.getElementById("cart-list"), true);
+    document.getElementById("sum-before").textContent = money(sums.before);
+    document.getElementById("sum-disc-label").textContent = t("cart.disc") + " " + discount + "%";
+    document.getElementById("sum-disc").textContent = "−" + money(sums.before - sums.total);
+    document.querySelector(".cart__disc").hidden = !discount;
+    document.getElementById("sum-total").textContent = t("from") + " " + money(sums.total);
+
+    // Заказ в форме заявки
+    document.getElementById("order-box").hidden = !has;
+    document.getElementById("service-label").hidden = has;
+    fillList(document.getElementById("order-list"), false);
+    document.getElementById("order-total").textContent = t("cart.total") + ": " + t("from") + " " + money(sums.total) +
+      (discount ? " (" + t("cart.disc").toLowerCase() + " " + discount + "%)" : "");
+    var form = document.getElementById("lead-form");
+    form.elements.cart.value = cart.map(function (id) { return T.ru["s." + id][0] + " — " + sale(findService(id).price) + " zł"; }).join("; ");
+    form.elements.total.value = has ? sums.total + " zł" : "";
+  }
+
+  function openCart(open) {
+    document.getElementById("cart").hidden = !open;
+    document.body.classList.toggle("no-scroll", open);
+  }
+
   function renderServices() {
     var grid = document.getElementById("price-list");
     var select = document.getElementById("service-select");
     var current = select.value;
     grid.innerHTML = "";
     select.innerHTML = "";
+    var promo = document.getElementById("promo");
+    promo.hidden = !discount;
+    promo.textContent = t("promo").replace("{n}", discount);
     cfg.services.forEach(function (s) {
       var text = t("s." + s.id);
       if (!text) return;
+      var inCart = cart.indexOf(s.id) !== -1;
       var card = document.createElement("div");
-      card.className = "card";
-      card.innerHTML = "<div class=\"card__icon\">" + icon(s.id) + "</div><h3></h3><p></p><div class=\"price\"></div>";
+      card.className = "card" + (inCart ? " is-in-cart" : "");
+      card.innerHTML = "<div class=\"card__icon\">" + icon(s.id) + "</div><h3></h3><p></p>" +
+        "<div class=\"price\"><s class=\"price__old\"></s><span class=\"price__new\"></span><span class=\"price__badge\"></span></div>" +
+        "<button type=\"button\" class=\"btn btn--small card__add\"></button>";
       card.querySelector("h3").textContent = text[0];
       card.querySelector("p").textContent = text[1];
-      card.querySelector(".price").textContent = t("from") + " " + s.price + " " + t("currency");
+      var old = card.querySelector(".price__old"), badge = card.querySelector(".price__badge");
+      old.textContent = money(s.price); old.hidden = !discount;
+      badge.textContent = "−" + discount + "%"; badge.hidden = !discount;
+      card.querySelector(".price__new").textContent = t("from") + " " + money(sale(s.price));
+      var add = card.querySelector(".card__add");
+      add.textContent = t(inCart ? "cart.added" : "cart.add");
+      add.setAttribute("aria-pressed", inCart);
+      add.addEventListener("click", function () { toggleCart(s.id); });
       grid.appendChild(card);
 
       var opt = document.createElement("option");
@@ -217,6 +322,7 @@
     });
     document.querySelector("input[name=lang]").value = l;
     renderServices();
+    renderCart();
   }
 
   function setupContacts() {
@@ -232,7 +338,8 @@
     if (cfg.phone) { ph.href = "tel:" + cfg.phone; ph.textContent = cfg.phone; ph.hidden = false; }
   }
 
-  // Отправка формы без перезагрузки (Netlify Forms принимает POST на "/")
+  // Отправка заявки: уведомление в Telegram (функция Netlify) + копия в Netlify Forms.
+  // Заявка считается отправленной, если сработал хотя бы один канал.
   function setupForm() {
     var form = document.getElementById("lead-form");
     var status = document.getElementById("form-status");
@@ -241,17 +348,31 @@
       var btn = form.querySelector("button[type=submit]");
       btn.disabled = true;
       status.textContent = t("form.sending");
-      fetch("/", {
+      var f = form.elements;
+      var order = {
+        name: f.name.value, contact: f.contact.value, where: f.where.value,
+        description: f.description.value, lang: lang, botField: f["bot-field"].value,
+        items: cart.length ? cart.slice() : [f.service.value]
+      };
+      function ok(r) { if (!r.ok) throw new Error(r.status); return true; }
+      function no() { return false; }
+      var toTelegram = fetch("/.netlify/functions/order", {
+        method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(order)
+      }).then(ok).catch(no);
+      var toNetlify = fetch("/", {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
         body: new URLSearchParams(new FormData(form)).toString()
-      }).then(function (r) {
-        if (!r.ok) throw new Error(r.status);
+      }).then(ok).catch(no);
+      Promise.all([toTelegram, toNetlify]).then(function (res) {
+        if (!res[0] && !res[1]) { status.textContent = t("form.err"); return; }
         form.reset();
         document.querySelector("input[name=lang]").value = lang;
+        cart = [];
+        try { localStorage.removeItem("cart"); } catch (e) {}
+        renderServices();
+        renderCart();
         status.textContent = t("form.ok");
-      }).catch(function () {
-        status.textContent = t("form.err");
       }).then(function () { btn.disabled = false; });
     });
   }
@@ -263,10 +384,24 @@
   // Кнопки «Что случилось?» — выбирают услугу в форме и прокручивают к ней
   document.querySelectorAll(".problem").forEach(function (b) {
     b.addEventListener("click", function () {
-      document.getElementById("service-select").value = b.getAttribute("data-service");
+      var id = b.getAttribute("data-service");
+      document.getElementById("service-select").value = id;
+      if (cart.indexOf(id) === -1) toggleCart(id);
       document.getElementById("contact").scrollIntoView({ behavior: "smooth" });
       setTimeout(function () { document.querySelector("#lead-form input[name=name]").focus({ preventScroll: true }); }, 500);
     });
+  });
+
+  // Корзина: открыть, закрыть, перейти к оформлению
+  document.getElementById("cart-open").addEventListener("click", function () { openCart(true); });
+  document.getElementById("order-edit").addEventListener("click", function () { openCart(true); });
+  document.querySelectorAll("[data-cart-close]").forEach(function (el) {
+    el.addEventListener("click", function () { openCart(false); });
+  });
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape") openCart(false); });
+  document.getElementById("cart-checkout").addEventListener("click", function () {
+    openCart(false);
+    document.getElementById("contact").scrollIntoView({ behavior: "smooth" });
   });
 
   setupContacts();

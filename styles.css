@@ -14,6 +14,8 @@
   --hero-muted: #a9b6d3;
   --radius: 16px;
   --tg: #229ed9;
+  --sale: #b42318;
+  --sale-bg: #fee4e2;
 }
 @media (prefers-color-scheme: dark) {
   :root {
@@ -26,6 +28,8 @@
     --card: #121d31;
     --shadow: 0 8px 24px rgba(0, 0, 0, .35);
     --hero-bg: #070d18;
+    --sale: #ffb4ab;
+    --sale-bg: #4a1512;
   }
 }
 
@@ -150,10 +154,50 @@ a { color: var(--accent); }
 .card__icon svg { width: 24px; height: 24px; }
 .card h3 { margin: 0 0 8px; font-size: 1.1rem; }
 .card p { margin: 0 0 18px; color: var(--muted); flex: 1; font-size: .95rem; }
-.card .price {
-  align-self: flex-start; font-weight: 700; font-size: 1.05rem;
-  padding: 6px 12px; border-radius: 999px; background: var(--bg-alt); color: var(--text);
+.card .price { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
+.price__old { color: var(--muted); font-size: .95rem; }
+.price__new { font-weight: 700; font-size: 1.15rem; }
+.price__badge { font-weight: 700; font-size: .8rem; padding: 3px 8px; border-radius: 999px; background: var(--sale-bg); color: var(--sale); }
+.card__add { align-self: stretch; }
+.card.is-in-cart { border-color: var(--accent); }
+.card.is-in-cart .card__add { background: var(--bg-alt); color: var(--text); border: 1px solid var(--accent); }
+
+.promo {
+  display: inline-block; margin: 6px 0 4px; padding: 8px 14px; border-radius: 999px;
+  background: var(--sale-bg); color: var(--sale); font-weight: 700;
 }
+
+/* ---------- Корзина ---------- */
+.cart-btn {
+  display: inline-flex; align-items: center; gap: 8px; cursor: pointer; font: inherit; font-weight: 600;
+  background: rgba(255, 255, 255, .06); color: #fff; border: 1px solid rgba(255, 255, 255, .18);
+  padding: 8px 12px; border-radius: 10px;
+}
+.cart-btn svg { width: 20px; height: 20px; }
+.cart-btn b { background: var(--accent-2); color: #06202a; border-radius: 999px; min-width: 22px; padding: 0 6px; font-size: .8rem; line-height: 22px; text-align: center; }
+.no-scroll { overflow: hidden; }
+.cart { position: fixed; inset: 0; z-index: 40; }
+.cart__shade { position: absolute; inset: 0; background: rgba(5, 10, 20, .6); }
+.cart__panel {
+  position: absolute; top: 0; right: 0; bottom: 0; width: min(420px, 100%);
+  background: var(--card); color: var(--text); padding: 22px; overflow-y: auto;
+  box-shadow: -20px 0 60px rgba(0, 0, 0, .35);
+}
+.cart__head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+.cart__head h2 { margin: 0; font-size: 1.4rem; }
+.cart__x, .cart__rm { border: 0; background: transparent; color: var(--muted); font-size: 1.6rem; line-height: 1; cursor: pointer; padding: 4px 8px; }
+.cart__list, .order ul { list-style: none; margin: 0; padding: 0; }
+.cart__list li, .order li { display: flex; align-items: center; gap: 10px; padding: 12px 0; border-bottom: 1px solid var(--border); }
+.cart__list li span, .order li span { flex: 1; }
+.cart__list li b, .order li b { white-space: nowrap; }
+.cart__sum p { display: flex; justify-content: space-between; gap: 12px; margin: 10px 0; }
+.cart__disc { color: var(--sale); font-weight: 600; }
+.cart__total { font-weight: 800; font-size: 1.2rem; }
+.cart__sum .btn { width: 100%; margin-top: 8px; }
+.order { border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px; background: var(--bg); }
+.order li { padding: 8px 0; font-weight: 400; }
+.order__total { margin: 10px 0 4px; font-weight: 700; }
+.link { border: 0; background: none; padding: 0; color: var(--accent); font: inherit; cursor: pointer; text-decoration: underline; }
 
 .steps { list-style: none; counter-reset: s; padding: 0; display: grid; gap: 18px; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); margin-top: 32px; }
 .steps li { counter-increment: s; background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 22px; box-shadow: var(--shadow); }
@@ -216,5 +260,10 @@ details p { color: var(--muted); margin: 10px 0 0; }
 @media (max-width: 480px) {
   .nav .btn--small { display: none; }
   .tg-float span { display: none; }
+  .cart-btn span { display: none; }
+  .top__row { gap: 8px; }
+  .logo { font-size: 1rem; }
+  .cart-btn { padding: 6px 8px; gap: 5px; }
+  .lang button { padding: 5px 6px; }
   .tg-float { padding: 14px; }
 }

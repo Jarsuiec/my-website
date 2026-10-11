@@ -20,6 +20,10 @@
         <a href="#faq" data-i18n="nav.faq">Вопросы</a>
         <a href="#contact" class="btn btn--small" data-i18n="nav.contact">Оставить заявку</a>
       </nav>
+      <button type="button" class="cart-btn" id="cart-open" aria-haspopup="dialog">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 4h2l2.4 11h10.2L20 7H6.2"/><circle cx="9" cy="19" r="1.4"/><circle cx="17" cy="19" r="1.4"/></svg>
+        <span data-i18n="cart.title">Корзина</span><b id="cart-count" hidden>0</b>
+      </button>
       <div class="lang" role="group" aria-label="Language">
         <button type="button" data-lang="ru">RU</button>
         <button type="button" data-lang="uk">UA</button>
@@ -61,6 +65,7 @@
     <section id="services" class="section">
       <div class="wrap">
         <h2 data-i18n="services.title">Услуги и ориентировочные цены</h2>
+        <p class="promo" id="promo" hidden></p>
         <p class="muted" data-i18n="services.note">Точная цена зависит от модели и состояния устройства. Запчасти оплачиваются отдельно по чеку.</p>
         <div class="grid" id="price-list"></div>
       </div>
@@ -96,6 +101,8 @@
         <form name="zayavka" method="POST" data-netlify="true" netlify-honeypot="bot-field" class="form" id="lead-form">
           <input type="hidden" name="form-name" value="zayavka">
           <input type="hidden" name="lang" value="ru">
+          <input type="hidden" name="cart" value="">
+          <input type="hidden" name="total" value="">
           <p hidden><label>Не заполняйте: <input name="bot-field"></label></p>
 
           <label><span data-i18n="form.name">Имя</span>
@@ -104,7 +111,14 @@
           <label><span data-i18n="form.contact">Телефон или Telegram</span>
             <input name="contact" required autocomplete="tel"></label>
 
-          <label><span data-i18n="form.service">Что нужно сделать</span>
+          <div class="order" id="order-box" hidden>
+            <strong data-i18n="cart.order">Ваш заказ</strong>
+            <ul id="order-list"></ul>
+            <p class="order__total" id="order-total"></p>
+            <button type="button" class="link" id="order-edit" data-i18n="cart.edit">Изменить корзину</button>
+          </div>
+
+          <label id="service-label"><span data-i18n="form.service">Что нужно сделать</span>
             <select name="service" id="service-select"></select></label>
 
           <label><span data-i18n="form.where">Где удобно</span>
@@ -133,6 +147,25 @@
       <p>PC Master Warszawa · <span data-i18n="foot.area">Варшава, Прушкув и окрестности</span></p>
     </div>
   </footer>
+
+  <div class="cart" id="cart" hidden>
+    <div class="cart__shade" data-cart-close></div>
+    <aside class="cart__panel" role="dialog" aria-modal="true" aria-labelledby="cart-h">
+      <div class="cart__head">
+        <h2 id="cart-h" data-i18n="cart.title">Корзина</h2>
+        <button type="button" class="cart__x" data-cart-close aria-label="Close">×</button>
+      </div>
+      <p class="muted" id="cart-empty" data-i18n="cart.empty">Корзина пуста. Добавьте услуги из списка.</p>
+      <ul class="cart__list" id="cart-list"></ul>
+      <div class="cart__sum" id="cart-sum" hidden>
+        <p><span data-i18n="cart.before">Без скидки</span><span id="sum-before"></span></p>
+        <p class="cart__disc"><span id="sum-disc-label"></span><span id="sum-disc"></span></p>
+        <p class="cart__total"><span data-i18n="cart.total">Итого</span><span id="sum-total"></span></p>
+        <p class="small muted" data-i18n="cart.note">Цены «от»: точную сумму согласуем до начала работы. Оплата после результата.</p>
+        <button type="button" class="btn" id="cart-checkout" data-i18n="cart.checkout">Оформить заказ</button>
+      </div>
+    </aside>
+  </div>
 
   <a href="#" class="tg-float" hidden aria-label="Telegram"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M21.9 4.6 18.7 19.4c-.2 1-.9 1.3-1.7.8l-4.8-3.5-2.3 2.2c-.3.3-.5.5-1 .5l.3-4.9 8.9-8c.4-.3-.1-.5-.6-.2L6.5 13.2 1.8 11.7c-1-.3-1-1 .2-1.5L20.5 3.1c.9-.3 1.6.2 1.4 1.5z"/></svg><span data-i18n="tg.float">Написать в Telegram</span></a>
 
