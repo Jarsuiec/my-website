@@ -1,0 +1,18 @@
+{
+  "title": "Новый ролик",
+  "brand": "PC MASTER · WARSZAWA",
+  "voice": "voice.mp3",
+  "music": "music.mp3",
+  "scenes": [
+    { "t": [0, 2], "type": "hook", "text": "Мало FPS|в [CS2?]",
+      "voice": "Проблема одним вопросом", "shot": "Зацепка", "clip": "clips/01.mp4" },
+    { "t": [2, 6], "text": "Часто дело|не в [видеокарте]",
+      "voice": "Почему так", "shot": "Причина", "clip": "clips/02.mp4" },
+    { "t": [6, 14], "text": "Что делаю: [...]",
+      "voice": "Что делаешь руками", "shot": "2–3 коротких кадра", "clip": ["clips/03a.mp4", "clips/03b.mp4"] },
+    { "t": [14, 20], "type": "timer", "tone": "lime", "text": "[ПОСЛЕ]:", "seconds": null,
+      "voice": "Результат, только реальные цифры", "shot": "До/после", "clip": "clips/04.mp4" },
+    { "t": [20, 25], "type": "cta", "telegram": "@yplk44", "lines": ["Услуга от [... zł]"],
+      "voice": "Услуга, цена, Telegram", "shot": "Ты в кадре / контакты", "clip": "clips/05.mp4" }
+  ]
+}

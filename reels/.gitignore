@@ -1,0 +1,6 @@
+node_modules
+out.mp4
+videos/*/clips/*
+!videos/*/clips/.gitkeep
+videos/*/voice.*
+videos/*/music.*
