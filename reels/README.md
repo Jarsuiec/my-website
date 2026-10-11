@@ -36,3 +36,20 @@ node reels/engine/render.mjs reels/videos/02-hdd-ssd
 | `seconds` | для `timer`: **реальное** время загрузки с секундомера; `null` = ещё не замерено |
 
 Новый ролик: скопируй `videos/_template` и поменяй тексты.
+
+## Озвучка, музыка и иллюстрации без съёмки
+
+```bash
+sudo apt install rhvoice rhvoice-russian           # один раз
+node reels/engine/tts.mjs reels/videos/01-noutbuk-greetsya             # мужской голос aleksandr-hq
+node reels/engine/tts.mjs reels/videos/01-noutbuk-greetsya --voice artemiy --rate 120
+node reels/engine/beat.mjs reels/videos/01-noutbuk-greetsya/music.mp3 40   # фоновый бит
+```
+
+`tts.mjs` озвучивает поле `voice` каждой сцены (поле `say` — если надо поправить
+произношение, например «Windows» → «виндоус»), удлиняет сцены, если фраза не влезает,
+и пишет `voice.wav`. Мужские голоса: aleksandr-hq, aleksandr, artemiy, mikhail, pavel, vitaliy, yuriy, evgeniy-rus.
+
+Поле сцены `art` — анимированная иллюстрация вместо съёмки, пока нет клипа:
+`hotLaptop`, `openCover`, `dustFan`, `dryPaste`, `cleaning`, `cool` (см. `engine/art.js`).
+Как только кладёшь настоящий клип — он заменяет иллюстрацию.

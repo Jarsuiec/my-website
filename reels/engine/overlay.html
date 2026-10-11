@@ -38,7 +38,7 @@
   #progress { left:0; top:0; height:10px; background:var(--lime); box-shadow:0 0 20px var(--lime); }
 
   .head { left:60px; right:60px; top:260px; text-align:center; font-size:96px; line-height:1.18; }
-  .hook { left:40px; right:40px; top:560px; text-align:center; font-size:128px; line-height:1.15; }
+  .hook { left:40px; right:40px; top:300px; text-align:center; font-size:128px; line-height:1.15; }
 
   #subs { left:70px; right:70px; top:1240px; text-align:center; font-size:62px; line-height:1.25; }
   #subs span { display:inline-block; margin:0 .14em; }
@@ -64,6 +64,7 @@
 <div class="abs" id="progress"></div>
 <div class="layer" id="flash" style="background:#fff;opacity:0"></div>
 
+<script src="art.js"></script>
 <script>
 const $ = id => document.getElementById(id);
 const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
@@ -72,7 +73,8 @@ const easeOut = x => 1 - Math.pow(1 - x, 3);
 const easeIn = x => x * x * x;
 const backOut = x => { const c = 2; return 1 + (c + 1) * Math.pow(x - 1, 3) + c * Math.pow(x - 1, 2); };
 const rnd = n => { const s = Math.sin(n * 12.9898) * 43758.5453; return s - Math.floor(s); };
-const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;');
+const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;')
+  .replace(/zł/g, '<span style="text-transform:none">zł</span>'); // currency stays lowercase
 
 // "Дело не в [Windows]|вторая строка" -> words as spans, [x] = lime tag, {x} = red tag
 function richWords(text) {
@@ -202,13 +204,16 @@ window.setup = function (cfg, opts = {}) {
     const T = TYPES[s.type || 'caption'];
     html += `<div class="layer" id="sc${i}" style="opacity:0">${T.build(s)}</div>`;
     const hasClip = opts.clipsPresent && opts.clipsPresent[i];
-    if (!hasClip) bg += `<div class="layer ph" id="ph${i}" style="opacity:0"><div class="grid"></div>
-      <div class="box"><div class="lbl mono">📷 КАДР ${i + 1} · ${s.t[0]}–${s.t[1]} С${s.speed > 1 ? ` · УСКОРИТЬ ×${s.speed}` : ''}</div>
-      <div class="shot">${esc(s.shot || '')}</div><div class="hint mono">${esc(s.clip ? 'файл: ' + [].concat(s.clip).join(', ') : 'здесь будет твоё видео')}</div></div></div>`;
+    if (!hasClip && s.art && window.ART[s.art]) bg += `<div class="layer ph" id="ph${i}" style="opacity:0"><div class="grid"></div>
+      <svg class="art" viewBox="0 0 900 600" style="position:absolute;left:90px;top:630px;width:900px;height:600px;transform-origin:center">${window.ART[s.art].build()}</svg></div>`;
+    else if (!hasClip) bg += `<div class="layer ph" id="ph${i}" style="opacity:0"><div class="grid"></div>
+      ${s.type === 'cta' ? '' : `<div class="box"><div class="lbl mono">📷 КАДР ${i + 1} · ${s.t[0]}–${s.t[1]} С${s.speed > 1 ? ` · УСКОРИТЬ ×${s.speed}` : ''}</div>
+      <div class="shot">${esc(s.shot || '')}</div><div class="hint mono">${esc(s.clip ? 'файл: ' + [].concat(s.clip).join(', ') : 'здесь будет твоё видео')}</div></div>`}</div>`;
   });
   $('sceneLayer').innerHTML = html;
   $('bgLayer').innerHTML = bg;
-  SCENES = cfg.scenes.map((s, i) => ({ s, T: TYPES[s.type || 'caption'], el: $('sc' + i), ph: $('ph' + i) }));
+  SCENES = cfg.scenes.map((s, i) => ({ s, T: TYPES[s.type || 'caption'], el: $('sc' + i), ph: $('ph' + i),
+    art: !(opts.clipsPresent && opts.clipsPresent[i]) && s.art && window.ART[s.art] }));
   window.TOTAL = Math.max(...cfg.scenes.map(s => s.t[1]));
 };
 
@@ -217,7 +222,7 @@ function renderSubs(t) {
   const box = $('subs');
   if (!sc || !sc.s.voice || CFG.subtitles === false) { box.innerHTML = ''; return; }
   const [a, b] = sc.s.t, words = sc.s.voice.split(/\s+/);
-  const k = clamp((t - a) / ((b - a) * .92));
+  const k = sc.s.voiceDur ? clamp((t - a - .15) / sc.s.voiceDur) : clamp((t - a) / ((b - a) * .92));
   const cur = Math.min(words.length - 1, Math.floor(k * words.length));
   const CH = 3, start = Math.floor(cur / CH) * CH;
   box.innerHTML = words.slice(start, start + CH).map((w, j) =>
@@ -226,13 +231,14 @@ function renderSubs(t) {
 
 window.render = function (t) {
   let flash = 0;
-  SCENES.forEach(({ s, T, el, ph }) => {
+  SCENES.forEach(({ s, T, el, ph, art }) => {
     const [a, b] = s.t, dur = b - a, lt = t - a;
     const last = b >= window.TOTAL;
     const vis = t >= a && (t < b || (last && t <= b));
     el.style.opacity = vis ? Math.min(1, 1 - easeIn(prog(lt, dur - .12, dur)) * (last ? 0 : 1)) : 0;
     if (ph) ph.style.opacity = vis ? 1 : 0;
     if (vis) T.update(el, lt, dur, s);
+    if (vis && art) art.update(ph.querySelector('svg'), lt, dur);
     const fa = T.flashAt ?? T.flash;
     if (fa != null) flash = Math.max(flash, Math.max(0, 1 - Math.abs(lt - fa) * 9));
     if (a > 0) flash = Math.max(flash, Math.max(0, 1 - Math.abs(lt) * 14) * .6); // tiny flash on every cut
