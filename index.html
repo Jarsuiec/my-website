@@ -5,6 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>PC Master Warszawa — компьютерная помощь на русском и украинском</title>
   <meta name="description" content="Ремонт и настройка компьютеров и ноутбуков в Варшаве и Прушкуве. Переустановка Windows, чистка, SSD, сборка ПК, удалённая помощь. Говорим по-русски и по-украински.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;700;800&family=Inter:wght@400;500;600&display=swap">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -27,7 +30,8 @@
 
   <main>
     <section class="hero">
-      <div class="wrap">
+      <div class="wrap hero__grid">
+      <div>
         <p class="hero__tag" data-i18n="hero.tag">Варшава · Прушкув · удалённо по всей Польше</p>
         <h1 data-i18n="hero.title">Компьютер тормозит, греется или не включается? Помогу — на понятном вам языке.</h1>
         <p class="hero__sub" data-i18n="hero.sub">Переустановка Windows, чистка и замена термопасты, установка SSD, сборка и настройка игровых ПК. Объясняю, что сломалось и сколько стоит, до начала работы.</p>
@@ -42,6 +46,15 @@
           <li data-i18n="hero.f2">Русский, українська, polski</li>
           <li data-i18n="hero.f3">Цена согласуется до начала работы</li>
         </ul>
+      </div>
+      <div class="problems">
+        <p class="problems__title" data-i18n="pr.title">Что случилось?</p>
+        <button type="button" class="problem" data-service="speedup"><span class="problem__icon">🐢</span><span data-i18n="pr.slow">Тормозит и долго грузится</span></button>
+        <button type="button" class="problem" data-service="cleaning"><span class="problem__icon">🔥</span><span data-i18n="pr.hot">Греется и шумит</span></button>
+        <button type="button" class="problem" data-service="windows"><span class="problem__icon">⛔</span><span data-i18n="pr.boot">Не загружается Windows</span></button>
+        <button type="button" class="problem" data-service="gaming"><span class="problem__icon">🎮</span><span data-i18n="pr.fps">Мало FPS в играх</span></button>
+        <button type="button" class="problem" data-service="advice"><span class="problem__icon">🛒</span><span data-i18n="pr.buy">Хочу купить или собрать ПК</span></button>
+      </div>
       </div>
     </section>
 
@@ -120,6 +133,8 @@
       <p>PC Master Warszawa · <span data-i18n="foot.area">Варшава, Прушкув и окрестности</span></p>
     </div>
   </footer>
+
+  <a href="#" class="tg-float" hidden aria-label="Telegram"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M21.9 4.6 18.7 19.4c-.2 1-.9 1.3-1.7.8l-4.8-3.5-2.3 2.2c-.3.3-.5.5-1 .5l.3-4.9 8.9-8c.4-.3-.1-.5-.6-.2L6.5 13.2 1.8 11.7c-1-.3-1-1 .2-1.5L20.5 3.1c.9-.3 1.6.2 1.4 1.5z"/></svg><span data-i18n="tg.float">Написать в Telegram</span></a>
 
   <script src="config.js"></script>
   <script src="script.js"></script>

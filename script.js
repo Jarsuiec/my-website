@@ -4,6 +4,7 @@
   // ---------- Тексты на трёх языках ----------
   var T = {
     ru: {
+      "pr.title": "Что случилось?", "pr.slow": "Тормозит и долго грузится", "pr.hot": "Греется и шумит", "pr.boot": "Не загружается Windows", "pr.fps": "Мало FPS в играх", "pr.buy": "Хочу купить или собрать ПК", "tg.float": "Написать в Telegram",
       "nav.services": "Услуги", "nav.how": "Как работаю", "nav.faq": "Вопросы", "nav.contact": "Оставить заявку",
       "hero.tag": "Варшава · Прушкув · удалённо по всей Польше",
       "hero.title": "Компьютер тормозит, греется или не включается? Помогу — на понятном вам языке.",
@@ -51,6 +52,7 @@
       "s.wifi": ["Wi‑Fi и роутер", "Настройка интернета, слабый сигнал, подключение устройств"]
     },
     uk: {
+      "pr.title": "Що сталося?", "pr.slow": "Гальмує і довго вантажиться", "pr.hot": "Гріється і шумить", "pr.boot": "Не завантажується Windows", "pr.fps": "Мало FPS в іграх", "pr.buy": "Хочу купити або зібрати ПК", "tg.float": "Написати в Telegram",
       "nav.services": "Послуги", "nav.how": "Як працюю", "nav.faq": "Питання", "nav.contact": "Залишити заявку",
       "hero.tag": "Варшава · Прушкув · віддалено по всій Польщі",
       "hero.title": "Комп'ютер гальмує, гріється або не вмикається? Допоможу — зрозумілою вам мовою.",
@@ -98,6 +100,7 @@
       "s.wifi": ["Wi‑Fi і роутер", "Налаштування інтернету, слабкий сигнал, підключення пристроїв"]
     },
     pl: {
+      "pr.title": "Co się stało?", "pr.slow": "Zwalnia i długo się uruchamia", "pr.hot": "Grzeje się i hałasuje", "pr.boot": "Windows się nie uruchamia", "pr.fps": "Mało FPS w grach", "pr.buy": "Chcę kupić lub złożyć komputer", "tg.float": "Napisz na Telegramie",
       "nav.services": "Usługi", "nav.how": "Jak pracuję", "nav.faq": "Pytania", "nav.contact": "Zostaw zgłoszenie",
       "hero.tag": "Warszawa · Pruszków · zdalnie w całej Polsce",
       "hero.title": "Komputer zwalnia, grzeje się albo się nie włącza? Pomogę — w zrozumiałym dla Ciebie języku.",
@@ -146,6 +149,23 @@
     }
   };
 
+
+  // Иконки услуг (простые линии, цвет берётся из CSS)
+  var ICONS = {
+    windows: '<rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/>',
+    cleaning: '<circle cx="12" cy="12" r="2"/><path d="M12 10c0-4 3-6 5-4s-1 5-5 4M14 12c4 0 6 3 4 5s-5-1-4-5M12 14c0 4-3 6-5 4s1-5 5-4M10 12c-4 0-6-3-4-5s5 1 4 5"/>',
+    ssd: '<rect x="3" y="6" width="18" height="12" rx="2"/><path d="M7 14h.01M11 14h.01M15 10h2"/>',
+    speedup: '<path d="M13 2 4 14h7l-1 8 9-12h-7z"/>',
+    remote: '<rect x="2" y="4" width="20" height="13" rx="2"/><path d="M8 21h8M9 10l3 3 3-3"/>',
+    gaming: '<rect x="2" y="7" width="20" height="10" rx="5"/><path d="M7 12h4M9 10v4M15 11h.01M17 13h.01"/>',
+    build: '<rect x="5" y="5" width="14" height="14" rx="2"/><rect x="9" y="9" width="6" height="6"/><path d="M9 2v3M15 2v3M9 19v3M15 19v3M2 9h3M2 15h3M19 9h3M19 15h3"/>',
+    advice: '<circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .9-1 1.6V14M12 17h.01"/>',
+    wifi: '<path d="M2 9a15 15 0 0 1 20 0M5 12.5a10 10 0 0 1 14 0M8.5 16a5 5 0 0 1 7 0M12 19.5h.01"/>'
+  };
+  function icon(id) {
+    return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + (ICONS[id] || "") + "</svg>";
+  }
+
   var lang = "ru";
   try { lang = localStorage.getItem("lang") || lang; } catch (e) {}
   if (!T[lang]) lang = "ru";
@@ -163,7 +183,7 @@
       if (!text) return;
       var card = document.createElement("div");
       card.className = "card";
-      card.innerHTML = "<h3></h3><p></p><div class=\"price\"></div>";
+      card.innerHTML = "<div class=\"card__icon\">" + icon(s.id) + "</div><h3></h3><p></p><div class=\"price\"></div>";
       card.querySelector("h3").textContent = text[0];
       card.querySelector("p").textContent = text[1];
       card.querySelector(".price").textContent = t("from") + " " + s.price + " " + t("currency");
@@ -203,7 +223,11 @@
     var tg = document.querySelector(".js-telegram");
     var wa = document.querySelector(".js-whatsapp");
     var ph = document.querySelector(".js-phone");
-    if (cfg.telegram) { tg.href = "https://t.me/" + cfg.telegram; tg.hidden = false; }
+    if (cfg.telegram) {
+      tg.href = "https://t.me/" + cfg.telegram; tg.hidden = false;
+      var fl = document.querySelector(".tg-float");
+      fl.href = tg.href; fl.hidden = false;
+    }
     if (cfg.whatsapp) { wa.href = "https://wa.me/" + cfg.whatsapp; wa.hidden = false; }
     if (cfg.phone) { ph.href = "tel:" + cfg.phone; ph.textContent = cfg.phone; ph.hidden = false; }
   }
@@ -234,6 +258,15 @@
 
   document.querySelectorAll(".lang button").forEach(function (b) {
     b.addEventListener("click", function () { applyLang(b.getAttribute("data-lang")); });
+  });
+
+  // Кнопки «Что случилось?» — выбирают услугу в форме и прокручивают к ней
+  document.querySelectorAll(".problem").forEach(function (b) {
+    b.addEventListener("click", function () {
+      document.getElementById("service-select").value = b.getAttribute("data-service");
+      document.getElementById("contact").scrollIntoView({ behavior: "smooth" });
+      setTimeout(function () { document.querySelector("#lead-form input[name=name]").focus({ preventScroll: true }); }, 500);
+    });
   });
 
   setupContacts();
