@@ -6,7 +6,7 @@ window.SITE_CONFIG = {
   // Телефон в международном формате, без пробелов: "+48123456789"
   phone: "",
   // Имя пользователя в Telegram без @: "pcmasterwarszawa"
-  telegram: "",
+  telegram: "yplk44",
   // Номер для WhatsApp без "+" и пробелов: "48123456789"
   whatsapp: "",
 
