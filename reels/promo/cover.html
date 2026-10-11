@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="ru"><head><meta charset="utf-8">
+<link rel="stylesheet" href="/node_modules/@fontsource/unbounded/900.css">
+<link rel="stylesheet" href="/node_modules/@fontsource/manrope/800.css">
+<link rel="stylesheet" href="/node_modules/@fontsource/jetbrains-mono/700.css">
+<link rel="stylesheet" href="src/style.css">
+<style>
+  body { background:#07090c; }
+  .half { position:absolute; inset:0; background-size:cover; background-position:center; }
+  #hot { clip-path: polygon(0 0, 100% 0, 100% 34%, 0 70%); background-image:url(build/still-hot.jpg); background-position:50% 40%; filter: saturate(1.15); }
+  #cool { clip-path: polygon(0 70%, 100% 34%, 100% 100%, 0 100%); background-image:url(build/still-cool.jpg); background-position:50% 60%; }
+  #seam { position:absolute; left:-10%; width:120%; top:52%; height:8px; transform:rotate(-18.4deg); background:linear-gradient(90deg,#ff7a2f,#fff 45%,#22e4d4);
+    box-shadow:0 0 40px 10px rgba(255,255,255,.35); }
+  #title { position:absolute; left:60px; right:60px; top:150px; text-align:center; font-family:Unbounded; font-weight:900; text-transform:uppercase;
+    font-size:118px; line-height:1.02; letter-spacing:-.02em; color:#fff; text-shadow:0 8px 40px rgba(0,0,0,.8); }
+  #title .o { color:#ff8a45; text-shadow:0 0 40px rgba(255,122,47,.7), 0 8px 40px rgba(0,0,0,.8); }
+  .tag { position:absolute; font-family:Unbounded; font-weight:900; font-size:46px; padding:16px 30px; border-radius:999px; text-transform:uppercase; }
+  #t1 { left:70px; top:640px; background:rgba(255,122,47,.18); border:3px solid #ff7a2f; color:#ffd2b8; }
+  #t2 { right:70px; bottom:560px; background:rgba(34,228,212,.16); border:3px solid #22e4d4; color:#c8fbf6; }
+  #foot { position:absolute; left:0; right:0; bottom:120px; display:flex; flex-direction:column; align-items:center; gap:22px;
+    padding-top:60px; background:linear-gradient(transparent, rgba(7,9,12,.9) 40%); }
+  #shade { position:absolute; left:0; right:0; top:0; height:700px; background:linear-gradient(rgba(7,9,12,.85), transparent); }
+</style></head>
+<body>
+  <div id="hot" class="half"></div><div id="cool" class="half"></div><div id="seam"></div><div id="shade"></div>
+  <div id="title">Ноутбук<br>шумит как<br><span class="o">самолёт?!</span></div>
+  <div class="tag" id="t1">🔥 Перегрев</div><div class="tag" id="t2">✓ Тихо и чисто</div>
+  <div id="foot"><div id="logo"></div><div class="kicker" style="font-size:30px;color:#cfe3ff">Telegram <span id="tg"></span></div></div>
+  <script type="module">
+    import { logoSVG } from './src/brand.js';
+    const cfg = await (await fetch('promo.json')).json();
+    document.getElementById('logo').innerHTML = logoSVG(620);
+    document.getElementById('tg').textContent = cfg.telegram;
+    await document.fonts.ready; window.ready = true;
+  </script>
+</body></html>

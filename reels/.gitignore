@@ -4,3 +4,7 @@ videos/*/clips/*
 !videos/*/clips/.gitkeep
 videos/*/voice.*
 videos/*/music.*
+promo/build/
+promo/assets/*.mp3
+promo/clips/*
+!promo/clips/.gitkeep

@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="/node_modules/@fontsource/unbounded/700.css">
+<link rel="stylesheet" href="/node_modules/@fontsource/unbounded/800.css">
+<link rel="stylesheet" href="/node_modules/@fontsource/unbounded/900.css">
+<link rel="stylesheet" href="/node_modules/@fontsource/manrope/700.css">
+<link rel="stylesheet" href="/node_modules/@fontsource/manrope/800.css">
+<link rel="stylesheet" href="/node_modules/@fontsource/jetbrains-mono/500.css">
+<link rel="stylesheet" href="/node_modules/@fontsource/jetbrains-mono/700.css">
+<link rel="stylesheet" href="src/style.css">
+<script type="importmap">
+{ "imports": { "three": "/node_modules/three/build/three.module.js", "three/addons/": "/node_modules/three/examples/jsm/" } }
+</script>
+</head>
+<body>
+  <div id="frame">
+    <div id="bg2d" class="fill"></div>
+    <canvas id="gl" class="fill"></canvas>
+    <div id="layers" class="fill"></div>
+    <div id="subs"></div>
+    <div id="fx" class="fill">
+      <div id="vignette" class="fill"></div>
+      <canvas id="grain" width="270" height="480"></canvas>
+      <div id="flash" class="fill"></div>
+    </div>
+  </div>
+  <script type="module" src="src/main.js"></script>
+</body>
+</html>

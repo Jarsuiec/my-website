@@ -1,0 +1,1736 @@
+{
+ "words": [
+  {
+   "text": "Привет,",
+   "tone": null,
+   "chunk": 0,
+   "start": 0.149,
+   "end": 0.498
+  },
+  {
+   "text": "меня",
+   "tone": null,
+   "chunk": 0,
+   "start": 0.498,
+   "end": 0.766
+  },
+  {
+   "text": "зовут",
+   "tone": null,
+   "chunk": 0,
+   "start": 0.766,
+   "end": 1.034
+  },
+  {
+   "text": "Ярослав,",
+   "tone": "blue",
+   "chunk": 0,
+   "start": 1.034,
+   "end": 1.516
+  },
+  {
+   "text": "я",
+   "tone": null,
+   "chunk": 0,
+   "start": 1.516,
+   "end": 1.65
+  },
+  {
+   "text": "ремонтирую",
+   "tone": null,
+   "chunk": 0,
+   "start": 1.65,
+   "end": 2.321
+  },
+  {
+   "text": "компьютеры",
+   "tone": null,
+   "chunk": 0,
+   "start": 2.321,
+   "end": 2.857
+  },
+  {
+   "text": "и",
+   "tone": null,
+   "chunk": 0,
+   "start": 2.857,
+   "end": 2.991
+  },
+  {
+   "text": "ноутбуки",
+   "tone": null,
+   "chunk": 0,
+   "start": 2.991,
+   "end": 3.527
+  },
+  {
+   "text": "в",
+   "tone": null,
+   "chunk": 0,
+   "start": 3.527,
+   "end": 3.661
+  },
+  {
+   "text": "Варшаве",
+   "tone": "blue",
+   "chunk": 0,
+   "start": 3.661,
+   "end": 4.063
+  },
+  {
+   "text": "и",
+   "tone": null,
+   "chunk": 0,
+   "start": 4.063,
+   "end": 4.197
+  },
+  {
+   "text": "Прушкуве.",
+   "tone": "blue",
+   "chunk": 0,
+   "start": 4.197,
+   "end": 4.653
+  },
+  {
+   "text": "Знаете,",
+   "tone": null,
+   "chunk": 1,
+   "start": 6.327,
+   "end": 6.817
+  },
+  {
+   "text": "что",
+   "tone": null,
+   "chunk": 1,
+   "start": 6.817,
+   "end": 6.953
+  },
+  {
+   "text": "бесит",
+   "tone": null,
+   "chunk": 1,
+   "start": 6.953,
+   "end": 7.225
+  },
+  {
+   "text": "больше",
+   "tone": null,
+   "chunk": 1,
+   "start": 7.225,
+   "end": 7.497
+  },
+  {
+   "text": "всего?",
+   "tone": null,
+   "chunk": 1,
+   "start": 7.497,
+   "end": 7.823
+  },
+  {
+   "text": "Когда",
+   "tone": null,
+   "chunk": 2,
+   "start": 8.513,
+   "end": 8.933
+  },
+  {
+   "text": "ноутбук",
+   "tone": null,
+   "chunk": 2,
+   "start": 8.933,
+   "end": 9.562
+  },
+  {
+   "text": "ШУМИТ,",
+   "tone": "orange",
+   "chunk": 2,
+   "start": 9.562,
+   "end": 10.108
+  },
+  {
+   "text": "как",
+   "tone": null,
+   "chunk": 2,
+   "start": 10.108,
+   "end": 10.318
+  },
+  {
+   "text": "самолёт,",
+   "tone": "orange",
+   "chunk": 2,
+   "start": 10.318,
+   "end": 11.073
+  },
+  {
+   "text": "и",
+   "tone": null,
+   "chunk": 3,
+   "start": 11.195,
+   "end": 11.35
+  },
+  {
+   "text": "тормозит",
+   "tone": "orange",
+   "chunk": 3,
+   "start": 11.35,
+   "end": 11.814
+  },
+  {
+   "text": "в",
+   "tone": null,
+   "chunk": 3,
+   "start": 11.814,
+   "end": 11.968
+  },
+  {
+   "text": "самый",
+   "tone": null,
+   "chunk": 3,
+   "start": 11.968,
+   "end": 12.278
+  },
+  {
+   "text": "неподходящий",
+   "tone": null,
+   "chunk": 3,
+   "start": 12.278,
+   "end": 13.051
+  },
+  {
+   "text": "момент!",
+   "tone": null,
+   "chunk": 3,
+   "start": 13.051,
+   "end": 13.422
+  },
+  {
+   "text": "А",
+   "tone": null,
+   "chunk": 4,
+   "start": 14.258,
+   "end": 14.401
+  },
+  {
+   "text": "ведь",
+   "tone": null,
+   "chunk": 4,
+   "start": 14.401,
+   "end": 14.544
+  },
+  {
+   "text": "чаще",
+   "tone": null,
+   "chunk": 4,
+   "start": 14.544,
+   "end": 14.829
+  },
+  {
+   "text": "всего",
+   "tone": null,
+   "chunk": 4,
+   "start": 14.829,
+   "end": 15.115
+  },
+  {
+   "text": "проблема",
+   "tone": null,
+   "chunk": 4,
+   "start": 15.115,
+   "end": 15.543
+  },
+  {
+   "text": "простая:",
+   "tone": null,
+   "chunk": 4,
+   "start": 15.543,
+   "end": 16.057
+  },
+  {
+   "text": "пыль",
+   "tone": "orange",
+   "chunk": 5,
+   "start": 16.357,
+   "end": 16.514
+  },
+  {
+   "text": "и",
+   "tone": null,
+   "chunk": 5,
+   "start": 16.514,
+   "end": 16.671
+  },
+  {
+   "text": "старая",
+   "tone": null,
+   "chunk": 5,
+   "start": 16.671,
+   "end": 17.143
+  },
+  {
+   "text": "термопаста.",
+   "tone": "orange",
+   "chunk": 5,
+   "start": 17.143,
+   "end": 17.835
+  },
+  {
+   "text": "Час",
+   "tone": null,
+   "chunk": 6,
+   "start": 18.303,
+   "end": 18.453
+  },
+  {
+   "text": "работы",
+   "tone": null,
+   "chunk": 6,
+   "start": 18.453,
+   "end": 18.901
+  },
+  {
+   "text": "—",
+   "tone": null,
+   "chunk": 6,
+   "start": 18.901,
+   "end": 19.17
+  },
+  {
+   "text": "и",
+   "tone": null,
+   "chunk": 6,
+   "start": 19.17,
+   "end": 19.32
+  },
+  {
+   "text": "он",
+   "tone": null,
+   "chunk": 6,
+   "start": 19.32,
+   "end": 19.469
+  },
+  {
+   "text": "снова",
+   "tone": null,
+   "chunk": 6,
+   "start": 19.469,
+   "end": 19.769
+  },
+  {
+   "text": "как",
+   "tone": "green",
+   "chunk": 6,
+   "start": 19.769,
+   "end": 19.918
+  },
+  {
+   "text": "новый!",
+   "tone": "green",
+   "chunk": 6,
+   "start": 19.918,
+   "end": 20.277
+  },
+  {
+   "text": "Ещё",
+   "tone": null,
+   "chunk": 7,
+   "start": 20.918,
+   "end": 21.19
+  },
+  {
+   "text": "один",
+   "tone": null,
+   "chunk": 7,
+   "start": 21.19,
+   "end": 21.462
+  },
+  {
+   "text": "частый",
+   "tone": null,
+   "chunk": 7,
+   "start": 21.462,
+   "end": 21.734
+  },
+  {
+   "text": "случай",
+   "tone": null,
+   "chunk": 7,
+   "start": 21.734,
+   "end": 22.005
+  },
+  {
+   "text": "—",
+   "tone": null,
+   "chunk": 7,
+   "start": 22.005,
+   "end": 22.25
+  },
+  {
+   "text": "старый",
+   "tone": null,
+   "chunk": 8,
+   "start": 22.396,
+   "end": 22.819
+  },
+  {
+   "text": "жёсткий",
+   "tone": null,
+   "chunk": 8,
+   "start": 22.819,
+   "end": 23.243
+  },
+  {
+   "text": "диск.",
+   "tone": null,
+   "chunk": 8,
+   "start": 23.243,
+   "end": 23.539
+  },
+  {
+   "text": "Поставил",
+   "tone": null,
+   "chunk": 9,
+   "start": 23.98,
+   "end": 24.408
+  },
+  {
+   "text": "SSD",
+   "tone": "blue",
+   "chunk": 9,
+   "start": 24.408,
+   "end": 24.551
+  },
+  {
+   "text": "—",
+   "tone": null,
+   "chunk": 9,
+   "start": 24.551,
+   "end": 24.808
+  },
+  {
+   "text": "и",
+   "tone": null,
+   "chunk": 9,
+   "start": 24.808,
+   "end": 24.951
+  },
+  {
+   "text": "система",
+   "tone": null,
+   "chunk": 9,
+   "start": 24.951,
+   "end": 25.38
+  },
+  {
+   "text": "загружается",
+   "tone": null,
+   "chunk": 9,
+   "start": 25.38,
+   "end": 26.094
+  },
+  {
+   "text": "за",
+   "tone": "blue",
+   "chunk": 9,
+   "start": 26.094,
+   "end": 26.237
+  },
+  {
+   "text": "секунды,",
+   "tone": "blue",
+   "chunk": 9,
+   "start": 26.237,
+   "end": 26.751
+  },
+  {
+   "text": "а",
+   "tone": null,
+   "chunk": 9,
+   "start": 26.751,
+   "end": 26.894
+  },
+  {
+   "text": "не",
+   "tone": null,
+   "chunk": 9,
+   "start": 26.894,
+   "end": 27.037
+  },
+  {
+   "text": "за",
+   "tone": null,
+   "chunk": 9,
+   "start": 27.037,
+   "end": 27.179
+  },
+  {
+   "text": "минуту!",
+   "tone": null,
+   "chunk": 9,
+   "start": 27.179,
+   "end": 27.665
+  },
+  {
+   "text": "Я",
+   "tone": null,
+   "chunk": 10,
+   "start": 28.667,
+   "end": 28.795
+  },
+  {
+   "text": "всегда",
+   "tone": null,
+   "chunk": 10,
+   "start": 28.795,
+   "end": 29.051
+  },
+  {
+   "text": "говорю",
+   "tone": null,
+   "chunk": 10,
+   "start": 29.051,
+   "end": 29.436
+  },
+  {
+   "text": "цену",
+   "tone": "blue",
+   "chunk": 10,
+   "start": 29.436,
+   "end": 29.692
+  },
+  {
+   "text": "заранее.",
+   "tone": "blue",
+   "chunk": 10,
+   "start": 29.692,
+   "end": 30.256
+  },
+  {
+   "text": "Никаких",
+   "tone": "green",
+   "chunk": 11,
+   "start": 30.411,
+   "end": 30.87
+  },
+  {
+   "text": "сюрпризов.",
+   "tone": "green",
+   "chunk": 11,
+   "start": 30.87,
+   "end": 31.39
+  },
+  {
+   "text": "Объясню",
+   "tone": null,
+   "chunk": 12,
+   "start": 32.001,
+   "end": 32.406
+  },
+  {
+   "text": "по-русски,",
+   "tone": "blue",
+   "chunk": 12,
+   "start": 32.406,
+   "end": 32.892
+  },
+  {
+   "text": "по-украински",
+   "tone": "blue",
+   "chunk": 12,
+   "start": 32.892,
+   "end": 33.566
+  },
+  {
+   "text": "или",
+   "tone": null,
+   "chunk": 12,
+   "start": 33.566,
+   "end": 33.836
+  },
+  {
+   "text": "по-польски",
+   "tone": "blue",
+   "chunk": 12,
+   "start": 33.836,
+   "end": 34.241
+  },
+  {
+   "text": "—",
+   "tone": null,
+   "chunk": 12,
+   "start": 34.241,
+   "end": 34.484
+  },
+  {
+   "text": "как",
+   "tone": null,
+   "chunk": 13,
+   "start": 34.673,
+   "end": 34.798
+  },
+  {
+   "text": "вам",
+   "tone": null,
+   "chunk": 13,
+   "start": 34.798,
+   "end": 34.922
+  },
+  {
+   "text": "удобнее.",
+   "tone": null,
+   "chunk": 13,
+   "start": 34.922,
+   "end": 35.471
+  },
+  {
+   "text": "Собрать",
+   "tone": null,
+   "chunk": 14,
+   "start": 36.057,
+   "end": 36.351
+  },
+  {
+   "text": "игровой",
+   "tone": "blue",
+   "chunk": 14,
+   "start": 36.351,
+   "end": 36.791
+  },
+  {
+   "text": "компьютер?",
+   "tone": "blue",
+   "chunk": 14,
+   "start": 36.791,
+   "end": 37.29
+  },
+  {
+   "text": "Легко!",
+   "tone": "green",
+   "chunk": 15,
+   "start": 37.618,
+   "end": 38.292
+  },
+  {
+   "text": "Подобрать",
+   "tone": null,
+   "chunk": 16,
+   "start": 38.758,
+   "end": 39.203
+  },
+  {
+   "text": "железо",
+   "tone": null,
+   "chunk": 16,
+   "start": 39.203,
+   "end": 39.648
+  },
+  {
+   "text": "под",
+   "tone": null,
+   "chunk": 16,
+   "start": 39.648,
+   "end": 39.796
+  },
+  {
+   "text": "бюджет?",
+   "tone": "blue",
+   "chunk": 16,
+   "start": 39.796,
+   "end": 40.152
+  },
+  {
+   "text": "Сделаю.",
+   "tone": "green",
+   "chunk": 17,
+   "start": 40.415,
+   "end": 41.012
+  },
+  {
+   "text": "Настроить",
+   "tone": null,
+   "chunk": 18,
+   "start": 41.39,
+   "end": 41.864
+  },
+  {
+   "text": "Windows",
+   "tone": "blue",
+   "chunk": 18,
+   "start": 41.864,
+   "end": 42.18
+  },
+  {
+   "text": "удалённо?",
+   "tone": "blue",
+   "chunk": 18,
+   "start": 42.18,
+   "end": 42.875
+  },
+  {
+   "text": "Тоже",
+   "tone": null,
+   "chunk": 19,
+   "start": 43.283,
+   "end": 43.591
+  },
+  {
+   "text": "можно.",
+   "tone": null,
+   "chunk": 19,
+   "start": 43.591,
+   "end": 43.96
+  },
+  {
+   "text": "Так",
+   "tone": null,
+   "chunk": 20,
+   "start": 44.488,
+   "end": 44.615
+  },
+  {
+   "text": "что",
+   "tone": null,
+   "chunk": 20,
+   "start": 44.615,
+   "end": 44.743
+  },
+  {
+   "text": "если",
+   "tone": null,
+   "chunk": 20,
+   "start": 44.743,
+   "end": 44.998
+  },
+  {
+   "text": "ваш",
+   "tone": null,
+   "chunk": 20,
+   "start": 44.998,
+   "end": 45.125
+  },
+  {
+   "text": "компьютер",
+   "tone": null,
+   "chunk": 20,
+   "start": 45.125,
+   "end": 45.507
+  },
+  {
+   "text": "капризничает",
+   "tone": null,
+   "chunk": 20,
+   "start": 45.507,
+   "end": 46.145
+  },
+  {
+   "text": "—",
+   "tone": null,
+   "chunk": 20,
+   "start": 46.145,
+   "end": 46.374
+  },
+  {
+   "text": "не",
+   "tone": "orange",
+   "chunk": 21,
+   "start": 46.526,
+   "end": 46.66
+  },
+  {
+   "text": "выбрасывайте",
+   "tone": "orange",
+   "chunk": 21,
+   "start": 46.66,
+   "end": 47.332
+  },
+  {
+   "text": "его.",
+   "tone": null,
+   "chunk": 21,
+   "start": 47.332,
+   "end": 47.654
+  },
+  {
+   "text": "Напишите",
+   "tone": null,
+   "chunk": 22,
+   "start": 48.133,
+   "end": 48.687
+  },
+  {
+   "text": "мне",
+   "tone": null,
+   "chunk": 22,
+   "start": 48.687,
+   "end": 48.825
+  },
+  {
+   "text": "в",
+   "tone": null,
+   "chunk": 22,
+   "start": 48.825,
+   "end": 48.964
+  },
+  {
+   "text": "Телеграм,",
+   "tone": "blue",
+   "chunk": 22,
+   "start": 48.964,
+   "end": 49.462
+  },
+  {
+   "text": "разберёмся",
+   "tone": null,
+   "chunk": 22,
+   "start": 49.462,
+   "end": 50.016
+  },
+  {
+   "text": "вместе.",
+   "tone": null,
+   "chunk": 22,
+   "start": 50.016,
+   "end": 50.348
+  },
+  {
+   "text": "Серьёзно,",
+   "tone": null,
+   "chunk": 23,
+   "start": 50.824,
+   "end": 51.327
+  },
+  {
+   "text": "это",
+   "tone": null,
+   "chunk": 23,
+   "start": 51.327,
+   "end": 51.606
+  },
+  {
+   "text": "проще,",
+   "tone": null,
+   "chunk": 23,
+   "start": 51.606,
+   "end": 51.969
+  },
+  {
+   "text": "чем",
+   "tone": null,
+   "chunk": 23,
+   "start": 51.969,
+   "end": 52.108
+  },
+  {
+   "text": "кажется.",
+   "tone": null,
+   "chunk": 23,
+   "start": 52.108,
+   "end": 52.583
+  },
+  {
+   "text": "Ну",
+   "tone": null,
+   "chunk": 24,
+   "start": 53.05,
+   "end": 53.203
+  },
+  {
+   "text": "что,",
+   "tone": null,
+   "chunk": 24,
+   "start": 53.203,
+   "end": 53.447
+  },
+  {
+   "text": "договорились?",
+   "tone": "green",
+   "chunk": 24,
+   "start": 53.447,
+   "end": 54.272
+  }
+ ],
+ "cues": [
+  {
+   "start": 0.149,
+   "end": 2.321,
+   "lines": [
+    [
+     {
+      "text": "Привет,",
+      "tone": null,
+      "start": 0.149
+     },
+     {
+      "text": "меня",
+      "tone": null,
+      "start": 0.498
+     },
+     {
+      "text": "зовут",
+      "tone": null,
+      "start": 0.766
+     }
+    ],
+    [
+     {
+      "text": "Ярослав,",
+      "tone": "blue",
+      "start": 1.034
+     },
+     {
+      "text": "я",
+      "tone": null,
+      "start": 1.516
+     },
+     {
+      "text": "ремонтирую",
+      "tone": null,
+      "start": 1.65
+     }
+    ]
+   ]
+  },
+  {
+   "start": 2.321,
+   "end": 4.903,
+   "lines": [
+    [
+     {
+      "text": "компьютеры",
+      "tone": null,
+      "start": 2.321
+     },
+     {
+      "text": "и",
+      "tone": null,
+      "start": 2.857
+     },
+     {
+      "text": "ноутбуки",
+      "tone": null,
+      "start": 2.991
+     }
+    ],
+    [
+     {
+      "text": "в",
+      "tone": null,
+      "start": 3.527
+     },
+     {
+      "text": "Варшаве",
+      "tone": "blue",
+      "start": 3.661
+     },
+     {
+      "text": "и",
+      "tone": null,
+      "start": 4.063
+     },
+     {
+      "text": "Прушкуве.",
+      "tone": "blue",
+      "start": 4.197
+     }
+    ]
+   ]
+  },
+  {
+   "start": 6.327,
+   "end": 8.073,
+   "lines": [
+    [
+     {
+      "text": "Знаете,",
+      "tone": null,
+      "start": 6.327
+     },
+     {
+      "text": "что",
+      "tone": null,
+      "start": 6.817
+     },
+     {
+      "text": "бесит",
+      "tone": null,
+      "start": 6.953
+     }
+    ],
+    [
+     {
+      "text": "больше",
+      "tone": null,
+      "start": 7.225
+     },
+     {
+      "text": "всего?",
+      "tone": null,
+      "start": 7.497
+     }
+    ]
+   ]
+  },
+  {
+   "start": 8.513,
+   "end": 11.175,
+   "lines": [
+    [
+     {
+      "text": "Когда",
+      "tone": null,
+      "start": 8.513
+     },
+     {
+      "text": "ноутбук",
+      "tone": null,
+      "start": 8.933
+     },
+     {
+      "text": "ШУМИТ,",
+      "tone": "orange",
+      "start": 9.562
+     }
+    ],
+    [
+     {
+      "text": "как",
+      "tone": null,
+      "start": 10.108
+     },
+     {
+      "text": "самолёт,",
+      "tone": "orange",
+      "start": 10.318
+     }
+    ]
+   ]
+  },
+  {
+   "start": 11.195,
+   "end": 13.672,
+   "lines": [
+    [
+     {
+      "text": "и",
+      "tone": null,
+      "start": 11.195
+     },
+     {
+      "text": "тормозит",
+      "tone": "orange",
+      "start": 11.35
+     },
+     {
+      "text": "в",
+      "tone": null,
+      "start": 11.814
+     },
+     {
+      "text": "самый",
+      "tone": null,
+      "start": 11.968
+     }
+    ],
+    [
+     {
+      "text": "неподходящий",
+      "tone": null,
+      "start": 12.278
+     },
+     {
+      "text": "момент!",
+      "tone": null,
+      "start": 13.051
+     }
+    ]
+   ]
+  },
+  {
+   "start": 14.258,
+   "end": 16.307,
+   "lines": [
+    [
+     {
+      "text": "А",
+      "tone": null,
+      "start": 14.258
+     },
+     {
+      "text": "ведь",
+      "tone": null,
+      "start": 14.401
+     },
+     {
+      "text": "чаще",
+      "tone": null,
+      "start": 14.544
+     },
+     {
+      "text": "всего",
+      "tone": null,
+      "start": 14.829
+     }
+    ],
+    [
+     {
+      "text": "проблема",
+      "tone": null,
+      "start": 15.115
+     },
+     {
+      "text": "простая:",
+      "tone": null,
+      "start": 15.543
+     }
+    ]
+   ]
+  },
+  {
+   "start": 16.357,
+   "end": 18.085,
+   "lines": [
+    [
+     {
+      "text": "пыль",
+      "tone": "orange",
+      "start": 16.357
+     },
+     {
+      "text": "и",
+      "tone": null,
+      "start": 16.514
+     },
+     {
+      "text": "старая",
+      "tone": null,
+      "start": 16.671
+     }
+    ],
+    [
+     {
+      "text": "термопаста.",
+      "tone": "orange",
+      "start": 17.143
+     }
+    ]
+   ]
+  },
+  {
+   "start": 18.303,
+   "end": 20.527,
+   "lines": [
+    [
+     {
+      "text": "Час",
+      "tone": null,
+      "start": 18.303
+     },
+     {
+      "text": "работы",
+      "tone": null,
+      "start": 18.453
+     },
+     {
+      "text": "—",
+      "tone": null,
+      "start": 18.901
+     },
+     {
+      "text": "и",
+      "tone": null,
+      "start": 19.17
+     },
+     {
+      "text": "он",
+      "tone": null,
+      "start": 19.32
+     }
+    ],
+    [
+     {
+      "text": "снова",
+      "tone": null,
+      "start": 19.469
+     },
+     {
+      "text": "как",
+      "tone": "green",
+      "start": 19.769
+     },
+     {
+      "text": "новый!",
+      "tone": "green",
+      "start": 19.918
+     }
+    ]
+   ]
+  },
+  {
+   "start": 20.918,
+   "end": 22.376,
+   "lines": [
+    [
+     {
+      "text": "Ещё",
+      "tone": null,
+      "start": 20.918
+     },
+     {
+      "text": "один",
+      "tone": null,
+      "start": 21.19
+     },
+     {
+      "text": "частый",
+      "tone": null,
+      "start": 21.462
+     },
+     {
+      "text": "случай",
+      "tone": null,
+      "start": 21.734
+     }
+    ],
+    [
+     {
+      "text": "—",
+      "tone": null,
+      "start": 22.005
+     }
+    ]
+   ]
+  },
+  {
+   "start": 22.396,
+   "end": 23.789,
+   "lines": [
+    [
+     {
+      "text": "старый",
+      "tone": null,
+      "start": 22.396
+     },
+     {
+      "text": "жёсткий",
+      "tone": null,
+      "start": 22.819
+     },
+     {
+      "text": "диск.",
+      "tone": null,
+      "start": 23.243
+     }
+    ]
+   ]
+  },
+  {
+   "start": 23.98,
+   "end": 26.237,
+   "lines": [
+    [
+     {
+      "text": "Поставил",
+      "tone": null,
+      "start": 23.98
+     },
+     {
+      "text": "SSD",
+      "tone": "blue",
+      "start": 24.408
+     },
+     {
+      "text": "—",
+      "tone": null,
+      "start": 24.551
+     },
+     {
+      "text": "и",
+      "tone": null,
+      "start": 24.808
+     }
+    ],
+    [
+     {
+      "text": "система",
+      "tone": null,
+      "start": 24.951
+     },
+     {
+      "text": "загружается",
+      "tone": null,
+      "start": 25.38
+     },
+     {
+      "text": "за",
+      "tone": "blue",
+      "start": 26.094
+     }
+    ]
+   ]
+  },
+  {
+   "start": 26.237,
+   "end": 27.915,
+   "lines": [
+    [
+     {
+      "text": "секунды,",
+      "tone": "blue",
+      "start": 26.237
+     },
+     {
+      "text": "а",
+      "tone": null,
+      "start": 26.751
+     },
+     {
+      "text": "не",
+      "tone": null,
+      "start": 26.894
+     },
+     {
+      "text": "за",
+      "tone": null,
+      "start": 27.037
+     }
+    ],
+    [
+     {
+      "text": "минуту!",
+      "tone": null,
+      "start": 27.179
+     }
+    ]
+   ]
+  },
+  {
+   "start": 28.667,
+   "end": 30.391,
+   "lines": [
+    [
+     {
+      "text": "Я",
+      "tone": null,
+      "start": 28.667
+     },
+     {
+      "text": "всегда",
+      "tone": null,
+      "start": 28.795
+     },
+     {
+      "text": "говорю",
+      "tone": null,
+      "start": 29.051
+     },
+     {
+      "text": "цену",
+      "tone": "blue",
+      "start": 29.436
+     }
+    ],
+    [
+     {
+      "text": "заранее.",
+      "tone": "blue",
+      "start": 29.692
+     }
+    ]
+   ]
+  },
+  {
+   "start": 30.411,
+   "end": 31.64,
+   "lines": [
+    [
+     {
+      "text": "Никаких",
+      "tone": "green",
+      "start": 30.411
+     },
+     {
+      "text": "сюрпризов.",
+      "tone": "green",
+      "start": 30.87
+     }
+    ]
+   ]
+  },
+  {
+   "start": 32.001,
+   "end": 33.836,
+   "lines": [
+    [
+     {
+      "text": "Объясню",
+      "tone": null,
+      "start": 32.001
+     },
+     {
+      "text": "по-русски,",
+      "tone": "blue",
+      "start": 32.406
+     }
+    ],
+    [
+     {
+      "text": "по-украински",
+      "tone": "blue",
+      "start": 32.892
+     },
+     {
+      "text": "или",
+      "tone": null,
+      "start": 33.566
+     }
+    ]
+   ]
+  },
+  {
+   "start": 33.836,
+   "end": 34.653,
+   "lines": [
+    [
+     {
+      "text": "по-польски",
+      "tone": "blue",
+      "start": 33.836
+     },
+     {
+      "text": "—",
+      "tone": null,
+      "start": 34.241
+     }
+    ]
+   ]
+  },
+  {
+   "start": 34.673,
+   "end": 35.721,
+   "lines": [
+    [
+     {
+      "text": "как",
+      "tone": null,
+      "start": 34.673
+     },
+     {
+      "text": "вам",
+      "tone": null,
+      "start": 34.798
+     },
+     {
+      "text": "удобнее.",
+      "tone": null,
+      "start": 34.922
+     }
+    ]
+   ]
+  },
+  {
+   "start": 36.057,
+   "end": 37.54,
+   "lines": [
+    [
+     {
+      "text": "Собрать",
+      "tone": null,
+      "start": 36.057
+     },
+     {
+      "text": "игровой",
+      "tone": "blue",
+      "start": 36.351
+     }
+    ],
+    [
+     {
+      "text": "компьютер?",
+      "tone": "blue",
+      "start": 36.791
+     }
+    ]
+   ]
+  },
+  {
+   "start": 37.618,
+   "end": 38.542,
+   "lines": [
+    [
+     {
+      "text": "Легко!",
+      "tone": "green",
+      "start": 37.618
+     }
+    ]
+   ]
+  },
+  {
+   "start": 38.758,
+   "end": 40.395,
+   "lines": [
+    [
+     {
+      "text": "Подобрать",
+      "tone": null,
+      "start": 38.758
+     },
+     {
+      "text": "железо",
+      "tone": null,
+      "start": 39.203
+     },
+     {
+      "text": "под",
+      "tone": null,
+      "start": 39.648
+     }
+    ],
+    [
+     {
+      "text": "бюджет?",
+      "tone": "blue",
+      "start": 39.796
+     }
+    ]
+   ]
+  },
+  {
+   "start": 40.415,
+   "end": 41.262,
+   "lines": [
+    [
+     {
+      "text": "Сделаю.",
+      "tone": "green",
+      "start": 40.415
+     }
+    ]
+   ]
+  },
+  {
+   "start": 41.39,
+   "end": 43.125,
+   "lines": [
+    [
+     {
+      "text": "Настроить",
+      "tone": null,
+      "start": 41.39
+     },
+     {
+      "text": "Windows",
+      "tone": "blue",
+      "start": 41.864
+     }
+    ],
+    [
+     {
+      "text": "удалённо?",
+      "tone": "blue",
+      "start": 42.18
+     }
+    ]
+   ]
+  },
+  {
+   "start": 43.283,
+   "end": 44.21,
+   "lines": [
+    [
+     {
+      "text": "Тоже",
+      "tone": null,
+      "start": 43.283
+     },
+     {
+      "text": "можно.",
+      "tone": null,
+      "start": 43.591
+     }
+    ]
+   ]
+  },
+  {
+   "start": 44.488,
+   "end": 46.145,
+   "lines": [
+    [
+     {
+      "text": "Так",
+      "tone": null,
+      "start": 44.488
+     },
+     {
+      "text": "что",
+      "tone": null,
+      "start": 44.615
+     },
+     {
+      "text": "если",
+      "tone": null,
+      "start": 44.743
+     },
+     {
+      "text": "ваш",
+      "tone": null,
+      "start": 44.998
+     }
+    ],
+    [
+     {
+      "text": "компьютер",
+      "tone": null,
+      "start": 45.125
+     },
+     {
+      "text": "капризничает",
+      "tone": null,
+      "start": 45.507
+     }
+    ]
+   ]
+  },
+  {
+   "start": 46.145,
+   "end": 46.506,
+   "lines": [
+    [
+     {
+      "text": "—",
+      "tone": null,
+      "start": 46.145
+     }
+    ]
+   ]
+  },
+  {
+   "start": 46.526,
+   "end": 47.904,
+   "lines": [
+    [
+     {
+      "text": "не",
+      "tone": "orange",
+      "start": 46.526
+     },
+     {
+      "text": "выбрасывайте",
+      "tone": "orange",
+      "start": 46.66
+     },
+     {
+      "text": "его.",
+      "tone": null,
+      "start": 47.332
+     }
+    ]
+   ]
+  },
+  {
+   "start": 48.133,
+   "end": 50.016,
+   "lines": [
+    [
+     {
+      "text": "Напишите",
+      "tone": null,
+      "start": 48.133
+     },
+     {
+      "text": "мне",
+      "tone": null,
+      "start": 48.687
+     },
+     {
+      "text": "в",
+      "tone": null,
+      "start": 48.825
+     }
+    ],
+    [
+     {
+      "text": "Телеграм,",
+      "tone": "blue",
+      "start": 48.964
+     },
+     {
+      "text": "разберёмся",
+      "tone": null,
+      "start": 49.462
+     }
+    ]
+   ]
+  },
+  {
+   "start": 50.016,
+   "end": 50.598,
+   "lines": [
+    [
+     {
+      "text": "вместе.",
+      "tone": null,
+      "start": 50.016
+     }
+    ]
+   ]
+  },
+  {
+   "start": 50.824,
+   "end": 52.833,
+   "lines": [
+    [
+     {
+      "text": "Серьёзно,",
+      "tone": null,
+      "start": 50.824
+     },
+     {
+      "text": "это",
+      "tone": null,
+      "start": 51.327
+     },
+     {
+      "text": "проще,",
+      "tone": null,
+      "start": 51.606
+     }
+    ],
+    [
+     {
+      "text": "чем",
+      "tone": null,
+      "start": 51.969
+     },
+     {
+      "text": "кажется.",
+      "tone": null,
+      "start": 52.108
+     }
+    ]
+   ]
+  },
+  {
+   "start": 53.05,
+   "end": 54.522,
+   "lines": [
+    [
+     {
+      "text": "Ну",
+      "tone": null,
+      "start": 53.05
+     },
+     {
+      "text": "что,",
+      "tone": null,
+      "start": 53.203
+     },
+     {
+      "text": "договорились?",
+      "tone": "green",
+      "start": 53.447
+     }
+    ]
+   ]
+  }
+ ]
+}
