@@ -57,7 +57,7 @@ a { color: var(--accent); }
   border-bottom: 1px solid rgba(255, 255, 255, .08);
 }
 .top__row { display: flex; align-items: center; gap: 20px; min-height: 64px; }
-.logo { font-weight: 800; font-size: 1.2rem; text-decoration: none; color: #fff; margin-right: auto; }
+.logo { white-space: nowrap; font-weight: 800; font-size: 1.2rem; text-decoration: none; color: #fff; margin-right: auto; }
 .logo span {
   background: linear-gradient(90deg, #60a5fa, var(--accent-2));
   -webkit-background-clip: text; background-clip: text; color: transparent;
