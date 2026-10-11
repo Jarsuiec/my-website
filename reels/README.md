@@ -18,7 +18,7 @@ node reels/engine/render.mjs reels/videos/02-hdd-ssd
 # готовое видео: reels/videos/02-hdd-ssd/out.mp4
 ```
 
-Нужны Node.js, `playwright` и `ffmpeg`.
+Нужны Node.js, ffmpeg и Python 3 с numpy. Один раз: `cd reels && npm install`.
 
 ## video.json
 
@@ -37,31 +37,28 @@ node reels/engine/render.mjs reels/videos/02-hdd-ssd
 
 Новый ролик: скопируй `videos/_template` и поменяй тексты.
 
-## Озвучка, музыка и иллюстрации без съёмки
+## Полный цикл (v2)
 
 ```bash
-sudo apt install rhvoice rhvoice-russian           # один раз
-node reels/engine/tts.mjs reels/videos/01-noutbuk-greetsya             # мужской голос aleksandr-hq
-node reels/engine/tts.mjs reels/videos/01-noutbuk-greetsya --voice artemiy --rate 120
-node reels/engine/beat.mjs reels/videos/01-noutbuk-greetsya/music.mp3 40   # фоновый бит
-```
-
-`tts.mjs` озвучивает поле `voice` каждой сцены (поле `say` — если надо поправить
-произношение, например «Windows» → «виндоус»), удлиняет сцены, если фраза не влезает,
-и пишет `voice.wav`. Мужские голоса: aleksandr-hq, aleksandr, artemiy, mikhail, pavel, vitaliy, yuriy, evgeniy-rus.
-
-Поле сцены `art` — анимированная иллюстрация вместо съёмки, пока нет клипа:
-`hotLaptop`, `openCover`, `dustFan`, `dryPaste`, `cleaning`, `cool` (см. `engine/art.js`).
-Как только кладёшь настоящий клип — он заменяет иллюстрацию.
-
-## Свой голос из ElevenLabs
-
-Озвучь в ElevenLabs весь текст ролика одним файлом, оставляя пустую строку (паузу) между фразами
-сцен, скачай MP3 и выровняй ролик по нему:
-
-```bash
+# 1. голос: озвучь текст в ElevenLabs (пустая строка между фразами сцен) и выровняй ролик
 node reels/engine/align.mjs reels/videos/01-noutbuk-greetsya ~/Downloads/ElevenLabs_....mp3
+# 2. музыка + звуковые эффекты (свуши на склейках, удары на крупных словах), без щелчков
+python3 reels/engine/audio.py reels/videos/01-noutbuk-greetsya
+# 3. рендер: 60 fps с motion blur -> 30 fps MP4
 node reels/engine/render.mjs reels/videos/01-noutbuk-greetsya
+# быстрый просмотр отдельных кадров
+node reels/engine/preview.mjs reels/videos/01-noutbuk-greetsya /tmp 1.0 5.5 12
 ```
 
-`align.mjs` находит паузы, ставит начало каждой сцены на начало её фразы и синхронизирует субтитры.
+Поля сцены в v2:
+
+| Поле | Что делает |
+|---|---|
+| `caption` | текст, который появляется слово за словом в такт голосу: `[слово]` салатовое, `{слово}` красное, `<слово>` голубое |
+| `big` | крупное слово-удар: `{ "text": "95°C", "at": 1.2, "hold": 0.9, "tone": "hot" }` |
+| `temp` | температура CPU в HUD для этой сцены (плавно меняется между сценами) |
+| `art` | иллюстрация вместо съёмки: `hotLaptop`, `openCover`, `dustFan`, `dryPaste`, `cleaning`, `cool` |
+| `type: "cta"` + `telegram` / `link`, `chips`, `button` | финальная карточка |
+| `type: "timer"` + `seconds` | секундомер ДО/ПОСЛЕ (только реальные цифры) |
+
+Старый движок оставлен как `engine/overlay-v1.html`.

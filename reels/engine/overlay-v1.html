@@ -1,0 +1,252 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<style>
+  :root { --bg:#0a0a0b; --lime:#d4ff3a; --red:#ff4d3a; --txt:#f5f5f0; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html, body { width:1080px; height:1920px; overflow:hidden; background:transparent; }
+  body { font-family:"Inter","Noto Color Emoji",sans-serif; color:var(--txt); }
+  .abs { position:absolute; }
+  .layer { position:absolute; inset:0; }
+  .word { font-weight:900; text-transform:uppercase; }
+  .stroke { -webkit-text-stroke:14px rgba(0,0,0,.85); paint-order:stroke fill; }
+  .tag {
+    display:inline-block; background:var(--lime); color:#0a0a0b; padding:.02em .2em; border-radius:.08em;
+    box-shadow:0 0 40px rgba(212,255,58,.45), 0 .08em 0 #7d9a12; -webkit-text-stroke:0;
+  }
+  .tag.red { background:var(--red); box-shadow:0 0 40px rgba(255,77,58,.45), 0 .08em 0 #8a2418; color:#fff; }
+  .mono { font-family:"DejaVu Sans Mono",monospace; }
+
+  /* placeholder storyboard (no clip yet) */
+  .ph { background:var(--bg); }
+  .ph .grid { position:absolute; inset:0;
+    background-image:linear-gradient(rgba(212,255,58,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(212,255,58,.05) 1px,transparent 1px);
+    background-size:60px 60px; }
+  .ph .box { position:absolute; left:90px; right:90px; top:1420px; height:330px; border:4px dashed rgba(212,255,58,.45);
+    border-radius:28px; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:24px 40px; gap:14px; }
+  .ph .lbl { font-size:30px; color:var(--lime); letter-spacing:3px; }
+  .ph .shot { font-size:40px; font-weight:800; line-height:1.25; color:#e9e9e2; }
+  .ph .hint { font-size:26px; color:rgba(245,245,240,.4); letter-spacing:2px; }
+
+  /* top shade so captions read on any footage */
+  #shadeTop { left:0; right:0; top:0; height:760px; background:linear-gradient(rgba(0,0,0,.55),transparent); }
+  #shadeBot { left:0; right:0; bottom:0; height:900px; background:linear-gradient(transparent,rgba(0,0,0,.6)); }
+
+  #brand { left:70px; top:120px; font-size:26px; font-weight:800; letter-spacing:3px; display:flex; align-items:center; gap:14px; }
+  #brand i { width:16px; height:16px; border-radius:50%; background:var(--lime); box-shadow:0 0 16px var(--lime); }
+  #progress { left:0; top:0; height:10px; background:var(--lime); box-shadow:0 0 20px var(--lime); }
+
+  .head { left:60px; right:60px; top:260px; text-align:center; font-size:96px; line-height:1.18; }
+  .hook { left:40px; right:40px; top:300px; text-align:center; font-size:128px; line-height:1.15; }
+
+  #subs { left:70px; right:70px; top:1240px; text-align:center; font-size:62px; line-height:1.25; }
+  #subs span { display:inline-block; margin:0 .14em; }
+
+  .ring-wrap { left:50%; top:760px; transform:translateX(-50%); width:420px; height:420px; }
+  .ring-num { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; flex-direction:column; }
+
+  .chip { display:block; margin:26px auto; width:max-content; font-size:84px; }
+  .card { left:70px; right:70px; top:560px; background:rgba(12,13,10,.92); border:3px solid rgba(212,255,58,.6);
+    border-radius:40px; padding:60px 50px; text-align:center; box-shadow:0 0 80px rgba(212,255,58,.18); }
+  .card .tg { display:flex; align-items:center; justify-content:center; gap:26px; font-size:84px; font-weight:900; color:var(--lime); }
+  .card .line { font-size:46px; font-weight:800; margin-top:34px; color:#e9e9e2; line-height:1.3; }
+  .swapbox { display:inline-flex; align-items:center; justify-content:center; width:330px; height:230px; border-radius:26px; font-size:110px; font-weight:900; }
+</style>
+</head>
+<body>
+<div class="layer" id="bgLayer"></div>
+<div class="abs" id="shadeTop"></div>
+<div class="abs" id="shadeBot"></div>
+<div class="layer" id="sceneLayer"></div>
+<div class="abs word stroke" id="subs"></div>
+<div class="abs word" id="brand"><i></i><span id="brandText"></span></div>
+<div class="abs" id="progress"></div>
+<div class="layer" id="flash" style="background:#fff;opacity:0"></div>
+
+<script src="art-v1.js"></script>
+<script>
+const $ = id => document.getElementById(id);
+const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+const prog = (t, a, b) => clamp((t - a) / (b - a));
+const easeOut = x => 1 - Math.pow(1 - x, 3);
+const easeIn = x => x * x * x;
+const backOut = x => { const c = 2; return 1 + (c + 1) * Math.pow(x - 1, 3) + c * Math.pow(x - 1, 2); };
+const rnd = n => { const s = Math.sin(n * 12.9898) * 43758.5453; return s - Math.floor(s); };
+const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;')
+  .replace(/zł/g, '<span style="text-transform:none">zł</span>'); // currency stays lowercase
+
+// "Дело не в [Windows]|вторая строка" -> words as spans, [x] = lime tag, {x} = red tag
+function richWords(text) {
+  return text.split('|').map(line => {
+    const parts = line.match(/\[[^\]]+\]|\{[^}]+\}|[^\s\[\{]+/g) || [];
+    return parts.map(p => {
+      if (p[0] === '[') return `<span class="w"><span class="tag">${esc(p.slice(1, -1))}</span></span>`;
+      if (p[0] === '{') return `<span class="w"><span class="tag red">${esc(p.slice(1, -1))}</span></span>`;
+      return `<span class="w">${esc(p)}</span>`;
+    }).join(' ');
+  }).join('<br>');
+}
+function animWords(el, lt, start = 0, step = .09) {
+  el.querySelectorAll('.w').forEach((w, i) => {
+    const p = backOut(prog(lt, start + i * step, start + i * step + .3));
+    w.style.display = 'inline-block';
+    w.style.opacity = clamp(p * 2);
+    w.style.transform = `translateY(${(1 - p) * 60}px) scale(${.75 + .25 * p})`;
+  });
+}
+function shake(lt, start, amt) {
+  const k = 1 - prog(lt, start, start + .3);
+  return [(rnd(Math.floor(lt * 60)) - .5) * amt * k, (rnd(Math.floor(lt * 60) + 7) - .5) * amt * k];
+}
+const TG_ICON = `<svg width="96" height="96" viewBox="0 0 240 240"><circle cx="120" cy="120" r="120" fill="#d4ff3a"/>
+  <path d="M54 117l118-46c6-2 11 2 9 10l-20 94c-1 7-6 8-12 5l-31-23-15 14c-2 2-3 3-7 3l2-32 59-53c3-2-1-4-4-2l-73 46-31-10c-7-2-7-7 1-10z" fill="#0a0a0b"/></svg>`;
+
+// ---------- scene types ----------
+const TYPES = {
+  hook: {
+    build: s => `<div class="abs hook word stroke">${richWords(s.text)}</div>`,
+    update(el, lt) {
+      const h = el.firstChild, p = backOut(prog(lt, 0, .35)), [dx, dy] = shake(lt, .3, 36);
+      h.style.transform = `translate(${dx}px,${dy}px) scale(${2.4 - 1.4 * p}) rotate(${-4 + 4 * p}deg)`;
+    },
+    flash: .3,
+  },
+  caption: {
+    build: s => `<div class="abs head word stroke">${richWords(s.text)}</div>`,
+    update(el, lt) { animWords(el.firstChild, lt); },
+  },
+  timer: { // ДО / ПОСЛЕ with a stopwatch; seconds must be real (null = not filled in yet)
+    build(s) {
+      const color = s.tone === 'red' ? 'var(--red)' : 'var(--lime)';
+      const num = s.seconds == null ? '??' : '0';
+      return `<div class="abs head word stroke">${richWords(s.text)}</div>
+        <div class="abs ring-wrap"><svg width="420" height="420" viewBox="0 0 420 420">
+          <circle cx="210" cy="210" r="180" fill="rgba(10,10,11,.85)" stroke="#2a2d22" stroke-width="16"/>
+          <circle class="arc" cx="210" cy="210" r="180" fill="none" stroke="${color}" stroke-width="16" stroke-linecap="round"
+            transform="rotate(-90 210 210)" stroke-dasharray="1131" stroke-dashoffset="1131"/></svg>
+          <div class="ring-num"><div class="mono num" style="font-size:120px;font-weight:700;color:${color}">${num}</div>
+          <div class="word" style="font-size:36px;letter-spacing:4px;opacity:.7">${s.seconds == null ? 'впиши время' : 'секунд'}</div></div></div>`;
+    },
+    update(el, lt, dur, s) {
+      animWords(el.querySelector('.head'), lt);
+      const ring = el.querySelector('.ring-wrap'), p = backOut(prog(lt, .1, .45));
+      ring.style.transform = `translateX(-50%) scale(${p})`;
+      if (s.seconds != null) {
+        const k = easeOut(prog(lt, .4, dur - .4));
+        el.querySelector('.num').textContent = (s.seconds * k).toFixed(s.seconds < 100 ? 1 : 0);
+        el.querySelector('.arc').setAttribute('stroke-dashoffset', 1131 * (1 - k));
+      }
+    },
+  },
+  swap: { // e.g. HDD -> SSD
+    build: s => `<div class="abs head word stroke">${richWords(s.text || '')}</div>
+      <div class="abs" style="left:0;right:0;top:720px;display:flex;align-items:center;justify-content:center;gap:40px">
+        <div class="swapbox from" style="background:rgba(10,10,11,.85);border:6px solid var(--red);color:var(--red);position:relative">${esc(s.from)}
+          <div class="x" style="position:absolute;left:-6%;top:47%;height:16px;background:var(--red);border-radius:8px"></div></div>
+        <div class="arrow word" style="font-size:120px;color:var(--lime)">→</div>
+        <div class="swapbox to" style="background:var(--lime);color:#0a0a0b;box-shadow:0 0 70px rgba(212,255,58,.55)">${esc(s.to)}</div></div>`,
+    update(el, lt) {
+      animWords(el.querySelector('.head'), lt);
+      const a = backOut(prog(lt, .1, .4)), b = easeOut(prog(lt, .6, .9)), c = backOut(prog(lt, .9, 1.25));
+      el.querySelector('.from').style.transform = `scale(${a})`;
+      el.querySelector('.x').style.width = `${easeOut(prog(lt, .5, .8)) * 112}%`;
+      el.querySelector('.arrow').style.cssText += `;opacity:${b};transform:translateX(${(1 - b) * -60}px)`;
+      const [dx] = shake(lt, 1.15, 30);
+      el.querySelector('.to').style.transform = `translateX(${dx}px) scale(${c})`;
+    },
+    flashAt: 1.15,
+  },
+  chips: { // items pop one by one across the scene
+    build: s => `<div class="abs" style="left:0;right:0;top:${s.top || 420}px">${
+      s.items.map(it => `<div class="chip word stroke">${richWords(it)}</div>`).join('')}</div>`,
+    update(el, lt, dur) {
+      const chips = el.querySelectorAll('.chip'), step = (dur - .4) / chips.length;
+      chips.forEach((c, i) => {
+        const p = backOut(prog(lt, i * step, i * step + .3));
+        c.style.opacity = clamp(p * 2);
+        c.style.transform = `translateX(${(1 - p) * (i % 2 ? 300 : -300)}px) scale(${.6 + .4 * p})`;
+      });
+    },
+  },
+  intro: { // name card
+    build: s => `<div class="abs" style="left:70px;right:70px;top:1000px">
+        <div class="word stroke name" style="font-size:150px;line-height:1">${esc(s.name)}</div>
+        <div class="word role" style="font-size:64px;margin-top:24px"><span class="tag">${esc(s.role)}</span></div></div>`,
+    update(el, lt) {
+      const a = easeOut(prog(lt, 0, .4)), b = backOut(prog(lt, .25, .6));
+      el.querySelector('.name').style.cssText += `;opacity:${a};transform:translateX(${(1 - a) * -120}px)`;
+      el.querySelector('.role').style.cssText += `;opacity:${clamp(b * 2)};transform:scale(${b});transform-origin:left center`;
+    },
+  },
+  cta: {
+    build: s => `<div class="abs head word stroke">${richWords(s.text || '')}</div>
+      <div class="abs card">
+        ${s.telegram ? `<div class="tg">${TG_ICON}<span>${esc(s.telegram)}</span></div>` : ''}
+        ${s.link ? `<div class="tg mono" style="font-size:52px;font-weight:700">${esc(s.link)}</div>` : ''}
+        ${(s.lines || []).map(l => `<div class="line word">${richWords(l)}</div>`).join('')}</div>`,
+    update(el, lt) {
+      animWords(el.querySelector('.head'), lt);
+      const card = el.querySelector('.card'), p = backOut(prog(lt, .15, .55));
+      const pulse = 1 + Math.sin(Math.max(0, lt - .6) * 5) * .015;
+      card.style.opacity = clamp(p * 2);
+      card.style.transform = `translateY(${(1 - p) * 200}px) scale(${pulse})`;
+    },
+  },
+};
+
+let CFG, SCENES = [];
+window.setup = function (cfg, opts = {}) {
+  CFG = cfg;
+  $('brandText').textContent = cfg.brand || '';
+  let html = '', bg = '';
+  cfg.scenes.forEach((s, i) => {
+    const T = TYPES[s.type || 'caption'];
+    html += `<div class="layer" id="sc${i}" style="opacity:0">${T.build(s)}</div>`;
+    const hasClip = opts.clipsPresent && opts.clipsPresent[i];
+    if (!hasClip && s.art && window.ART[s.art]) bg += `<div class="layer ph" id="ph${i}" style="opacity:0"><div class="grid"></div>
+      <svg class="art" viewBox="0 0 900 600" style="position:absolute;left:90px;top:630px;width:900px;height:600px;transform-origin:center">${window.ART[s.art].build()}</svg></div>`;
+    else if (!hasClip) bg += `<div class="layer ph" id="ph${i}" style="opacity:0"><div class="grid"></div>
+      ${s.type === 'cta' ? '' : `<div class="box"><div class="lbl mono">📷 КАДР ${i + 1} · ${s.t[0]}–${s.t[1]} С${s.speed > 1 ? ` · УСКОРИТЬ ×${s.speed}` : ''}</div>
+      <div class="shot">${esc(s.shot || '')}</div><div class="hint mono">${esc(s.clip ? 'файл: ' + [].concat(s.clip).join(', ') : 'здесь будет твоё видео')}</div></div>`}</div>`;
+  });
+  $('sceneLayer').innerHTML = html;
+  $('bgLayer').innerHTML = bg;
+  SCENES = cfg.scenes.map((s, i) => ({ s, T: TYPES[s.type || 'caption'], el: $('sc' + i), ph: $('ph' + i),
+    art: !(opts.clipsPresent && opts.clipsPresent[i]) && s.art && window.ART[s.art] }));
+  window.TOTAL = Math.max(...cfg.scenes.map(s => s.t[1]));
+};
+
+function renderSubs(t) {
+  const sc = SCENES.find(({ s }) => t >= s.t[0] && t < s.t[1]);
+  const box = $('subs');
+  if (!sc || !sc.s.voice || CFG.subtitles === false) { box.innerHTML = ''; return; }
+  const [a, b] = sc.s.t, words = sc.s.voice.split(/\s+/);
+  const k = sc.s.voiceDur ? clamp((t - a - (sc.s.voiceAt ?? .15)) / sc.s.voiceDur) : clamp((t - a) / ((b - a) * .92));
+  const cur = Math.min(words.length - 1, Math.floor(k * words.length));
+  const CH = 3, start = Math.floor(cur / CH) * CH;
+  box.innerHTML = words.slice(start, start + CH).map((w, j) =>
+    `<span style="color:${start + j === cur ? 'var(--lime)' : '#fff'}">${esc(w)}</span>`).join(' ');
+}
+
+window.render = function (t) {
+  let flash = 0;
+  SCENES.forEach(({ s, T, el, ph, art }) => {
+    const [a, b] = s.t, dur = b - a, lt = t - a;
+    const last = b >= window.TOTAL;
+    const vis = t >= a && (t < b || (last && t <= b));
+    el.style.opacity = vis ? Math.min(1, 1 - easeIn(prog(lt, dur - .12, dur)) * (last ? 0 : 1)) : 0;
+    if (ph) ph.style.opacity = vis ? 1 : 0;
+    if (vis) T.update(el, lt, dur, s);
+    if (vis && art) art.update(ph.querySelector('svg'), lt, dur);
+    const fa = T.flashAt ?? T.flash;
+    if (fa != null) flash = Math.max(flash, Math.max(0, 1 - Math.abs(lt - fa) * 9));
+    if (a > 0) flash = Math.max(flash, Math.max(0, 1 - Math.abs(lt) * 14) * .6); // tiny flash on every cut
+  });
+  $('flash').style.opacity = flash * .28;
+  $('progress').style.width = `${(t / window.TOTAL) * 1080}px`;
+  renderSubs(t);
+};
+</script>
+</body>
+</html>
