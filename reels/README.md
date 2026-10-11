@@ -53,3 +53,15 @@ node reels/engine/beat.mjs reels/videos/01-noutbuk-greetsya/music.mp3 40   # ф�
 Поле сцены `art` — анимированная иллюстрация вместо съёмки, пока нет клипа:
 `hotLaptop`, `openCover`, `dustFan`, `dryPaste`, `cleaning`, `cool` (см. `engine/art.js`).
 Как только кладёшь настоящий клип — он заменяет иллюстрацию.
+
+## Свой голос из ElevenLabs
+
+Озвучь в ElevenLabs весь текст ролика одним файлом, оставляя пустую строку (паузу) между фразами
+сцен, скачай MP3 и выровняй ролик по нему:
+
+```bash
+node reels/engine/align.mjs reels/videos/01-noutbuk-greetsya ~/Downloads/ElevenLabs_....mp3
+node reels/engine/render.mjs reels/videos/01-noutbuk-greetsya
+```
+
+`align.mjs` находит паузы, ставит начало каждой сцены на начало её фразы и синхронизирует субтитры.

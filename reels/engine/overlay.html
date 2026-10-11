@@ -222,7 +222,7 @@ function renderSubs(t) {
   const box = $('subs');
   if (!sc || !sc.s.voice || CFG.subtitles === false) { box.innerHTML = ''; return; }
   const [a, b] = sc.s.t, words = sc.s.voice.split(/\s+/);
-  const k = sc.s.voiceDur ? clamp((t - a - .15) / sc.s.voiceDur) : clamp((t - a) / ((b - a) * .92));
+  const k = sc.s.voiceDur ? clamp((t - a - (sc.s.voiceAt ?? .15)) / sc.s.voiceDur) : clamp((t - a) / ((b - a) * .92));
   const cur = Math.min(words.length - 1, Math.floor(k * words.length));
   const CH = 3, start = Math.floor(cur / CH) * CH;
   box.innerHTML = words.slice(start, start + CH).map((w, j) =>
