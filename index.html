@@ -5,9 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>PC Master Warszawa — компьютерная помощь на русском и украинском</title>
   <meta name="description" content="Ремонт и настройка компьютеров и ноутбуков в Варшаве и Прушкуве. Переустановка Windows, чистка, SSD, сборка ПК, удалённая помощь. Говорим по-русски и по-украински.">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;700;800&family=Inter:wght@400;500;600&display=swap">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -135,19 +132,19 @@
             <textarea name="description" rows="4" data-i18n-ph="form.descPh" placeholder="Например: ноутбук Lenovo, после включения долго грузится и шумит"></textarea></label>
 
           <label class="check"><input type="checkbox" name="consent" required>
-            <span data-i18n="form.consent">Согласен(на) на обработку моих данных для ответа на заявку.</span></label>
+            <span><span data-i18n="form.consent">Я прочитал(а) политику конфиденциальности и понимаю, что мои данные будут использованы для ответа на заявку.</span> <a href="privacy.html" target="_blank" rel="noopener" data-i18n="form.privacyLink">Открыть политику</a></span></label>
 
           <button class="btn" type="submit" data-i18n="form.send">Отправить заявку</button>
           <p class="form__status" id="form-status" role="status"></p>
         </form>
-        <p class="small muted" data-i18n="form.privacy">Данные из формы используются только для связи по вашей заявке, не передаются третьим лицам для рекламы и удаляются по вашей просьбе.</p>
+        <p class="small muted"><span data-i18n="form.privacy">Данные из формы используются только для связи по вашей заявке и выполнения работы, не передаются для рекламы и удаляются по вашей просьбе.</span> <a href="privacy.html" data-i18n="foot.privacy">Политика конфиденциальности</a></p>
       </div>
     </section>
   </main>
 
   <footer class="foot">
     <div class="wrap">
-      <p>PC Master Warszawa · <span data-i18n="foot.area">Варшава, Прушкув и окрестности</span></p>
+      <p>PC Master Warszawa · <span data-i18n="foot.area">Варшава, Прушкув и окрестности</span> · <a href="privacy.html" data-i18n="foot.privacy">Политика конфиденциальности</a></p>
     </div>
   </footer>
 
