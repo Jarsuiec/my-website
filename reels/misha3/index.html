@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="/node_modules/@fontsource/unbounded/800.css">
+<link rel="stylesheet" href="/node_modules/@fontsource/unbounded/900.css">
+<link rel="stylesheet" href="/node_modules/@fontsource/manrope/800.css">
+<link rel="stylesheet" href="/node_modules/@fontsource/jetbrains-mono/700.css">
+<script type="importmap">{ "imports": { "three": "/node_modules/three/build/three.module.js", "three/addons/": "/node_modules/three/examples/jsm/" } }</script>
+<style>
+  :root { --bg:#0b1220; --navy:#121c2e; --slate:#253247; --gray:#8a94a6; --light:#e6ebf2; --neon:#b6ff3c; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html, body { width:1080px; height:1920px; overflow:hidden; background:var(--bg); color:var(--light); font-family:"Manrope",sans-serif; }
+  .fill { position:absolute; inset:0; }
+  #stage { position:absolute; inset:0; overflow:hidden; }
+  #gl { position:absolute; inset:0; width:1080px; height:1920px; }
+  #sky { background:linear-gradient(#05080f 0%, #0b1424 45%, #16233a 70%, #0b1220 100%); }
+  #shadeTop { position:absolute; left:0; right:0; top:0; height:760px; background:linear-gradient(rgba(11,18,32,.88), rgba(11,18,32,0)); }
+  #shadeBot { position:absolute; left:0; right:0; bottom:0; height:900px; background:linear-gradient(rgba(11,18,32,0), rgba(11,18,32,.82)); }
+  #ui { position:absolute; inset:0; }
+  .el { position:absolute; opacity:0; }
+  .card { display:flex; align-items:center; gap:28px; padding:28px 36px; border-radius:30px; background:rgba(18,28,46,.78); border:1.5px solid rgba(230,235,242,.16);
+    backdrop-filter:blur(12px); box-shadow:0 30px 80px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.06); }
+  .big { font-family:"Unbounded"; font-weight:800; font-size:44px; line-height:1.12; text-transform:uppercase; letter-spacing:-.01em; }
+  .kick { font-family:"JetBrains Mono"; font-weight:700; font-size:22px; letter-spacing:.22em; text-transform:uppercase; color:var(--gray); }
+  .row { display:flex; gap:20px; } .row .card { flex:1; padding:24px 26px; gap:18px; }
+  .ava { width:130px; height:130px; border-radius:50%; object-fit:cover; box-shadow:0 0 0 4px var(--neon), 0 10px 30px rgba(0,0,0,.5); }
+  .stamp { font-family:"Unbounded"; font-weight:900; font-size:62px; text-transform:uppercase; color:var(--light); padding:10px 30px; border:5px solid var(--light); border-radius:16px; transform:rotate(-6deg); position:relative; opacity:.9; }
+  .stamp i { position:absolute; left:-4%; right:-4%; top:50%; height:6px; background:var(--neon); box-shadow:0 0 18px var(--neon); }
+  .gold { position:relative; display:inline-block; margin-left:50%; transform:translateX(-50%); font-family:"Unbounded"; font-weight:900; font-size:86px; text-transform:uppercase; white-space:nowrap; color:var(--light); }
+  .gold i { position:absolute; left:0; top:52%; height:12px; width:0; background:var(--neon); box-shadow:0 0 24px var(--neon); border-radius:6px; }
+  .note { font-family:"JetBrains Mono"; font-weight:700; font-size:28px; letter-spacing:.12em; padding:12px 24px; border-radius:999px; background:rgba(11,18,32,.75); border:1.5px solid rgba(182,255,60,.5); color:var(--neon); }
+  .city { font-family:"Unbounded"; font-weight:800; font-size:26px; text-transform:uppercase; padding:8px 16px; border-radius:12px; background:rgba(11,18,32,.82); border:1.5px solid rgba(182,255,60,.55); white-space:nowrap; }
+  .final { text-align:center; font-family:"Unbounded"; font-weight:900; font-size:104px; line-height:1; text-transform:uppercase; text-shadow:0 10px 40px rgba(0,0,0,.6); }
+  /* kinetic caption */
+  #cap { position:absolute; left:60px; right:60px; top:230px; height:340px; display:flex; align-items:center; justify-content:center; text-align:center; }
+  .cue { font-family:"Unbounded"; font-weight:800; font-size:66px; line-height:1.18; text-transform:uppercase; letter-spacing:-.01em; text-shadow:0 6px 30px rgba(0,0,0,.65); }
+  .cue .line { display:block; white-space:nowrap; } .cue .w { display:inline-block; margin:0 .12em; }
+  .cue .hi { color:var(--neon); text-shadow:0 0 26px rgba(182,255,60,.45), 0 6px 30px rgba(0,0,0,.6); }
+  /* HUD */
+  .br { position:absolute; width:52px; height:52px; border:0 solid rgba(230,235,242,.45); }
+  #brand { position:absolute; left:84px; top:96px; display:flex; align-items:center; gap:12px; font-family:"JetBrains Mono"; font-weight:700; font-size:22px; letter-spacing:.3em; color:var(--light); }
+  #brand i { width:12px; height:12px; border-radius:50%; background:var(--neon); box-shadow:0 0 12px var(--neon); display:block; }
+  #tag { position:absolute; left:84px; bottom:96px; font-family:"JetBrains Mono"; font-weight:700; font-size:19px; letter-spacing:.28em; color:var(--gray); }
+  #tc { position:absolute; right:84px; top:98px; font-family:"JetBrains Mono"; font-weight:700; font-size:20px; letter-spacing:.2em; color:var(--gray); }
+  #progress { position:absolute; left:0; top:0; height:5px; background:var(--neon); box-shadow:0 0 14px var(--neon); }
+  #leak { mix-blend-mode:screen; opacity:0; }
+  #grain { position:absolute; left:0; top:0; width:1080px; height:1920px; opacity:.06; mix-blend-mode:overlay; image-rendering:pixelated; }
+</style>
+</head>
+<body>
+  <div id="stage"><div id="sky" class="fill"></div><canvas id="stars" width="1080" height="900" style="position:absolute;left:0;top:0"></canvas><canvas id="gl"></canvas><div id="shadeTop"></div><div id="shadeBot"></div><div id="ui"></div><div id="leak" class="fill"></div></div>
+  <div id="cap"></div>
+  <div class="br" style="left:36px;top:36px;border-left-width:3px;border-top-width:3px"></div><div class="br" style="right:36px;top:36px;border-right-width:3px;border-top-width:3px"></div>
+  <div class="br" style="left:36px;bottom:36px;border-left-width:3px;border-bottom-width:3px"></div><div class="br" style="right:36px;bottom:36px;border-right-width:3px;border-bottom-width:3px"></div>
+  <div id="brand"><i></i>SOFIUS GROUP</div><div id="tag">RECRUITING · POLAND</div>
+  <canvas id="grain" width="270" height="480"></canvas><div id="progress"></div>
+  <script type="module" src="src/main.js"></script>
+</body>
+</html>
