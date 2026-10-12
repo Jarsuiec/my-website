@@ -42,13 +42,14 @@ exports.handler = async (event) => {
     "Имя: " + name,
     "Контакт: " + contact,
     "Где: " + (WHERE[data.where] || "не указано"),
+    data.where === "visit" ? "Адрес: " + (clean(data.address, 200) || "не указан") : "",
     "",
     lines.length ? "Услуги:\n" + lines.join("\n") : "Услуга: другое / не знает",
     lines.length ? "Итого: от " + total + " zł" + (discount ? " (скидка " + discount + "%, без скидки " + before + ")" : "") : "",
     "",
     "Описание: " + (clean(data.description, 1500) || "—"),
     "Язык клиента: " + clean(data.lang, 5)
-  ].filter((l, i, a) => !(l === "" && a[i - 1] === "")).join("\n");
+  ].filter((l, i, a) => l !== "" || (a[i - 1] !== "" && i > 0)).join("\n");
 
   const token = process.env.TELEGRAM_BOT_TOKEN;
   const chatId = process.env.TELEGRAM_CHAT_ID;

@@ -4,6 +4,7 @@
   // ---------- Тексты на трёх языках ----------
   var T = {
     ru: {
+      "form.address": "Адрес или район (необязательно)", "form.addressPh": "Например: Pruszków, ul. Kraszewskiego или Warszawa, Wola",
       "cart.title": "Корзина", "cart.add": "В корзину", "cart.added": "В корзине ✓", "cart.remove": "Убрать",
       "cart.empty": "Корзина пуста. Добавьте услуги из списка.", "cart.before": "Без скидки", "cart.disc": "Скидка", "cart.total": "Итого",
       "cart.note": "Цены «от»: точную сумму согласуем до начала работы. Оплата после результата.",
@@ -57,6 +58,7 @@
       "s.wifi": ["Wi‑Fi и роутер", "Настройка интернета, слабый сигнал, подключение устройств"]
     },
     uk: {
+      "form.address": "Адреса або район (необов'язково)", "form.addressPh": "Наприклад: Pruszków, ul. Kraszewskiego або Warszawa, Wola",
       "cart.title": "Кошик", "cart.add": "У кошик", "cart.added": "У кошику ✓", "cart.remove": "Прибрати",
       "cart.empty": "Кошик порожній. Додайте послуги зі списку.", "cart.before": "Без знижки", "cart.disc": "Знижка", "cart.total": "Разом",
       "cart.note": "Ціни «від»: точну суму погоджуємо до початку роботи. Оплата після результату.",
@@ -110,6 +112,7 @@
       "s.wifi": ["Wi‑Fi і роутер", "Налаштування інтернету, слабкий сигнал, підключення пристроїв"]
     },
     pl: {
+      "form.address": "Adres lub dzielnica (opcjonalnie)", "form.addressPh": "Na przykład: Pruszków, ul. Kraszewskiego albo Warszawa, Wola",
       "cart.title": "Koszyk", "cart.add": "Do koszyka", "cart.added": "W koszyku ✓", "cart.remove": "Usuń",
       "cart.empty": "Koszyk jest pusty. Dodaj usługi z listy.", "cart.before": "Bez rabatu", "cart.disc": "Rabat", "cart.total": "Razem",
       "cart.note": "Ceny „od”: dokładną kwotę ustalamy przed rozpoczęciem pracy. Płatność po wykonaniu.",
@@ -351,7 +354,8 @@
       var f = form.elements;
       var order = {
         name: f.name.value, contact: f.contact.value, where: f.where.value,
-        description: f.description.value, lang: lang, botField: f["bot-field"].value,
+        description: f.description.value, lang: lang,
+        address: f.where.value === "visit" ? f.address.value : "", botField: f["bot-field"].value,
         items: cart.length ? cart.slice() : [f.service.value]
       };
       function ok(r) { if (!r.ok) throw new Error(r.status); return true; }
@@ -391,6 +395,13 @@
       setTimeout(function () { document.querySelector("#lead-form input[name=name]").focus({ preventScroll: true }); }, 500);
     });
   });
+
+  // Поле адреса показывается только для выезда
+  var whereSel = document.querySelector("#lead-form select[name=where]");
+  function toggleAddress() { document.getElementById("address-label").hidden = whereSel.value !== "visit"; }
+  whereSel.addEventListener("change", toggleAddress);
+  document.getElementById("lead-form").addEventListener("reset", function () { setTimeout(toggleAddress, 0); });
+  toggleAddress();
 
   // Корзина: открыть, закрыть, перейти к оформлению
   document.getElementById("cart-open").addEventListener("click", function () { openCart(true); });
