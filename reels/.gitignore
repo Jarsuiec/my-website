@@ -8,3 +8,6 @@ promo/build/
 promo/assets/*.mp3
 promo/clips/*
 !promo/clips/.gitkeep
+misha/build/
+misha/assets/voice.mp3
+misha/assets/avatar*.png
