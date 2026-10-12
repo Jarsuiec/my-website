@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="/node_modules/@fontsource/unbounded/800.css">
+<link rel="stylesheet" href="/node_modules/@fontsource/unbounded/900.css">
+<link rel="stylesheet" href="/node_modules/@fontsource/manrope/700.css">
+<link rel="stylesheet" href="/node_modules/@fontsource/manrope/800.css">
+<script type="importmap">{ "imports": { "three": "/node_modules/three/build/three.module.js", "three/addons/": "/node_modules/three/examples/jsm/" } }</script>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html, body { width:1080px; height:1920px; overflow:hidden; background:#140a2a; color:#fff; font-family:"Manrope","Noto Color Emoji",sans-serif; }
+  .fill { position:absolute; inset:0; } .abs { position:absolute; }
+  #bgA, #bgB { position:absolute; inset:0; }
+  #glowA, #glowB { position:absolute; left:-20%; right:-20%; top:15%; height:70%; border-radius:50%; filter:blur(120px); opacity:.55; }
+  #gl { position:absolute; inset:0; width:1080px; height:1920px; }
+  #ui { position:absolute; inset:0; }
+  .glass { background:rgba(255,255,255,.13); border:2px solid rgba(255,255,255,.35); border-radius:34px; backdrop-filter:blur(14px);
+    box-shadow:0 30px 80px rgba(0,0,0,.25), inset 0 1px 0 rgba(255,255,255,.35); }
+  .ttl { font-family:"Unbounded","Noto Color Emoji",sans-serif; font-weight:900; text-transform:uppercase; letter-spacing:-.01em; line-height:1.02;
+    text-shadow:0 6px 40px rgba(0,0,0,.35); }
+  .lbl { font-family:"Unbounded","Noto Color Emoji",sans-serif; font-weight:800; text-transform:uppercase; }
+  .el { position:absolute; opacity:0; will-change:transform,opacity,filter; }
+  #subs { position:absolute; left:60px; right:60px; top:1400px; height:220px; display:flex; align-items:center; justify-content:center; text-align:center; }
+  .cue { font-family:"Manrope","Noto Color Emoji",sans-serif; font-weight:800; font-size:62px; line-height:1.18; color:#fff;
+    text-shadow:0 4px 0 rgba(0,0,0,.25), 0 0 28px rgba(0,0,0,.55); }
+  .cue .line { display:block; white-space:nowrap; } .cue .w { display:inline-block; margin:0 .1em; }
+  .cue .yellow { color:#ffe45c; } .cue .red { color:#ff8a7a; } .cue .green { color:#7dffc4; }
+  #vig { background:radial-gradient(ellipse at 50% 45%, transparent 55%, rgba(0,0,0,.45) 100%); }
+  #grain { position:absolute; left:0; top:0; width:1080px; height:1920px; opacity:.05; mix-blend-mode:overlay; image-rendering:pixelated; }
+  #flash { background:#fff; opacity:0; mix-blend-mode:soft-light; }
+  #brand { position:absolute; left:56px; top:70px; display:flex; align-items:center; gap:14px; font-family:"Unbounded"; font-weight:800; font-size:26px; letter-spacing:.06em;
+    padding:12px 24px 12px 14px; border-radius:999px; }
+  #brand i { width:30px; height:30px; border-radius:50%; background:linear-gradient(135deg,#ffe45c,#ff6aa8); display:block; }
+</style>
+</head>
+<body>
+  <div id="bgA"><div id="glowA"></div></div><div id="bgB" style="opacity:0"><div id="glowB"></div></div>
+  <canvas id="gl"></canvas>
+  <div id="ui"></div>
+  <div id="brand" class="glass"><i></i>SOFIUS GROUP</div>
+  <div id="subs"></div>
+  <div id="vig" class="fill"></div>
+  <canvas id="grain" width="270" height="480"></canvas>
+  <div id="flash" class="fill"></div>
+  <script type="module" src="src/main.js"></script>
+</body>
+</html>
