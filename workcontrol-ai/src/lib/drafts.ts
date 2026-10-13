@@ -40,8 +40,8 @@ const T: Record<string, Record<Lang, string>> = {
     ru: "Спасибо за сообщение. Мы подготовим фактуру{order}. Пожалуйста, подтвердите реквизиты (название фирмы, адрес, NIP), если они не были указаны в заказе.",
   },
   complaint: {
-    pl: "Przykro nam z powodu problemu z zamówieniem{order}. Aby szybko rozpatrzyć reklamację, prosimy o przesłanie zdjęć produktu i opakowania oraz krótkiego opisu usterki.",
-    en: "We are sorry about the problem with your order{order}. To process your complaint quickly, please send photos of the item and packaging and a short description of the issue.",
+    pl: "Przykro nam, że wystąpił problem z zamówieniem{order}. Aby szybko rozpatrzyć reklamację, prosimy o przesłanie zdjęć produktu i opakowania oraz krótkiego opisu usterki.",
+    en: "We are sorry that there is a problem with your order{order}. To process your complaint quickly, please send photos of the item and packaging and a short description of the issue.",
     de: "Es tut uns leid, dass es ein Problem mit Ihrer Bestellung{order} gibt. Bitte senden Sie uns Fotos des Artikels und der Verpackung sowie eine kurze Beschreibung des Mangels.",
     ru: "Нам жаль, что с заказом{order} возникла проблема. Чтобы быстро рассмотреть рекламацию, пришлите, пожалуйста, фото товара и упаковки и краткое описание дефекта.",
   },
@@ -65,16 +65,19 @@ const SIGN: Record<Lang, string> = {
   de: "Mit freundlichen Grüßen\nIhr Kundenservice",
   ru: "С уважением,\nслужба поддержки",
 };
-const ORDER: Record<Lang, (o: string) => string> = {
-  pl: (o) => ` (zamówienie ${o})`,
-  en: (o) => ` (order ${o})`,
-  de: (o) => ` (Bestellung ${o})`,
-  ru: (o) => ` (заказ ${o})`,
+// Номер вставляется после слова «заказ» в нужном падеже: «z zamówieniem nr 100251», «przesyłki (zamówienie nr 100251)».
+const ORDER: Record<Lang, (o: string, afterNoun: boolean) => string> = {
+  pl: (o, n) => (n ? ` nr ${o}` : ` (zamówienie nr ${o})`),
+  en: (o, n) => (n ? ` no. ${o}` : ` (order no. ${o})`),
+  de: (o, n) => (n ? ` Nr. ${o}` : ` (Bestellung Nr. ${o})`),
+  ru: (o, n) => (n ? ` № ${o}` : ` (заказ № ${o})`),
 };
+const AFTER_NOUN = /(zamówieniem|zamówienia|order|Bestellung|заказом|заказу|заказа)\{order\}/;
 
 export function templateDraft(category: string, lang: string, opts: { order?: string | null; name?: string | null }): string {
   const l = (["pl", "en", "de", "ru"].includes(lang) ? lang : "pl") as Lang;
-  const body = (T[category] ?? T.reply)[l].replace("{order}", opts.order ? ORDER[l](opts.order) : "");
+  const tpl = (T[category] ?? T.reply)[l];
+  const body = tpl.replace("{order}", opts.order ? ORDER[l](opts.order, AFTER_NOUN.test(tpl)) : "");
   return `${GREETING[l](opts.name)}\n\n${body.trim()}\n\n${SIGN[l]}`;
 }
 
