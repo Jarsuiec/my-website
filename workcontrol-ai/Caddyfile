@@ -1,0 +1,6 @@
+# HTTPS-прокси: Caddy сам получает сертификат Let's Encrypt для домена из переменной DOMAIN.
+{$DOMAIN} {
+	encode gzip
+	header Strict-Transport-Security "max-age=31536000"
+	reverse_proxy app:3000
+}

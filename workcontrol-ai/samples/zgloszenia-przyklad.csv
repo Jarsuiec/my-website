@@ -1,0 +1,3 @@
+﻿from,name,subject,date,message,source
+maria.d@example.invalid,Maria Dąbrowska,Zwrot,12.10.2026 12:05,"Chcę zwrócić kurtkę z zamówienia 700540, proszę o etykietę zwrotną.",decathlon
+buyer-anna@example.invalid,Anna,Question,2026-10-12T13:20:00+02:00,"Hi, where is my order #700555? It has not arrived yet.",etsy

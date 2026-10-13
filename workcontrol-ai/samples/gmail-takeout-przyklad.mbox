@@ -1,0 +1,36 @@
+From 1781234567890@xxx Mon Oct 12 07:10:00 +0000 2026
+Message-ID: <sample-mbox-1@example.invalid>
+X-Gmail-Labels: Inbox,Important
+From: Julia Kaminska <julia.k@example.invalid>
+To: sklep@example.invalid
+Subject: Faktura do zamowienia 700530
+Date: Mon, 12 Oct 2026 09:10:00 +0200
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+
+Dzień dobry, proszę o fakturę VAT na firmę do zamówienia nr 700530. NIP 5250000000.
+
+From 1781234567891@xxx Mon Oct 12 08:30:00 +0000 2026
+Message-ID: <sample-mbox-2@example.invalid>
+X-Gmail-Labels: Sent
+From: Sklep <sklep@example.invalid>
+To: Julia Kaminska <julia.k@example.invalid>
+In-Reply-To: <sample-mbox-1@example.invalid>
+Subject: Re: Faktura do zamowienia 700530
+Date: Mon, 12 Oct 2026 10:30:00 +0200
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+
+Dzień dobry, faktura zostanie wysłana dziś do końca dnia.
+
+From 1781234567892@xxx Mon Oct 12 09:00:00 +0000 2026
+Message-ID: <sample-mbox-3@example.invalid>
+X-Gmail-Labels: Inbox
+From: Stefan Wagner <s.wagner@example.invalid>
+To: sklep@example.invalid
+Subject: Reklamation Bestellung 700498
+Date: Mon, 12 Oct 2026 11:00:00 +0200
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+
+Guten Tag, die Ware ist beschädigt angekommen (Bestellung 700498). Ich bitte um Ersatz oder Rückerstattung.

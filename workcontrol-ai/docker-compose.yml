@@ -1,0 +1,32 @@
+# Запуск:  docker compose up -d --build
+# С HTTPS: укажите DOMAIN в .env и запустите  docker compose --profile https up -d --build
+services:
+  app:
+    build: .
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      DATA_DIR: /data
+      TZ: Europe/Warsaw
+    volumes:
+      - ./data:/data
+    # Только локально. Для доступа из сети используйте профиль https (Caddy) ниже.
+    ports:
+      - "127.0.0.1:3000:3000"
+
+  caddy:
+    image: caddy:2
+    profiles: ["https"]
+    restart: unless-stopped
+    depends_on: [app]
+    environment:
+      DOMAIN: ${DOMAIN:-localhost}
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+
+volumes:
+  caddy_data:
