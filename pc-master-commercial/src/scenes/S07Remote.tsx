@@ -223,7 +223,7 @@ export const S07Remote: React.FC<{dur: number}> = ({dur}) => {
       </ThreeCanvas>
       <AbsoluteFill style={{background: COLORS.bg, opacity: 1 - ramp(t, 0, 0.25)}} />
       <ImpactTitle text={'УДАЛЁННАЯ\nПОМОЩЬ'} t={t} at={0.3} out={dur - 0.3} y={230} size={118} glow={COLORS.cyan} exit="blur" />
-      <RevealTitle text={TEXT.remoteSub} t={t} at={REMOTE.click} out={dur - 0.3} y={1235} size={52} color={COLORS.lime} weight={800} tracking={0.16} glow={COLORS.lime} font={FONT.display} />
+      <RevealTitle text={TEXT.remoteSub} t={t} at={REMOTE.click} out={dur - 0.3} y={500} size={50} color={COLORS.lime} weight={800} tracking={0.16} glow={COLORS.lime} font={FONT.display} />
     </AbsoluteFill>
   );
 };
