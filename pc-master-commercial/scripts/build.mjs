@@ -4,6 +4,11 @@
 //   node scripts/build.mjs --audio-only   пересобрать только звук и перемуксить готовое видео
 import {execFileSync, spawnSync} from 'node:child_process';
 import fs from 'node:fs';
+import path from 'node:path';
+import {fileURLToPath} from 'node:url';
+
+// работаем из корня проекта независимо от того, откуда запущен скрипт
+process.chdir(path.dirname(path.dirname(fileURLToPath(import.meta.url))));
 
 const cut15 = process.argv.includes('--cut15');
 const audioOnly = process.argv.includes('--audio-only');
