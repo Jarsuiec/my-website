@@ -1,0 +1,9 @@
+node_modules/
+out/*
+!out/PC_MASTER_CINEMATIC_2026.mp4
+!out/PC_MASTER_15s_2026.mp4
+!out/PC_MASTER_CINEMATIC_2026.srt
+!out/PC_MASTER_CINEMATIC_2026.vtt
+.env
+src/config/timeline.json.bak
+__pycache__/

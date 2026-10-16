@@ -7,3 +7,10 @@
   to = "/404.html"
   status = 404
   force = true
+
+# Проект рекламного ролика тоже не публикуется на сайте.
+[[redirects]]
+  from = "/pc-master-commercial/*"
+  to = "/404.html"
+  status = 404
+  force = true

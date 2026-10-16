@@ -1,0 +1,5 @@
+{
+  "source": "none",
+  "_comment": "Этот файл перезаписывает скрипт озвучки (npm run voice / npm run voice:import). source=none — голос ещё не добавлен, тайминг субтитров берётся из оценок в timeline.json.",
+  "lines": {}
+}

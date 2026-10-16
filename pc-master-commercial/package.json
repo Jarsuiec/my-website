@@ -1,0 +1,36 @@
+{
+  "name": "pc-master-commercial",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "PC MASTER — рекламный ролик 9:16 (Remotion + Three.js + синтез звука на Python)",
+  "scripts": {
+    "studio": "remotion studio src/index.ts",
+    "build": "node scripts/build.mjs",
+    "build:15": "node scripts/build.mjs --cut15",
+    "remux": "node scripts/build.mjs --audio-only",
+    "audio": "python3 audio/mix.py",
+    "subtitles": "node scripts/subtitles.mjs",
+    "voice": "node scripts/elevenlabs-voice.mjs",
+    "voice:import": "node scripts/import-voice.mjs",
+    "stills": "node scripts/stills.mjs",
+    "typecheck": "tsc -p ."
+  },
+  "dependencies": {
+    "@fontsource/jetbrains-mono": "5.3.0",
+    "@react-three/fiber": "9.8.2",
+    "@remotion/cli": "4.0.535",
+    "@remotion/three": "4.0.535",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
+    "remotion": "4.0.535",
+    "three": "0.180.0"
+  },
+  "devDependencies": {
+    "@remotion/bundler": "4.0.535",
+    "@remotion/renderer": "4.0.535",
+    "@types/react": "19.3.0",
+    "@types/three": "0.180.0",
+    "typescript": "5.9.3"
+  }
+}
