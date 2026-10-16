@@ -248,7 +248,7 @@ export const Motherboard: React.FC<{accent?: string; accentK?: number; socketOpe
       {/* PCIe x16 со стальным усилением */}
       {[ANCH.pcie1, ANCH.pcie2].map(([x, y], i) => (
         <group key={'pcie' + i} position={[x, y, 0]}>
-          <Box s={[8.9, 0.78, 1.05]} p={[0, 0, 0.53]} m={i === 0 ? M.steel() : M.plastic()} rad={0.06} />
+          <Box s={[8.9, 0.78, 1.05]} p={[0, 0, 0.53]} m={i === 0 ? M.steelSatin() : M.plastic()} rad={0.06} />
           <Box s={[8.5, 0.18, 0.1]} p={[0, 0, 1.06]} m={M.rubber()} />
           <Box s={[0.9, 1.0, 1.25]} p={[4.75, 0, 0.62]} m={M.plasticGray()} rad={0.08} />
         </group>

@@ -101,7 +101,7 @@ export const S06Gaming: React.FC<{dur: number}> = ({dur}) => {
         <Cam pos={[pos[0] + sx, pos[1] + sy, pos[2]]} target={tgt} fov={34} roll={0} far={600} />
         <GamingPC t={t} power={power} assemble={assemble} glassIn={glassIn} partsT={t} />
         <Particles t={t} count={160} box={[[-40, -30, -10], [40, 30, 40]]} color={COLORS.cyan} size={0.35} drift={[0.5, 1.2, 0]} opacity={0.25 + power * 0.25} seed={61} />
-        <Post bloom={0.7 + power * 0.25} threshold={0.72} radius={0.55} />
+        <Post bloom={0.65 + power * 0.2} threshold={0.82} radius={0.55} />
       </ThreeCanvas>
       <AbsoluteFill style={{background: COLORS.cyan, opacity: flash * 0.22, mixBlendMode: 'screen'}} />
       <AbsoluteFill style={{background: COLORS.bg, opacity: 1 - ramp(t, 0, 0.3)}} />
