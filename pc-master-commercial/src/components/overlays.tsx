@@ -44,7 +44,7 @@ export const FilmLook: React.FC<{t: number; grain?: number; vignette?: number}> 
 // Субтитры: фраза делится на куски ≤ 2 строк; тайминг — по словам из ElevenLabs
 // (если есть), иначе пропорционально числу символов.
 // ---------------------------------------------------------------------------
-const KEYWORDS = ['PC MASTER', 'SSD', 'Windows', 'термопаста', 'бюджет', 'диагностика', 'скорость', 'Телеграм', 'Ярослав', 'причину'];
+const KEYWORDS = ['PC MASTER', 'SSD', 'Windows', 'термопасту', 'охлаждение', 'бюджет', 'диагностика', 'скорость', 'Телеграм'];
 export const CHUNKS = buildChunks(VOICE);
 
 const renderWithKeywords = (text: string) => {

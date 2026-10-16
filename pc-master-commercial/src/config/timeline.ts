@@ -32,3 +32,4 @@ export const VOICE: VoiceLine[] = tl.voice.map((v) => {
 
 export const SUBS_HIDDEN: string[] = tl.subtitles.hideInScenes;
 export const CUES = tl.cues;
+export const FOOTAGE = (tl as unknown as {footage?: {file: string | null; scene: string; at: number; dur: number; from?: number}}).footage;

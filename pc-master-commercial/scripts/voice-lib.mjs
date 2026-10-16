@@ -38,7 +38,7 @@ export const retime = (tl, durs, {GAP = 0.25, SPILL = 0.5} = {}) => {
       changes.push(`удар логотипа: ${tl.cues.logoDrop} → ${need} с от начала сцены (L03 длиннее паузы)`);
       tl.cues.logoDrop = need;
     }
-    if (l4 && l4.at < tl.cues.logoDrop + 0.2) l4.at = +(tl.cues.logoDrop + 0.25).toFixed(2);
+    if (l4 && l4.scene === 'logo' && l4.at < tl.cues.logoDrop + 0.2) l4.at = +(tl.cues.logoDrop + 0.25).toFixed(2);
   }
   for (let iter = 0; iter < 20; iter++) {
     let changed = false;

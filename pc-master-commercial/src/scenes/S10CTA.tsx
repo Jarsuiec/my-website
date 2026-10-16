@@ -2,7 +2,7 @@ import React from 'react';
 import {AbsoluteFill, useCurrentFrame} from 'remotion';
 import {ThreeCanvas} from '@remotion/three';
 import {BRAND, COLORS} from '../config/brand';
-import {FPS, W, H} from '../config/timeline';
+import {FPS, VOICE, W, H, scene} from '../config/timeline';
 import {Cam, Particles, Post, StudioEnv, V3} from '../three/core';
 import {GamingPC} from './S06Gaming';
 import {E, clamp01, ramp} from '../components/anim';
@@ -25,6 +25,12 @@ export const S10CTA: React.FC<{dur: number}> = ({dur}) => {
   const tgt: V3 = [4, -2, 8];
   const pos: V3 = [tgt[0] + Math.sin(orbit) * 120, tgt[1] - 4 + t * 0.6, tgt[2] + Math.cos(orbit) * 120];
   const plate = a(0.35, 0.6);
+  // момент слова «Телеграм» в озвучке → блик и мягкое свечение плашки
+  const l12 = VOICE.find((v) => v.id === 'L12');
+  const wi = l12?.words?.findIndex((w) => w.w.startsWith('Телеграм')) ?? -1;
+  const tg = l12 ? l12.start - scene('cta').start + (l12.words && wi >= 0 ? l12.words[wi].s : 1.0) : 3.5;
+  const shine = ramp(t, tg - 0.05, tg + 0.55, E.inOutSine);
+  const pulse = Math.exp(-Math.max(0, t - tg) * 2.5) * (t >= tg ? 1 : 0);
   return (
     <AbsoluteFill style={{background: COLORS.bg}}>
       <AbsoluteFill style={{filter: 'blur(3px) brightness(0.55) saturate(1.1)', transform: `scale(${1.08 - t * 0.008})`}}>
@@ -69,7 +75,8 @@ export const S10CTA: React.FC<{dur: number}> = ({dur}) => {
             height: 196,
             borderRadius: 98,
             background: `linear-gradient(135deg, ${COLORS.blue} 0%, #1590d6 100%)`,
-            boxShadow: `0 20px 70px rgba(33,191,255,0.45), inset 0 2px 0 rgba(255,255,255,0.35)`,
+            boxShadow: `0 20px ${70 + pulse * 60}px rgba(33,191,255,${0.45 + pulse * 0.35}), 0 0 0 ${pulse * 10}px rgba(103,232,255,${pulse * 0.25}), inset 0 2px 0 rgba(255,255,255,0.35)`,
+            overflow: 'hidden',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -78,6 +85,7 @@ export const S10CTA: React.FC<{dur: number}> = ({dur}) => {
             transform: `scale(${0.9 + 0.1 * plate})`,
           }}
         >
+          {shine > 0 && shine < 1 && <div style={{position: 'absolute', top: 0, bottom: 0, width: 160, left: `${-20 + shine * 120}%`, background: 'linear-gradient(100deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.45) 50%, rgba(255,255,255,0) 100%)', transform: 'skewX(-18deg)'}} />}
           <PaperPlane />
           <div style={{fontFamily: FONT.display, fontWeight: 900, fontSize: 118, color: '#fff', letterSpacing: '0.005em', lineHeight: 1, textShadow: '0 3px 14px rgba(0,40,80,0.45)'}}>{BRAND.telegram}</div>
         </div>

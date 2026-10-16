@@ -82,7 +82,11 @@ const ShotButton: React.FC<{t: number}> = ({t}) => {
 // Игра запускается, едет — и замирает.
 const FREEZE = 0.55; // момент зависания (от начала кадра игры)
 const ShotGame: React.FC<{t: number}> = ({t}) => {
-  const tt = Math.min(t, FREEZE);
+  // зависание: короткое «заикание» (кадр дёргается между двумя состояниями), затем полный стоп
+  const fr = Math.floor(t * 30);
+  const stutter = t > FREEZE && t < FREEZE + 0.27 && fr % 4 < 2;
+  const tt = stutter ? FREEZE - 0.07 : Math.min(t, FREEZE);
+  const gl = t < FREEZE ? 0 : t < FREEZE + 0.3 ? 0.95 : t < FREEZE + 0.4 ? 0.35 : hash(fr) > 0.93 && t < 1.75 ? 0.4 : 0;
   const y = 40 + tt * 60 + tt * tt * 10;
   const sway = Math.sin(tt * 2.2) * 0.6;
   const glitch = t > FREEZE && t < FREEZE + 0.35 ? 1 : 0;
@@ -93,7 +97,7 @@ const ShotGame: React.FC<{t: number}> = ({t}) => {
       <directionalLight position={[0, 200, 60]} intensity={1.6} color="#ff9a5c" />
       <Cam pos={[sway, y, 2.2]} target={[sway * 0.6, y + 40, 1.6]} fov={62} roll={Math.sin(tt * 1.6) * 0.04 + glitch * (hash(Math.floor(t * 30)) - 0.5) * 0.1} far={1500} />
       <GameWorld y={y} />
-      <Post bloom={0.6} threshold={0.85} radius={0.5} />
+      <Post bloom={0.6} threshold={0.85} radius={0.5} glitch={gl} glitchSeed={fr * 0.37} />
     </ThreeCanvas>
   );
 };
@@ -182,7 +186,7 @@ export const S01Hook: React.FC<{dur: number}> = ({dur}) => {
             </svg>
           </div>
         )}
-        <GlitchBars t={t} amount={glitch} seed={9} />
+        <GlitchBars t={t} amount={glitch * 0.45} seed={9} />
         <ImpactTitle text={TEXT.hook.replace(' ТОРМОЗИТ', '\nТОРМОЗИТ')} t={t} at={titleAt} out={2.85} y={540} size={136} glow={COLORS.heat} rgbSplit exit="blur" />
         {/* «сигнал» — тонкая подпись */}
         {t > titleAt + 0.4 && t < 2.85 && (

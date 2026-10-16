@@ -165,11 +165,19 @@ def render(starts, total):
         place(game, kick(0.7), k * 0.25)
     place(game, pad_chord([52, 59, 64, 67], 0.6, 0.5, 2600, 0.05, 0.2), 0)
     seg = game[:, : int((freeze - g0) * SR)].copy()
+    # остановка «плёнки» в момент зависания: последние 0.22 с замедляются и падают по высоте
+    ts = int(0.22 * SR)
+    tail_src = seg[:, -ts:]
+    rate = np.linspace(1.0, 0.15, ts)
+    posn = np.cumsum(rate)
+    posn = posn / posn[-1] * (ts - 1) * 0.62
+    tape = np.vstack([np.interp(posn, np.arange(ts), tail_src[c]) for c in range(2)]) * np.linspace(1, 0.2, ts)
+    seg[:, -ts:] = tape
     place(Mu, seg, g0)
-    # заедание буфера: последний кусочек повторяется, затем тишина
-    grain = seg[:, -int(0.055 * SR):]
+    # заедание буфера: короткий повтор, затем тишина
+    grain = tail_src[:, :int(0.05 * SR)]
     for r in range(2):
-        place(Mu, grain * (0.9 - r * 0.3), freeze + r * 0.055)
+        place(Mu, grain * (0.7 - r * 0.3), freeze + r * 0.05)
     # низкий гул под заголовком
     tH = S['hook'] + 1.9  # = titleAt в S01Hook.tsx
     dur = S['problem'] - tH

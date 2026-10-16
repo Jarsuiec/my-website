@@ -4,7 +4,7 @@
 """
 import numpy as np
 from engine import (SR, adsr, logo_drop, cue, bp, buf, expdec, hp, lp, noise, note_hz, place, reverb, saw, sine, soft_clip, sweep_lp, tt)
-from music import impact
+from music import clean_boom, impact
 
 
 def click(gain=1.0, f=2400, seed=1, body=0.0):
@@ -167,7 +167,8 @@ def render(starts, total):
     P(fan_noise(0.6, 20, 9, 0.0, 0.25), h + 0.45)
     P(whoosh(0.35, 0.5, 400, 5000, 3), h + 0.9)
     P(glitch_burst(0.1, 0.7, 9), h + 1.6)
-    P(impact(1.1), h + 1.9)
+    P(impact(1.0), h + 1.9)
+    P(clean_boom(1.1, 1.8), h + 1.9)  # мощный чистый бас под заголовком
     P(glitch_burst(0.12, 0.5, 4), h + 1.9, 1.0, 0.3)
     P(whoosh(1.15, 0.9, 200, 9000, 8, 0, 0), h + 2.85)  # провал в экран
 

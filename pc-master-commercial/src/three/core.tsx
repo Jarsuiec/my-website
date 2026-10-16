@@ -97,7 +97,34 @@ const ZoomBlurShader = {
     }`,
 };
 
-// Постобработка: bloom для свечения и, при необходимости, глубина резкости и zoom blur.
+// Цифровой сбой: разрыв кадра полосами, RGB-сдвиг, блочные артефакты (детерминированно от seed).
+const GlitchShader = {
+  uniforms: {tDiffuse: {value: null}, amount: {value: 0}, seed: {value: 0}},
+  vertexShader: 'varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }',
+  fragmentShader: `
+    uniform sampler2D tDiffuse; uniform float amount; uniform float seed; varying vec2 vUv;
+    float h(float n){ return fract(sin(n * 127.1 + seed * 311.7) * 43758.5453); }
+    void main(){
+      vec2 uv = vUv;
+      float band = floor(uv.y * 26.0);
+      float r = h(band);
+      float shift = (r > 1.0 - amount * 0.55) ? (h(band + 7.0) - 0.5) * 0.22 * amount : 0.0;
+      uv.x = fract(uv.x + shift);
+      vec2 blk = floor(uv * vec2(18.0, 32.0));
+      float bq = h(blk.x * 13.0 + blk.y * 7.0);
+      if (bq > 1.0 - amount * 0.12) uv = (blk + 0.5) / vec2(18.0, 32.0);
+      float sp = 0.012 * amount;
+      vec4 c;
+      c.r = texture2D(tDiffuse, uv + vec2(sp, 0.0)).r;
+      c.g = texture2D(tDiffuse, uv).g;
+      c.b = texture2D(tDiffuse, uv - vec2(sp, 0.0)).b;
+      c.a = 1.0;
+      float line = step(0.985, h(floor(vUv.y * 480.0) + floor(seed * 3.0))) * amount * 0.35;
+      gl_FragColor = c + vec4(line);
+    }`,
+};
+
+// Постобработка: bloom для свечения и, при необходимости, глубина резкости, zoom blur и цифровой сбой.
 export const Post: React.FC<{
   bloom?: number;
   radius?: number;
@@ -107,7 +134,9 @@ export const Post: React.FC<{
   maxblur?: number;
   zoom?: number; // сила радиального размытия 0..~0.25
   zoomCenter?: [number, number];
-}> = ({bloom = 0.9, radius = 0.55, threshold = 0.62, focus = 0, aperture = 0.0025, maxblur = 0.012, zoom = -1, zoomCenter = [0.5, 0.5]}) => {
+  glitch?: number; // сила цифрового сбоя 0..1 (−1 — без прохода)
+  glitchSeed?: number;
+}> = ({bloom = 0.9, radius = 0.55, threshold = 0.62, focus = 0, aperture = 0.0025, maxblur = 0.012, zoom = -1, zoomCenter = [0.5, 0.5], glitch = -1, glitchSeed = 0}) => {
   const {gl, scene, camera, size} = useThree();
   const composer = useMemo(() => {
     const c = new EffectComposer(gl);
@@ -119,10 +148,11 @@ export const Post: React.FC<{
     const bp = new UnrealBloomPass(new THREE.Vector2(size.width / 2, size.height / 2), bloom, radius, threshold);
     c.addPass(bp);
     if (zoom >= 0) c.addPass(new ShaderPass(ZoomBlurShader));
+    if (glitch >= 0) c.addPass(new ShaderPass(GlitchShader));
     c.addPass(new OutputPass());
     return c;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [gl, scene, camera, focus > 0, zoom >= 0]);
+  }, [gl, scene, camera, focus > 0, zoom >= 0, glitch >= 0]);
   useLayoutEffect(() => {
     composer.setSize(size.width, size.height);
     composer.setPixelRatio(1);
@@ -133,6 +163,12 @@ export const Post: React.FC<{
         p.strength = bloom;
         p.radius = radius;
         p.threshold = threshold;
+      }
+      if (p instanceof ShaderPass && (p.uniforms as Record<string, {value: unknown}>).amount) {
+        const u = p.uniforms as Record<string, {value: unknown}>;
+        u.amount.value = Math.max(0, glitch);
+        u.seed.value = glitchSeed;
+        p.enabled = glitch > 0.01;
       }
       if (p instanceof ShaderPass && (p.uniforms as Record<string, {value: unknown}>).strength) {
         const u = p.uniforms as Record<string, {value: unknown}>;

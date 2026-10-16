@@ -134,81 +134,159 @@ const SlowUI: React.FC<{t: number}> = ({t}) => {
   );
 };
 
-// Новая скорость: быстрая установка Windows и отзывчивый рабочий стол. Без логотипов, только интерфейс.
+// Новая скорость: узнаваемая установка Windows и отзывчивый рабочий стол в стиле Windows 11.
+// Только интерфейс и собственная графика — без логотипов и чужих обоев.
+const WinDots: React.FC<{t: number; size?: number}> = ({t, size = 130}) => {
+  // классический «бегущий» индикатор загрузки: точки догоняют друг друга по кругу
+  const dots = Array.from({length: 5}, (_, i) => {
+    const ph = ((t * 0.9 - i * 0.07) % 1 + 1) % 1;
+    const a = -Math.PI / 2 + E.inOutCubic(ph) * Math.PI * 2;
+    return {x: Math.cos(a) * size * 0.4, y: Math.sin(a) * size * 0.4, o: ph < 0.92 ? 1 : 0};
+  });
+  return (
+    <svg width={size} height={size} viewBox={`${-size / 2} ${-size / 2} ${size} ${size}`}>
+      {dots.map((d, i) => (
+        <circle key={i} cx={d.x} cy={d.y} r={size * 0.055} fill="#fff" opacity={d.o} />
+      ))}
+    </svg>
+  );
+};
+const Bloom: React.FC = () => (
+  // собственные абстрактные обои: мягкие голубые «лепестки»
+  <svg width="100%" height="100%" viewBox="0 0 940 690" preserveAspectRatio="xMidYMid slice" style={{position: 'absolute', inset: 0}}>
+    <defs>
+      <radialGradient id="wbg" cx="50%" cy="55%" r="70%">
+        <stop offset="0" stopColor="#1b5fc4" />
+        <stop offset="0.55" stopColor="#0a2a63" />
+        <stop offset="1" stopColor="#050f26" />
+      </radialGradient>
+      <linearGradient id="pet" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stopColor="#bfe6ff" stopOpacity="0.95" />
+        <stop offset="1" stopColor="#2f8cff" stopOpacity="0.35" />
+      </linearGradient>
+      <filter id="soft"><feGaussianBlur stdDeviation="6" /></filter>
+    </defs>
+    <rect width="940" height="690" fill="url(#wbg)" />
+    <g transform="translate(470 360)" filter="url(#soft)">
+      {[0, 1, 2, 3, 4, 5].map((i) => (
+        <ellipse key={i} rx="230" ry="78" fill="url(#pet)" opacity={0.42 - i * 0.04} transform={`rotate(${-20 + i * 28}) translate(110 0)`} />
+      ))}
+    </g>
+  </svg>
+);
+const Ic: React.FC<{k: string; s?: number}> = ({k, s = 40}) => {
+  const c = {width: s, height: s, viewBox: '0 0 40 40'} as const;
+  if (k === 'start') return (<svg {...c}><rect x="4" y="4" width="32" height="32" rx="8" fill="#3aa0ff" /><rect x="10" y="12" width="20" height="16" rx="2.5" fill="none" stroke="#fff" strokeWidth="2.5" /><rect x="10" y="12" width="20" height="4.5" rx="2" fill="#fff" /></svg>);
+  if (k === 'folder') return (<svg {...c}><path d="M5 12a3 3 0 0 1 3-3h8l3 3h13a3 3 0 0 1 3 3v14a3 3 0 0 1-3 3H8a3 3 0 0 1-3-3z" fill="#f2c14e" /><path d="M5 16h30v13a3 3 0 0 1-3 3H8a3 3 0 0 1-3-3z" fill="#ffd772" /></svg>);
+  if (k === 'globe') return (<svg {...c}><circle cx="20" cy="20" r="14" fill="#1fb6d6" /><path d="M6 20h28M20 6c5 4 5 24 0 28M20 6c-5 4-5 24 0 28" stroke="#fff" strokeWidth="2" fill="none" /></svg>);
+  if (k === 'gear') return (<svg {...c}><circle cx="20" cy="20" r="14" fill="#6b7a90" /><circle cx="20" cy="20" r="5.5" fill="none" stroke="#fff" strokeWidth="3" />{Array.from({length: 8}, (_, i) => <rect key={i} x="18.5" y="6.5" width="3" height="5" rx="1" fill="#fff" transform={`rotate(${i * 45} 20 20)`} />)}</svg>);
+  if (k === 'pc') return (<svg {...c}><rect x="5" y="7" width="30" height="20" rx="2.5" fill="#4aa8ff" /><rect x="8" y="10" width="24" height="14" rx="1" fill="#0d3b7a" /><rect x="15" y="29" width="10" height="3" fill="#9fb4c8" /><rect x="11" y="32" width="18" height="2.5" rx="1" fill="#9fb4c8" /></svg>);
+  if (k === 'bin') return (<svg {...c}><path d="M11 13h18l-1.6 20a2 2 0 0 1-2 1.8H14.6a2 2 0 0 1-2-1.8z" fill="#cfe3f5" /><rect x="9" y="9" width="22" height="4" rx="1.5" fill="#e8f2fb" /></svg>);
+  return null;
+};
 const FastUI: React.FC<{t: number}> = ({t}) => {
   if (t < 0) return null;
   const k = ramp(t, 0, 0.18, E.outExpo);
-  const prog = ramp(t, 0.08, 0.5, E.inOutCubic);
-  const desk = ramp(t, 0.5, 0.62, E.outExpo);
-  const icons = ['Документы', 'Браузер', 'Игры', 'Фото', 'Музыка', 'Настройки'];
-  const click1 = 1.15;
-  const click2 = 1.7;
-  const win1 = ramp(t, click1 + 0.04, click1 + 0.16, E.outBack);
-  const win2 = ramp(t, click2 + 0.04, click2 + 0.16, E.outBack);
-  const cur = keys3(t, [[0.7, [700, 520, 0]], [click1, [318, 84, 0]], [click1 + 0.2, [318, 84, 0]], [click2, [122, 84, 0]]], E.inOutCubic);
-  const pressed = (Math.abs(t - click1) < 0.06 || Math.abs(t - click2) < 0.06) ? 0.85 : 1;
+  const prog = Math.round(ramp(t, 0.06, 0.62, E.inOutCubic) * 100);
+  const welcome = ramp(t, 0.66, 0.74) * (1 - ramp(t, 0.9, 0.98));
+  const setupOut = ramp(t, 0.62, 0.7);
+  const desk = ramp(t, 0.92, 1.04, E.outExpo);
+  const click = 1.15;
+  const win = ramp(t, click + 0.04, click + 0.16, E.outBack);
+  const toast = ramp(t, 1.75, 1.95, E.outExpo);
+  const cur = keys3(t, [[0.95, [640, 560, 0]], [click, [598, 618, 0]], [2.5, [598, 618, 0]]], E.inOutCubic);
+  const pressed = Math.abs(t - click) < 0.06 ? 0.85 : 1;
+  const rows = [
+    {n: 'Обновления', v: 'установлены', at: 1.3},
+    {n: 'Драйверы устройств', v: 'установлены', at: 1.42},
+    {n: 'Автозагрузка', v: 'настроена', at: 1.54},
+  ];
   return (
-    <div
-      style={{
-        position: 'absolute',
-        left: 80,
-        right: 80,
-        top: 600,
-        height: 660,
-        borderRadius: 30,
-        overflow: 'hidden',
-        transform: `perspective(1600px) rotateX(${(1 - k) * 24}deg) scale(${0.86 + 0.14 * k})`,
-        opacity: k,
-        boxShadow: `0 40px 120px rgba(0,0,0,0.6), 0 0 0 2px rgba(103,232,255,0.3), 0 0 90px rgba(33,191,255,0.3)`,
-        background: '#071224',
-        fontFamily: FONT.text,
-        color: COLORS.white,
-      }}
-    >
-      <div style={{position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', opacity: 1 - desk}}>
-        <svg width="210" height="210" viewBox="0 0 200 200">
-          <circle cx="100" cy="100" r="80" stroke="rgba(243,248,255,0.12)" strokeWidth="12" fill="none" />
-          <circle cx="100" cy="100" r="80" stroke={COLORS.cyan} strokeWidth="12" fill="none" strokeLinecap="round" strokeDasharray={503} strokeDashoffset={503 * (1 - prog)} transform="rotate(-90 100 100)" />
-        </svg>
-        <div style={{marginTop: 30, fontSize: 52, fontWeight: 800}}>Установка Windows</div>
-        <div style={{marginTop: 12, fontSize: 34, opacity: 0.7, fontFamily: FONT.mono}}>{prog < 1 ? 'настройка системы…' : 'готово'}</div>
+    <div style={{position: 'absolute', left: 70, right: 70, top: 590, height: 690, borderRadius: 26, overflow: 'hidden', transform: `perspective(1600px) rotateX(${(1 - k) * 22}deg) scale(${0.86 + 0.14 * k})`, opacity: k, boxShadow: '0 40px 120px rgba(0,0,0,0.6), 0 0 0 10px #0a0d12, 0 0 0 12px rgba(103,232,255,0.35), 0 0 90px rgba(33,191,255,0.3)', background: '#0b1f3d', fontFamily: '"Inter", "Segoe UI", sans-serif', color: '#fff'}}>
+      {/* 1. установка */}
+      <div style={{position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: 'linear-gradient(180deg, #0d2b57 0%, #071a38 100%)', opacity: 1 - setupOut}}>
+        <WinDots t={t} />
+        <div style={{marginTop: 34, fontSize: 46, fontWeight: 600}}>Установка Windows</div>
+        <div style={{marginTop: 14, fontSize: 34, opacity: 0.9}}>Ход выполнения: {prog}%</div>
+        <div style={{marginTop: 26, fontSize: 26, opacity: 0.6}}>Компьютер может перезагрузиться несколько раз</div>
       </div>
-      <div style={{position: 'absolute', inset: 0, opacity: desk, background: `radial-gradient(ellipse 90% 70% at 70% 30%, #1d6fb8 0%, #0b2a52 45%, #050d1c 100%)`}}>
-        <div style={{position: 'absolute', left: 40, top: 40, display: 'grid', gridTemplateColumns: 'repeat(2, 172px)', gap: 24}}>
-          {icons.map((n, i) => {
-            const ik = ramp(t, 0.55 + i * 0.035, 0.7 + i * 0.035, E.outBack);
-            return (
-              <div key={n} style={{display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10, transform: `scale(${ik})`, opacity: clamp01(ik)}}>
-                <div style={{width: 84, height: 84, borderRadius: 22, background: i % 2 ? 'linear-gradient(135deg, #67E8FF, #21BFFF)' : 'linear-gradient(135deg, #F3F8FF, #9fd6ff)', boxShadow: '0 8px 20px rgba(0,0,0,0.35)'}} />
-                <div style={{fontSize: 30, fontWeight: 700, textShadow: '0 2px 8px rgba(0,0,0,0.5)'}}>{n}</div>
-              </div>
-            );
-          })}
+      {/* 2. приветствие */}
+      {welcome > 0.01 && (
+        <div style={{position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: '#0a2350', opacity: welcome}}>
+          <div style={{fontSize: 60, fontWeight: 600}}>Добро пожаловать</div>
+          <div style={{marginTop: 30}}><WinDots t={t} size={100} /></div>
         </div>
-        {/* окна открываются мгновенно — отзывчивость */}
-        {[{w: win2, title: 'Документы', x: 460, y: 200}, {w: win1, title: 'Браузер', x: 440, y: 50}].map((o) =>
-          o.w > 0.01 ? (
-            <div key={o.title} style={{position: 'absolute', left: o.x, top: o.y, width: 430, height: 300, borderRadius: 18, background: 'rgba(8,20,38,0.95)', border: '1.5px solid rgba(103,232,255,0.35)', boxShadow: '0 20px 50px rgba(0,0,0,0.5)', transform: `scale(${0.85 + 0.15 * o.w})`, opacity: clamp01(o.w), overflow: 'hidden'}}>
-              <div style={{height: 54, display: 'flex', alignItems: 'center', padding: '0 20px', fontSize: 28, fontWeight: 700, background: 'rgba(33,191,255,0.18)'}}>{o.title}</div>
-              <div style={{padding: 22, display: 'grid', gap: 14}}>
-                {[0.9, 0.7, 0.8, 0.5].map((w, i) => (
-                  <div key={i} style={{height: 18, width: `${w * 100}%`, borderRadius: 9, background: 'rgba(243,248,255,0.16)'}} />
-                ))}
+      )}
+      {/* 3. рабочий стол */}
+      {desk > 0.01 && (
+        <div style={{position: 'absolute', inset: 0, opacity: desk}}>
+          <Bloom />
+          <div style={{position: 'absolute', left: 26, top: 24, display: 'grid', gap: 22}}>
+            {[['pc', 'Этот компьютер'], ['bin', 'Корзина'], ['folder', 'Документы']].map(([ic, n], i) => (
+              <div key={n} style={{display: 'flex', flexDirection: 'column', alignItems: 'center', width: 140, gap: 6, transform: `scale(${ramp(t, 1.0 + i * 0.04, 1.14 + i * 0.04, E.outBack)})`}}>
+                <Ic k={ic} s={58} />
+                <div style={{fontSize: 22, fontWeight: 600, textShadow: '0 1px 4px rgba(0,0,0,0.8)', textAlign: 'center'}}>{n}</div>
+              </div>
+            ))}
+          </div>
+          {/* окно «Параметры» открывается мгновенно */}
+          {win > 0.01 && (
+            <div style={{position: 'absolute', left: 190, top: 40, width: 700, height: 470, borderRadius: 14, overflow: 'hidden', background: 'rgba(32,38,52,0.94)', border: '1px solid rgba(255,255,255,0.12)', boxShadow: '0 24px 60px rgba(0,0,0,0.55)', transform: `scale(${0.88 + 0.12 * win})`, transformOrigin: '60% 90%', opacity: clamp01(win)}}>
+              <div style={{height: 48, display: 'flex', alignItems: 'center', padding: '0 18px', fontSize: 22}}>
+                <span style={{opacity: 0.9}}>Параметры</span>
+                <span style={{marginLeft: 'auto', letterSpacing: 22, opacity: 0.8}}>— ▢ ✕</span>
+              </div>
+              <div style={{display: 'flex', height: 422}}>
+                <div style={{width: 210, padding: '8px 12px', fontSize: 20, display: 'grid', alignContent: 'start', gap: 8, opacity: 0.85}}>
+                  {['Система', 'Устройства', 'Сеть и Интернет', 'Центр обновления'].map((n, i) => (
+                    <div key={n} style={{padding: '9px 12px', borderRadius: 8, background: i === 3 ? 'rgba(255,255,255,0.1)' : 'transparent', borderLeft: i === 3 ? '4px solid #4cc2ff' : '4px solid transparent'}}>{n}</div>
+                  ))}
+                </div>
+                <div style={{flex: 1, padding: '6px 22px 20px 6px'}}>
+                  <div style={{fontSize: 30, fontWeight: 700}}>Центр обновления Windows</div>
+                  <div style={{marginTop: 16, display: 'flex', alignItems: 'center', gap: 16, padding: '16px 18px', borderRadius: 12, background: 'rgba(255,255,255,0.06)'}}>
+                    <div style={{width: 46, height: 46, borderRadius: 23, background: COLORS.lime, color: '#0b1a05', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 28, fontWeight: 900}}>✓</div>
+                    <div style={{fontSize: 24, fontWeight: 600, lineHeight: 1.25}}>У вас установлены все последние обновления</div>
+                  </div>
+                  {rows.map((r) => {
+                    const rk = ramp(t, r.at, r.at + 0.12, E.outExpo);
+                    return (
+                      <div key={r.n} style={{marginTop: 12, display: 'flex', justifyContent: 'space-between', padding: '12px 18px', borderRadius: 10, background: 'rgba(255,255,255,0.04)', fontSize: 23, opacity: rk, transform: `translateX(${(1 - rk) * 30}px)`}}>
+                        <span>{r.n}</span>
+                        <span style={{color: COLORS.lime, fontWeight: 700}}>✓ {r.v}</span>
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
             </div>
-          ) : null
-        )}
-        <div style={{position: 'absolute', left: 0, right: 0, bottom: 0, height: 80, background: 'rgba(5,12,24,0.78)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 18}}>
-          {[0, 1, 2, 3, 4].map((i) => (
-            <div key={i} style={{width: 48, height: 48, borderRadius: 13, background: i === 0 ? COLORS.blue : 'rgba(243,248,255,0.22)', transform: `translateY(${(1 - ramp(t, 0.55 + i * 0.03, 0.75 + i * 0.03, E.outBack)) * 90}px)`}} />
-          ))}
+          )}
+          {/* уведомление */}
+          {toast > 0.01 && (
+            <div style={{position: 'absolute', right: 18, bottom: 92, width: 420, padding: '18px 22px', borderRadius: 14, background: 'rgba(32,38,52,0.96)', border: '1px solid rgba(255,255,255,0.12)', boxShadow: '0 16px 40px rgba(0,0,0,0.5)', transform: `translateX(${(1 - toast) * 460}px)`}}>
+              <div style={{fontSize: 26, fontWeight: 700}}><span style={{color: COLORS.lime}}>✓</span> Система готова к работе</div>
+              <div style={{marginTop: 6, fontSize: 21, opacity: 0.7}}>Windows установлена и настроена</div>
+            </div>
+          )}
+          {/* панель задач по центру */}
+          <div style={{position: 'absolute', left: 0, right: 0, bottom: 0, height: 74, background: 'rgba(22,27,38,0.88)', borderTop: '1px solid rgba(255,255,255,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 16}}>
+            {['start', 'search', 'folder', 'globe', 'gear'].map((ic, i) => {
+              const ik = ramp(t, 0.98 + i * 0.03, 1.12 + i * 0.03, E.outBack);
+              return ic === 'search' ? (
+                <div key={ic} style={{height: 44, padding: '0 18px', borderRadius: 22, background: 'rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', gap: 10, fontSize: 21, opacity: 0.85, transform: `translateY(${(1 - ik) * 80}px)`}}>⌕ Поиск</div>
+              ) : (
+                <div key={ic} style={{width: 52, height: 52, borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center', background: ic === 'gear' && t > click ? 'rgba(255,255,255,0.12)' : 'transparent', transform: `translateY(${(1 - ik) * 80}px)`}}>
+                  <Ic k={ic} s={40} />
+                </div>
+              );
+            })}
+            <div style={{position: 'absolute', right: 20, fontSize: 21, opacity: 0.85}}>RU</div>
+          </div>
+          <svg width="40" height="56" viewBox="0 0 46 64" style={{position: 'absolute', left: cur[0], top: cur[1], transform: `scale(${pressed})`, opacity: ramp(t, 0.98, 1.06)}}>
+            <path d="M0 0 L0 50 L13 39 L22 60 L31 56 L22 36 L38 35 Z" fill="#fff" stroke="#000" strokeWidth="2.5" />
+          </svg>
         </div>
-        <div style={{position: 'absolute', right: 34, bottom: 104, fontSize: 36, fontWeight: 800, color: COLORS.lime, opacity: ramp(t, 2.0, 2.2), textShadow: '0 2px 10px rgba(0,0,0,0.6)'}}>✓ Система готова</div>
-        {/* курсор */}
-        <svg width="46" height="64" viewBox="0 0 46 64" style={{position: 'absolute', left: cur[0], top: cur[1], transform: `scale(${pressed})`, opacity: ramp(t, 0.65, 0.75)}}>
-          <path d="M0 0 L0 50 L13 39 L22 60 L31 56 L22 36 L38 35 Z" fill="#fff" stroke="#000" strokeWidth="2.5" />
-        </svg>
-      </div>
+      )}
     </div>
   );
 };

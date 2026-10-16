@@ -1,9 +1,9 @@
 import React, {useMemo} from 'react';
 import * as THREE from 'three';
-import {AbsoluteFill, Sequence, useCurrentFrame} from 'remotion';
+import {AbsoluteFill, OffthreadVideo, Sequence, staticFile, useCurrentFrame} from 'remotion';
 import {ThreeCanvas} from '@remotion/three';
 import {COLORS} from '../config/brand';
-import {FPS, W, H} from '../config/timeline';
+import {FOOTAGE, FPS, W, H} from '../config/timeline';
 import {Cam, Particles, Post, StudioEnv, TracePulses, V3} from '../three/core';
 import {ANCH, CPU, Motherboard, RamStick, TowerCooler} from '../three/parts';
 import {M, glow} from '../three/materials';
@@ -291,10 +291,19 @@ export const S04Cooling: React.FC<{dur: number}> = ({dur}) => {
       <Sequence from={Math.round(installStart * FPS)} layout="none">
         <ShotInstall t={t - installStart} />
       </Sequence>
+      {/* необязательная реальная съёмка мастера (timeline.json → footage) */}
+      {FOOTAGE?.file && FOOTAGE.scene === 'cooling' && (
+        <Sequence from={Math.round(FOOTAGE.at * FPS)} durationInFrames={Math.round(FOOTAGE.dur * FPS)} layout="none">
+          <AbsoluteFill style={{opacity: ramp(t, FOOTAGE.at, FOOTAGE.at + 0.15) * (1 - ramp(t, FOOTAGE.at + FOOTAGE.dur - 0.15, FOOTAGE.at + FOOTAGE.dur))}}>
+            <OffthreadVideo src={staticFile(FOOTAGE.file)} muted startFrom={Math.round((FOOTAGE.from ?? 0) * FPS)} style={{width: '100%', height: '100%', objectFit: 'cover', filter: 'contrast(1.08) saturate(0.9) brightness(0.95)'}} />
+            <AbsoluteFill style={{background: 'radial-gradient(ellipse 80% 65% at 50% 50%, rgba(0,0,0,0) 55%, rgba(2,6,12,0.6) 100%)'}} />
+          </AbsoluteFill>
+        </Sequence>
+      )}
       {/* холодная волна в момент установки кулера */}
       <AbsoluteFill style={{background: `radial-gradient(circle at 50% 55%, rgba(33,191,255,${0.4 * wave}) 0%, rgba(0,0,0,0) 65%)`, mixBlendMode: 'screen'}} />
       <AbsoluteFill style={{background: COLORS.bg, opacity: 1 - ramp(t, 0, 0.2)}} />
-      <RevealTitle text="ДИАГНОСТИКА" t={t} at={0.2} out={diagEnd - 0.25} y={290} size={118} color={COLORS.white} glow={COLORS.cyan} weight={900} tracking={0.03} />
+      <RevealTitle text="ДИАГНОСТИКА" t={t} at={0.2} out={diagEnd - 0.5} y={290} size={118} color={COLORS.white} glow={COLORS.cyan} weight={900} tracking={0.03} />
       {t > diagEnd + 0.1 && t < airStart + 0.1 && (
         <div style={{position: 'absolute', left: 0, right: 0, top: 300, textAlign: 'center', opacity: ramp(t, diagEnd + 0.15, diagEnd + 0.4) * (1 - ramp(t, airStart - 0.15, airStart + 0.05)), textShadow: '0 0 24px rgba(255,118,59,0.5), 0 2px 12px rgba(0,0,0,0.8)'}}>
           <div style={{fontFamily: FONT.display, fontWeight: 900, fontSize: 96, letterSpacing: '0.02em', color: '#FFE3D4'}}>ПЕРЕГРЕВ</div>
