@@ -75,7 +75,7 @@ const ShotFan: React.FC<{t: number}> = ({t}) => {
       <fog attach="fog" args={[COLORS.bg, 18, 70]} />
       <StudioEnv mood="hot" intensity={0.8} />
       <ambientLight intensity={0.08} />
-      <directionalLight position={[-10, 10, 30]} intensity={1.1} color="#cfe4ff" />
+      <directionalLight position={[12, 14, 26]} intensity={0.9} color="#cfe4ff" />
       <pointLight position={[-4, 7.6, 18]} intensity={140} distance={60} color="#ff6a2a" decay={2} />
       <pointLight position={[18, -4, 8]} intensity={70} distance={60} color="#ff9a5a" decay={2} />
       {/* подсветка лопастей включается, когда камера уже у вентилятора — иначе блик на крышке кулера в начале пике */}

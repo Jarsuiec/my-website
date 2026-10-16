@@ -426,7 +426,7 @@ export const TowerCooler: React.FC<{fanAngle: number; fanBlur?: number; dust?: n
       {/* рёбра */}
       <primitive object={fins} />
       {/* верхняя крышка */}
-      <Box s={[5.3, 12.3, 0.45]} p={[0, 0, 15.95]} m={M.gunmetal()} rad={0.2} />
+      <Box s={[5.3, 12.3, 0.45]} p={[0, 0, 15.95]} m={M.coolerCap()} rad={0.2} />
       {led && <Box s={[5.0, 0.12, 0.12]} p={[0, -6.1, 15.95]} m={glow(led, 2.4)} />}
       {/* перегрев: раскалённые кромки рёбер, ярче у основания */}
       {heat > 0.01 && <primitive object={heatEdges} />}

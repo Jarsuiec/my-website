@@ -20,6 +20,8 @@ export const M = {
   copper: () => std('copper', {color: '#d0835a', metalness: 1, roughness: 0.24}),
   gold: () => std('gold', {color: '#e0b25a', metalness: 1, roughness: 0.22}),
   steel: () => std('steel', {color: '#bfc5cd', metalness: 1, roughness: 0.22, roughnessMap: brushedTexture()}),
+  // матовая шлифованная крышка кулера: не даёт зеркального блика сверху
+  coolerCap: () => std('coolerCap', {color: '#2c323b', metalness: 0.8, roughness: 0.58, roughnessMap: brushedTexture()}),
   steelSatin: () => std('steelSatin', {color: '#8f97a1', metalness: 0.9, roughness: 0.48, roughnessMap: brushedTexture()}),
   chrome: () => std('chrome', {color: '#b9bec6', metalness: 1, roughness: 0.12}),
   capAlu: () => std('capAlu', {color: '#a5adb7', metalness: 0.95, roughness: 0.32}),
