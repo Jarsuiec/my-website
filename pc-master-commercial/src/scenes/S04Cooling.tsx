@@ -17,7 +17,7 @@ const CPU: V3 = [ANCH.cpu[0], ANCH.cpu[1], 0];
 // --- A. Диагностика: скан платы, метки на узлах ------------------------------------------
 const diagCam = (t: number) => ({
   pos: keys3(t, [[0, [30, -50, 60]], [2.0, [22, -44, 54]]], E.inOutSine),
-  target: [1, 3.5, 4] as V3,
+  target: [1, 9, 4] as V3,
   fov: 36,
 });
 const ShotDiag: React.FC<{t: number}> = ({t}) => {
@@ -27,8 +27,9 @@ const ShotDiag: React.FC<{t: number}> = ({t}) => {
     <ThreeCanvas width={W} height={H} gl={{antialias: true}}>
       <color attach="background" args={[COLORS.bg]} />
       <fog attach="fog" args={[COLORS.bg, 30, 90]} />
-      <StudioEnv mood="neutral" intensity={0.9} />
-      <ambientLight intensity={0.1} />
+      <StudioEnv mood="neutral" intensity={1.1} />
+      <ambientLight intensity={0.35} />
+      <hemisphereLight args={['#cfe6ff', '#0a0f18', 0.6]} position={[0, 0, 1]} />
       <directionalLight position={[-14, -10, 30]} intensity={2.2} color="#e4f2ff" />
       <spotLight position={[10, -20, 50]} angle={0.5} penumbra={0.9} intensity={900} distance={120} color="#ffffff" />
       <pointLight position={[2, 7.6, 22]} intensity={60} distance={60} color="#ff6a2a" />
@@ -63,13 +64,13 @@ const DiagHUD: React.FC<{t: number}> = ({t}) => {
         const [x, y] = project(g.p, c.pos, c.target, c.fov);
         const dx = x > W / 2 ? -1 : 1;
         const lx = x + dx * 120 * k;
-        const ly = y - 70 * k;
+        const ly = Math.max(y - 70 * k, 500); // не залезать на заголовок
         const col = g.warn ? COLORS.heat : COLORS.cyan;
         return (
           <g key={i} opacity={k}>
             <circle cx={x} cy={y} r={10} fill="none" stroke={col} strokeWidth={3} />
             <circle cx={x} cy={y} r={4} fill={col} />
-            <polyline points={`${x},${y} ${x + dx * 40 * k},${y - 70 * k} ${lx},${ly}`} fill="none" stroke={col} strokeWidth={2.5} />
+            <polyline points={`${x},${y} ${x + dx * 40 * k},${ly} ${lx},${ly}`} fill="none" stroke={col} strokeWidth={2.5} />
             <text x={lx + dx * 12} y={ly + 10} textAnchor={dx > 0 ? 'start' : 'end'} fill={col} fontFamily="JetBrains Mono" fontWeight={700} fontSize={30} letterSpacing="2">
               {g.label}
             </text>
@@ -197,7 +198,7 @@ export const S04Cooling: React.FC<{dur: number}> = ({dur}) => {
       <RevealTitle text={TEXT.diagnostics} t={t} at={0.2} out={A - 0.25} y={300} size={104} color={COLORS.white} glow={COLORS.cyan} weight={900} tracking={0.04} />
       <ImpactTitle text={'ЧИСТКА\nИ ОХЛАЖДЕНИЕ'} t={t} at={A + 0.1} out={dur - 0.3} y={270} size={112} glow={COLORS.blue} exit="blur" />
       {t > B && (
-        <div style={{position: 'absolute', left: 0, right: 0, top: 520, textAlign: 'center', fontFamily: FONT.mono, fontSize: 30, letterSpacing: '0.3em', color: COLORS.lime, opacity: ramp(t, B + 0.2, B + 0.5) * (1 - ramp(t, dur - 0.3, dur))}}>
+        <div style={{position: 'absolute', left: 0, right: 0, top: 568, textAlign: 'center', fontFamily: FONT.mono, fontWeight: 700, fontSize: 32, letterSpacing: '0.3em', color: COLORS.lime, opacity: ramp(t, B + 0.2, B + 0.5) * (1 - ramp(t, dur - 0.3, dur))}}>
           ✓ НОВАЯ ТЕРМОПАСТА
         </div>
       )}
