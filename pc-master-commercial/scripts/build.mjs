@@ -21,12 +21,50 @@ fs.mkdirSync('out/audio', {recursive: true});
 run('python3', ['audio/mix.py', ...(cut15 ? ['--cut15'] : [])]);
 const mix = cut15 ? 'out/audio/mix15.wav' : 'out/audio/mix.wav';
 
-// 2. Видео без звука
+// 2. Видео без звука: рендер кусками (по сценам) в кадры JPEG, затем одно кодирование H.264.
+//    Каждый кусок — свежий браузер (нет утечки WebGL-контекстов); уже готовые кадры не перерисовываются.
 const silent = `out/${name}_video.mp4`;
 if (!audioOnly || !fs.existsSync(silent)) {
-  const args = ['remotion', 'render', 'src/index.ts', id, silent, '--muted', '--codec=h264', '--crf=16', '--x264-preset=slow', '--pixel-format=yuv420p', `--concurrency=${conc}`, `--browser-executable=${browser}`];
-  if (process.env.FRAMES) args.push(`--frames=${process.env.FRAMES}`);
-  run('npx', args);
+  const tl = JSON.parse(fs.readFileSync('src/config/timeline.json', 'utf8'));
+  const fps = tl.fps;
+  let chunks;
+  if (cut15) {
+    const c = JSON.parse(fs.readFileSync('src/config/cut15.json', 'utf8'));
+    chunks = c.segments.map((sg) => [Math.round(sg.dst * fps), Math.round((sg.dst + sg.len) * fps) - 1]);
+  } else {
+    let acc = 0;
+    chunks = tl.scenes.map((sc) => {
+      const a = Math.round(acc * fps);
+      acc += sc.dur;
+      return [a, Math.round(acc * fps) - 1];
+    });
+  }
+  const dir = `out/frames_${name}`;
+  fs.mkdirSync(dir, {recursive: true});
+  const pad = (n) => String(n).padStart(4, '0');
+  for (const [a, b] of chunks) {
+    let missing = false;
+    for (let fr = a; fr <= b; fr++) if (!fs.existsSync(`${dir}/element-${pad(fr)}.jpeg`)) missing = true;
+    if (!missing) {
+      console.log(`кадры ${a}–${b} уже готовы`);
+      continue;
+    }
+    for (let attempt = 1; attempt <= 3; attempt++) {
+      try {
+        run('npx', ['remotion', 'render', 'src/index.ts', id, dir, '--sequence', `--frames=${a}-${b}`, '--image-format=jpeg', '--jpeg-quality=95', `--concurrency=${conc}`, '--timeout=180000', `--browser-executable=${browser}`]);
+        // Remotion пишет element-N.jpeg без ведущих нулей — приводим к element-0000.jpeg
+        for (const f of fs.readdirSync(dir)) {
+          const m = f.match(/^element-(\d+)\.jpeg$/);
+          if (m && m[1].length !== 4) fs.renameSync(`${dir}/${f}`, `${dir}/element-${pad(+m[1])}.jpeg`);
+        }
+        break;
+      } catch (e) {
+        if (attempt === 3) throw e;
+        console.log(`повтор куска ${a}–${b} (попытка ${attempt + 1})`);
+      }
+    }
+  }
+  run('ffmpeg', ['-v', 'error', '-y', '-framerate', String(fps), '-start_number', '0', '-i', `${dir}/element-%04d.jpeg`, '-c:v', 'libx264', '-preset', 'slow', '-crf', '16', '-pix_fmt', 'yuv420p', '-profile:v', 'high', '-level', '4.2', '-color_primaries', 'bt709', '-color_trc', 'bt709', '-colorspace', 'bt709', '-movflags', '+faststart', silent]);
 }
 
 // 3. Громкость для соцсетей: −14 LUFS, true peak −1 dBTP (двухпроходный loudnorm)
