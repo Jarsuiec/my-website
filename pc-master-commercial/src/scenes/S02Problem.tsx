@@ -78,7 +78,8 @@ const ShotFan: React.FC<{t: number}> = ({t}) => {
       <directionalLight position={[-10, 10, 30]} intensity={1.1} color="#cfe4ff" />
       <pointLight position={[-4, 7.6, 18]} intensity={140} distance={60} color="#ff6a2a" decay={2} />
       <pointLight position={[18, -4, 8]} intensity={70} distance={60} color="#ff9a5a" decay={2} />
-      <pointLight position={[16, 3, 19]} intensity={110} distance={50} color="#fff1e4" decay={2} />
+      {/* подсветка лопастей включается, когда камера уже у вентилятора — иначе блик на крышке кулера в начале пике */}
+      <pointLight position={[16, 3, 19]} intensity={110 * ramp(t, 0.85, 1.25)} distance={50} color="#fff1e4" decay={2} />
       <Cam pos={[pos[0] + sx, pos[1] + sy, pos[2]]} target={tgt} fov={keys(t, [[0, 46], [1.0, 38], [2.1, 34]])} />
       <Rig t={t} dust={1} heat={0.35} fanSpeed={2.3} blur={0.55} wobble={1} pulses={0.7} />
       <Particles t={t} count={140} box={[[-8, -4, 1], [24, 18, 20]]} color="#ffb48a" size={0.22} drift={[-0.6, 0, 0.5]} opacity={0.35} seed={3} />
