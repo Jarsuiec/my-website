@@ -72,7 +72,7 @@ export const S06Gaming: React.FC<{dur: number}> = ({dur}) => {
   const assemble = ramp(t, ASSEMBLY.case - 0.5, ASSEMBLY.case, E.outCubic);
   const glassIn = ramp(t, ASSEMBLY.case - 0.3, ASSEMBLY.case + 0.1, E.outCubic);
   // камера: фронтальный 3/4 на сборку → облёт готового корпуса
-  const orbit = keys(t, [[0, 0.62], [ASSEMBLY.power, 0.45], [dur, -0.45]], E.inOutSine);
+  const orbit = keys(t, [[0, 0.62], [ASSEMBLY.power, 0.45], [dur, -0.12]], E.inOutSine);
   const rad = keys(t, [[0, 72], [ASSEMBLY.case - 0.4, 84], [ASSEMBLY.power, 122], [dur, 116]], E.inOutCubic);
   const elev = keys(t, [[0, 14], [dur, 6]]);
   const tgt: V3 = [keys(t, [[0, 1], [ASSEMBLY.case, 4]]), keys(t, [[0, 2], [ASSEMBLY.case, -3]]), keys(t, [[0, 4], [ASSEMBLY.case, 9]])];
@@ -95,7 +95,7 @@ export const S06Gaming: React.FC<{dur: number}> = ({dur}) => {
         <ambientLight intensity={0.06} />
         <spotLight position={[10, 70, 50]} angle={0.45} penumbra={0.8} intensity={1300} distance={220} color="#e8f4ff" />
         <directionalLight position={[30, 20, 90]} intensity={1.3} color="#dcecff" />
-        <pointLight position={[2, 0, 14]} intensity={160 * power} distance={45} color={COLORS.cyan} />
+        <pointLight position={[9, -9, 11]} intensity={90 * power} distance={45} color={COLORS.cyan} />
         <pointLight position={[-40, -10, 40]} intensity={700 * (0.4 + power)} distance={160} color={COLORS.blue} />
         <pointLight position={[50, 0, 20]} intensity={600 * (0.4 + power)} distance={160} color={COLORS.cyan} />
         <Cam pos={[pos[0] + sx, pos[1] + sy, pos[2]]} target={tgt} fov={34} roll={0} far={600} />
