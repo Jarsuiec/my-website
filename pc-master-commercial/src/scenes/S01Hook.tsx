@@ -138,7 +138,7 @@ const Subpixels: React.FC<{k: number}> = ({k}) => {
   return (
     <AbsoluteFill
       style={{
-        opacity: clamp01(k * 1.6) * 0.7,
+        opacity: clamp01(k * 1.6) * 0.45,
         mixBlendMode: 'multiply',
         backgroundImage: `linear-gradient(90deg, #ff4060 0 30%, #000 30% 34%, #40ff70 34% 64%, #000 64% 68%, #4080ff 68% 98%, #000 98%), linear-gradient(0deg, #000 0 8%, transparent 8%)`,
         backgroundSize: `${cell}px ${cell}px`,

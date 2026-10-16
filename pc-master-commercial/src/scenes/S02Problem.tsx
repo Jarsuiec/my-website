@@ -38,7 +38,7 @@ export const Rig: React.FC<{t: number; dust: number; heat: number; fanSpeed: num
       </group>
       {[6.2, 8.6].map((x, i) => (
         <group key={i} position={[x, ANCH.dimmY, 0.85]}>
-          <RamStick light={heat > 0.5 ? '#ff8a4a' : accent} lightK={heat > 0.5 ? 0.9 : 2.0} />
+          <RamStick light={heat > 0.5 || dust > 0.5 ? '#ff8a4a' : accent} lightK={heat > 0.5 || dust > 0.5 ? 0.5 : 2.0} />
         </group>
       ))}
       <group position={[ANCH.cpu[0], ANCH.cpu[1], CPU_Z + coolerLift]} rotation={[wobble * Math.sin(t * 41) * 0.004, wobble * Math.cos(t * 37) * 0.004, 0]}>
@@ -78,6 +78,7 @@ const ShotFan: React.FC<{t: number}> = ({t}) => {
       <directionalLight position={[-10, 10, 30]} intensity={1.1} color="#cfe4ff" />
       <pointLight position={[-4, 7.6, 18]} intensity={140} distance={60} color="#ff6a2a" decay={2} />
       <pointLight position={[18, -4, 8]} intensity={70} distance={60} color="#ff9a5a" decay={2} />
+      <pointLight position={[16, 3, 19]} intensity={110} distance={50} color="#fff1e4" decay={2} />
       <Cam pos={[pos[0] + sx, pos[1] + sy, pos[2]]} target={tgt} fov={keys(t, [[0, 46], [1.0, 38], [2.1, 34]])} />
       <Rig t={t} dust={1} heat={0.35} fanSpeed={2.3} blur={0.55} wobble={1} pulses={0.7} />
       <Particles t={t} count={140} box={[[-8, -4, 1], [24, 18, 20]]} color="#ffb48a" size={0.22} drift={[-0.6, 0, 0.5]} opacity={0.35} seed={3} />
@@ -118,7 +119,7 @@ const ShotHDD: React.FC<{t: number}> = ({t}) => {
     <ThreeCanvas width={W} height={H} gl={{antialias: true}} camera={{fov: 34}}>
       <color attach="background" args={[COLORS.bg]} />
       <fog attach="fog" args={[COLORS.bg, 16, 60]} />
-      <StudioEnv mood="neutral" intensity={1} />
+      <StudioEnv mood="neutral" intensity={0.45} />
       <ambientLight intensity={0.06} />
       <pointLight position={[-10, 8, 16]} intensity={70} distance={60} color="#ff8a4a" decay={2} />
       <pointLight position={[12, -8, 18]} intensity={50} distance={60} color="#9fd8ff" decay={2} />

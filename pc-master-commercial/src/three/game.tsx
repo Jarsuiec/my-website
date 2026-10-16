@@ -28,7 +28,6 @@ export const GameWorld: React.FC<{y: number}> = ({y}) => {
   const lineMat = useMemo(() => new THREE.MeshBasicMaterial({color: new THREE.Color('#ffd9a0').multiplyScalar(1.6), toneMapped: false}), []);
   const postMat = useMemo(() => new THREE.MeshBasicMaterial({color: new THREE.Color('#ff6a3b').multiplyScalar(2.2), toneMapped: false}), []);
   const postMatB = useMemo(() => new THREE.MeshBasicMaterial({color: new THREE.Color('#67E8FF').multiplyScalar(2.2), toneMapped: false}), []);
-  const sunMat = useMemo(() => new THREE.MeshBasicMaterial({color: new THREE.Color('#ff9a5c').multiplyScalar(1.15), toneMapped: false, fog: false}), []);
   const skyMat = useMemo(() => {
     const c = document.createElement('canvas');
     c.width = 4;
@@ -37,8 +36,9 @@ export const GameWorld: React.FC<{y: number}> = ({y}) => {
     const gr = g.createLinearGradient(0, 0, 0, 512);
     gr.addColorStop(0, '#05081a');
     gr.addColorStop(0.55, '#1b2350');
-    gr.addColorStop(0.82, '#a24a3c');
-    gr.addColorStop(1, '#ff9a5c');
+    gr.addColorStop(0.8, '#7a3a48');
+    gr.addColorStop(0.93, '#e0704a');
+    gr.addColorStop(1, '#ffb070');
     g.fillStyle = gr;
     g.fillRect(0, 0, 4, 512);
     const t = new THREE.CanvasTexture(c);
@@ -56,9 +56,6 @@ export const GameWorld: React.FC<{y: number}> = ({y}) => {
     <group>
       <mesh material={skyMat} position={[0, y, 0]} rotation={[Math.PI / 2, 0, 0]}>
         <sphereGeometry args={[700, 32, 16]} />
-      </mesh>
-      <mesh material={sunMat} position={[0, y + 640, 40]} rotation={[Math.PI / 2, 0, 0]}>
-        <circleGeometry args={[34, 64]} />
       </mesh>
       {[off - loop, off, off + loop].map((o) => (
         <group key={o} position={[0, o + 450, 0]}>
