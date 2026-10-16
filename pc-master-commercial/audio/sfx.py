@@ -3,7 +3,7 @@
 Моменты внутри сцен совпадают с константами в src/scenes/*.tsx (указаны в комментариях).
 """
 import numpy as np
-from engine import (SR, adsr, logo_drop, bp, buf, expdec, hp, lp, noise, note_hz, place, reverb, saw, sine, soft_clip, sweep_lp, tt)
+from engine import (SR, adsr, logo_drop, cue, bp, buf, expdec, hp, lp, noise, note_hz, place, reverb, saw, sine, soft_clip, sweep_lp, tt)
 from music import impact
 
 
@@ -192,38 +192,59 @@ def render(starts, total):
     P(zap(0.9, 0.18), lg + dl + 0.55)
     P(audio_logo(1.0), lg + logo_drop())
 
-    # --- COOLING (S04Cooling.tsx: метки 0.35/0.6/0.85/1.05; чистка с 2.0: продувка 0.05, снятие 0.55, стирание 1.0, паста 1.5, установка 2.45) ---
+    # --- COOLING (S04Cooling.tsx → COOL: диагностика 0–2.7, радиатор 2.7–5.1 (воздух с 3.95), паста 5.1–6.7, установка 6.7, посадка 7.15) ---
     c = S['cooling']
-    P(whoosh(0.6, 0.5, 400, 5000, 21), c - 0.1)
-    P(fan_noise(2.0, 22, 9, 0.6, 0.25), c)
-    n = int(1.4 * SR)
-    P(lp(sine(900, n) * (np.sin(2 * np.pi * 3 * tt(n)) > 0), 3000) * 0.04 * np.linspace(1, 0, n), c + 0.15)  # скан
-    for k, at in enumerate((0.35, 0.6, 0.85, 1.05)):
-        P(blip(1320 if k == 0 else 1760, 0.12, 0.25 if k else 0.3), c + at, 1.0, -0.3 + k * 0.2)
-    A = c + 2.0
-    P(air_blast(0.6, 0.6), A + 0.05)
-    P(whoosh(0.5, 0.4, 300, 3000, 31), A + 0.55)  # кулер вверх
-    P(bp(noise(int(0.35 * SR), 41), 800, 4000) * np.sin(np.pi * np.linspace(0, 1, int(0.35 * SR))) * 0.25, A + 1.0)  # протирка
-    P(lp(noise(int(0.3 * SR), 43), 600) * np.sin(np.pi * np.linspace(0, 1, int(0.3 * SR))) * 0.3, A + 1.5)  # паста
-    P(whoosh(0.5, 0.35, 300, 2500, 33), A + 1.95)
-    P(latch(0.9, 5), A + 2.45)
-    P(thump(0.8, 65), A + 2.45)
-    P(fan_noise(2.6, 22, 9, 0.0, 0.18), A + 2.5)  # чистый ровный звук
-    P(chime([86, 93], 0.18, 0.08, 0.6), A + 2.5)
+    P(whoosh(0.6, 0.45, 400, 5000, 21), c - 0.1)
+    n = int(1.3 * SR)
+    P(lp(sine(820 + 500 * np.linspace(0, 1, n), n), 2500) * np.sin(np.pi * np.linspace(0, 1, n)) * 0.05, c + 0.3)  # мягкий тон скана
+    for k, at in enumerate((0.8, 1.0, 1.2)):
+        P(blip(1568 + k * 120, 0.12, 0.22), c + at, 1.0, -0.3 + k * 0.2)
+    P(blip(740, 0.22, 0.3), c + 1.4)  # «перегрев» — ниже и мягче
+    P(blip(587, 0.3, 0.22), c + 1.7)
+    P(hiss(1.3, 0.22), c + 2.7)  # горячий радиатор
+    P(fan_noise(1.2, 22, 9, 0.8, 0.12), c + 2.7)
+    # чистка: мягкий воздушный звук сжатого воздуха, сопровождает насадку
+    n = int(1.05 * SR)
+    k_ = np.linspace(0, 1, n)
+    air = sweep_lp(noise(n, 61), 2500 + 4000 * (1 - k_), q=0.8) * np.clip(k_ / 0.06, 0, 1) * (1 - k_) ** 0.6
+    P(air * 0.42, c + 3.95, 1.0, 0.25)
+    P(whoosh(0.4, 0.2, 200, 1500, 63), c + 4.5)
+    # паста: салфетка, затем шприц
+    n = int(0.38 * SR)
+    P(bp(noise(n, 41), 900, 5000) * np.sin(np.pi * np.linspace(0, 1, n)) * 0.18, c + 5.28)
+    n = int(0.35 * SR)
+    P(lp(noise(n, 43), 500) * np.sin(np.pi * np.linspace(0, 1, n)) * 0.28, c + 5.9)
+    # установка кулера: опускание, точная посадка, ровная раскрутка вентилятора
+    P(whoosh(0.45, 0.3, 300, 2500, 33), c + 6.7)
+    P(latch(0.9, 5), c + 7.15)
+    P(thump(0.8, 65), c + 7.15)
+    n = int(0.9 * SR)
+    P(lp(saw(30 + 110 * np.linspace(0, 1, n) ** 0.6, n), 700) * np.sin(np.pi * np.linspace(0, 1, n) * 0.5) * 0.18, c + 7.2)
+    P(fan_noise(1.0, 22, 9, 0.0, 0.15), c + 7.25)
+    P(chime([86, 93], 0.18, 0.08, 0.6), c + 7.2)
 
-    # --- SSD (S05SSD.tsx: разбор 1.35–2.0, SWAP 2.0, интерфейс 3.9, рабочий стол +0.95) ---
+    # --- SSD (S05SSD.tsx: медленный HDD 0–1.5, разгон камеры с 1.0, SWAP = cues.ssdSwap, UI = cues.ssdUI) ---
     s = S['ssd']
-    P(hdd(2.0, 0.35, 5), s)
-    for k in range(5):
-        P(click(0.4, 3000 - k * 300, 50 + k), s + 1.4 + k * 0.12, 1.0, -0.5 + k * 0.25)
-    P(whoosh(0.7, 0.6, 500, 9000, 51, 0.8, -0.8), s + 1.35)
-    P(glitch_burst(0.15, 0.3, 21), s + 1.95)
-    P(chime([81, 86, 93, 98], 0.3, 0.06, 1.0), s + 2.0)
-    ui = s + 3.9
-    P(whoosh(0.4, 0.35, 600, 6000, 61), ui - 0.1)
+    sw = s + cue('ssdSwap')
+    ui = s + cue('ssdUI')
+    P(hdd(cue('ssdSwap'), 0.4, 5), s)
+    P(whoosh(0.55, 0.75, 300, 9000, 51, 0.6, -0.6), sw - 0.5)  # speed ramp
+    # технологический импульс превращения: восходящий «зап», чистый суб, стеклянный перезвон
+    P(zap(0.35, 0.35), sw - 0.05)
+    P(thump(1.0, 48, 0.22), sw)
+    P(chime([81, 86, 93, 98], 0.32, 0.05, 1.0), sw + 0.02)
     for k in range(6):
-        P(blip(1400 + k * 120, 0.07, 0.1), ui + 1.0 + k * 0.06, 1.0, -0.4 + k * 0.16)
-    P(chime([62, 69, 74, 78, 81], 0.4, 0.12, 1.2), ui + 0.95)  # мягкий звук запуска системы
+        P(blip(2400 + k * 160, 0.05, 0.08), sw + 0.25 + k * 0.11, 1.0, -0.5 + k * 0.2)  # импульсы по SSD
+    P(whoosh(0.3, 0.3, 600, 6000, 61), ui - 0.1)
+    for k in range(5):
+        P(click(0.25, 3200, 70 + k), ui + 0.12 + k * 0.08)  # быстрый прогресс установки
+    P(chime([62, 69, 74, 78, 81], 0.4, 0.08, 1.0), ui + 0.5)  # мягкий звук запуска системы
+    for k in range(6):
+        P(blip(1400 + k * 120, 0.06, 0.09), ui + 0.55 + k * 0.035, 1.0, -0.4 + k * 0.16)
+    for at_ in (1.15, 1.7):
+        P(click(0.55, 2400, 80), ui + at_)
+        P(blip(1760, 0.08, 0.12), ui + at_ + 0.06)  # окно открывается мгновенно
+    P(chime([86, 93], 0.2, 0.07, 0.6), ui + 2.0)
 
     # --- GAMING (S06Gaming.tsx ASSEMBLY) ---
     gm = S['gaming']

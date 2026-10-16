@@ -63,7 +63,7 @@ export const LogoLockup: React.FC<{t: number; sub?: string; scale?: number; subA
       <Wordmark k={k} />
       <div style={{marginTop: 34, display: 'flex', alignItems: 'center', gap: 22, opacity: ks}}>
         <div style={{width: 70 * ks, height: 2, background: COLORS.blue}} />
-        <div style={{fontFamily: FONT.display, fontWeight: 600, fontSize: 38, letterSpacing: `${0.28 + (1 - ks) * 0.2}em`, color: COLORS.white}}>{sub}</div>
+        <div style={{fontFamily: FONT.display, fontWeight: 700, fontSize: 42, letterSpacing: `${0.24 + (1 - ks) * 0.2}em`, color: COLORS.white, textShadow: '0 2px 16px rgba(0,0,0,0.7)'}}>{sub}</div>
         <div style={{width: 70 * ks, height: 2, background: COLORS.blue}} />
       </div>
     </div>

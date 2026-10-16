@@ -4,7 +4,7 @@
 все монтажные склейки попадают в доли. Структура строится от таймингов сцен в timeline.json.
 """
 import numpy as np
-from engine import (SR, adsr, logo_drop, bp, buf, delay, expdec, hp, lp, noise, note_hz, place, reverb, saw, sine, soft_clip, square, sweep_lp, tt)
+from engine import (SR, adsr, logo_drop, cue, bp, buf, delay, expdec, hp, lp, noise, note_hz, place, reverb, saw, sine, soft_clip, square, sweep_lp, tt)
 
 BEAT = 0.5
 
@@ -45,6 +45,16 @@ def crash(gain=1.0, sec=2.2):
     x = hp(noise(n, 21), 3500, 2) * expdec(n, 0.65)
     ring = sum(sine(f, n) for f in (3120, 4450, 5230)) * expdec(n, 0.4) * 0.05
     return (x + ring) * gain
+
+
+def clean_boom(gain=1.0, sec=2.2):
+    """Чистый басовый удар: синус с падением высоты, без шумовой грязи."""
+    n = int(sec * SR)
+    t = tt(n)
+    f = 42 + 70 * np.exp(-t / 0.09)
+    sub = np.sin(2 * np.pi * np.cumsum(f) / SR) * expdec(n, 0.6)
+    click = hp(noise(n, 5), 2500) * expdec(n, 0.003) * 0.25
+    return soft_clip(sub * 1.3 + click, 1.2) * gain
 
 
 def impact(gain=1.0, sec=2.4):
@@ -214,7 +224,7 @@ def render(starts, total):
     g_end = S['trust']
     climax = S['gaming']
     nbeats = int(round((g_end - drop) / BEAT))
-    place(FX, impact(1.3), drop)
+    place(FX, clean_boom(1.4), drop)  # мощный чистый бас на появлении PC MASTER
     place(D, crash(0.8), drop)
     for k in range(nbeats):
         t = drop + k * BEAT
@@ -249,7 +259,7 @@ def render(starts, total):
     # переходы-акценты на склейках
     for sc_id in ('cooling', 'ssd', 'gaming', 'remote'):
         place(FX, reverse_cymbal(0.5, 0.35), S[sc_id] - 0.5)
-    place(FX, impact(0.8, 1.6), S['ssd'] + 2.0)  # превращение HDD → SSD
+    place(FX, clean_boom(0.9, 1.4), S['ssd'] + cue('ssdSwap'))  # превращение HDD → SSD
     place(D, crash(0.7), climax)
     # лид-мелодия в кульминации
     phrase = P1 + [(b + 8, m, l) for b, m, l in P2]
@@ -323,6 +333,17 @@ def render(starts, total):
     fx = reverb(FX, 0.25, 2.6, 6000)
     bass = lp(B, 4000)
     mix = drums * 0.75 + bass * 0.7 + music * 0.85 + fx * 0.7
+    # «медленная система»: пока на экране старый HDD, музыка глухая; на SSD — резко раскрывается
+    a0, a1 = S['ssd'], S['ssd'] + cue('ssdSwap')
+    i0, i1 = int(a0 * SR), int(a1 * SR)
+    seg = mix[:, i0:i1]
+    nseg = seg.shape[1]
+    fc = 2600 * np.exp(-np.linspace(0, 1, nseg) * 1.8) + 450
+    dull = np.vstack([sweep_lp(seg[0], fc, q=1.2), sweep_lp(seg[1], fc, q=1.2)])
+    xf = int(0.08 * SR)
+    w = np.ones(nseg)
+    w[:xf] = np.linspace(0, 1, xf)
+    mix[:, i0:i1] = seg * (1 - w) + dull * w * 1.15
     mix = hp(mix, 28)
     # абсолютная тишина: после зависания игры и перед появлением логотипа (хвосты ревербера тоже глушим)
     def gate(a, b):

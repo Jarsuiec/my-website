@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import {brushedTexture, dustTexture, memo, pcbTextures, radialBrushedTexture} from './textures';
+import {brushedTexture, dustTexture, ihsTexture, memo, pcbTextures, radialBrushedTexture} from './textures';
 
 const std = (key: string, p: THREE.MeshStandardMaterialParameters) => memo('mat:' + key, () => new THREE.MeshStandardMaterial(p));
 const phys = (key: string, p: THREE.MeshPhysicalMaterialParameters) => memo('mat:' + key, () => new THREE.MeshPhysicalMaterial(p));
@@ -39,9 +39,10 @@ export const M = {
       envMapIntensity: 1.6,
       depthWrite: false,
     }),
+  ihs: () => phys('ihs', {map: ihsTexture(), metalness: 0.6, roughness: 0.42, roughnessMap: brushedTexture()}),
   // Старая высохшая термопаста и свежая
   oldPaste: () => std('oldPaste', {color: '#7d7b77', roughness: 0.9, metalness: 0.1}),
-  newPaste: () => std('newPaste', {color: '#c4c8cc', roughness: 0.35, metalness: 0.25}),
+  newPaste: () => phys('newPaste', {color: '#b7bcc2', roughness: 0.38, metalness: 0.3, clearcoat: 0.5, clearcoatRoughness: 0.3}),
   dust: () =>
     std('dust', {
       color: '#b3aa9f',

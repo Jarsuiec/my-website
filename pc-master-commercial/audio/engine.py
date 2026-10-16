@@ -23,6 +23,11 @@ def load_timeline():
     return tl, starts, acc
 
 
+def cue(name, default=0.0):
+    tl, _, _ = load_timeline()
+    return tl.get('cues', {}).get(name, default)
+
+
 def logo_drop():
     tl, _, _ = load_timeline()
     return tl.get('cues', {}).get('logoDrop', 1.5)

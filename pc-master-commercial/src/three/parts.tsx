@@ -3,6 +3,26 @@ import * as THREE from 'three';
 import {M, glow} from './materials';
 import {bladeGeometry, fanFrameGeometry, ringGeometry, roundedBox} from './geometry';
 import {BOARD_H, BOARD_W, chipTexture, dustTexture, hubTexture, memo, rng, ssdLabelTexture} from './textures';
+
+// «Горошина» термопасты: неровная глянцевая поверхность и хвостик от шприца.
+const pasteBlob = () =>
+  memo('pasteBlob', () => {
+    const g = new THREE.SphereGeometry(1, 64, 32, 0, Math.PI * 2, 0, Math.PI / 2);
+    const p = g.attributes.position as THREE.BufferAttribute;
+    for (let i = 0; i < p.count; i++) {
+      const x = p.getX(i);
+      const y = p.getY(i);
+      const z = p.getZ(i);
+      const a = Math.atan2(z, x);
+      const h = y; // 0 у основания, 1 на макушке
+      const bump = 1 + 0.025 * Math.sin(a * 5 + h * 7) + 0.012 * Math.sin(a * 11 - h * 13) + 0.008 * Math.sin(h * 23 + a * 3);
+      const tail = 1 + 0.55 * Math.pow(Math.max(0, h - 0.82) / 0.18, 2);
+      p.setXYZ(i, x * bump * (1 - 0.25 * Math.pow(h, 3)), y * tail, z * bump * (1 - 0.25 * Math.pow(h, 3)));
+    }
+    g.rotateX(Math.PI / 2);
+    g.computeVertexNormals();
+    return g;
+  });
 import type {V3} from './core';
 
 const Box: React.FC<{s: V3; p?: V3; r?: V3; m: THREE.Material; rad?: number}> = ({s, p = [0, 0, 0], r = [0, 0, 0], m, rad}) => (
@@ -317,13 +337,15 @@ export const CPU: React.FC<{paste?: 'none' | 'old' | 'clean' | 'new'; pasteAmoun
     <group>
       <Box s={[4.0, 4.0, 0.12]} p={[0, 0, 0.06]} m={M.pcbPlain()} />
       <mesh position={[0, 0, 0.12 + 0.17]} geometry={roundedBox(3.5, 3.5, 0.34, 0.12, 0.04)} material={M.nickel()} />
+      {/* верх крышки с гравировкой */}
+      <mesh position={[0, 0, 0.461]} material={M.ihs()}>
+        <planeGeometry args={[3.36, 3.36]} />
+      </mesh>
       {paste === 'old' && wipe < 1 && (
-        <mesh geometry={oldGeo} material={M.oldPaste()} position={[0, 0, 0.465]} scale={[1 - wipe * 0.0, 1 - wipe, 1]} />
+        <mesh geometry={oldGeo} material={M.oldPaste()} position={[(wipe * 1.6) / 2, 0, 0.465]} scale={[1 - wipe, 1, 1]} />
       )}
       {paste === 'new' && pasteAmount > 0 && (
-        <mesh position={[0, 0, 0.46]} scale={[1, 1, 0.55]} material={M.newPaste()}>
-          <sphereGeometry args={[0.42 * Math.cbrt(pasteAmount), 32, 16, 0, Math.PI * 2, 0, Math.PI / 2]} />
-        </mesh>
+        <mesh position={[0, 0, 0.46]} scale={[0.46 * Math.cbrt(pasteAmount), 0.46 * Math.cbrt(pasteAmount), 0.3 * Math.cbrt(pasteAmount)]} geometry={pasteBlob()} material={M.newPaste()} />
       )}
     </group>
   );

@@ -66,18 +66,18 @@ export const SubtitleBox: React.FC<{text: string; t: number; start: number; end:
   const k = clamp01((t - start) / 0.12);
   const ko = clamp01((end - t) / 0.1);
   return (
-    <div style={{position: 'absolute', left: 140, right: 140, top: 1372, display: 'flex', justifyContent: 'center', opacity: Math.min(k, ko)}}>
+    <div style={{position: 'absolute', left: 110, right: 110, top: 1350, display: 'flex', justifyContent: 'center', opacity: Math.min(k, ko)}}>
       <div
         style={{
           fontFamily: FONT.text,
           fontWeight: 600,
-          fontSize: 50,
-          lineHeight: 1.22,
+          fontSize: 54,
+          lineHeight: 1.2,
           color: COLORS.white,
           textAlign: 'center',
-          padding: '12px 26px 14px',
-          borderRadius: 18,
-          background: 'rgba(4,8,14,0.55)',
+          padding: '12px 28px 15px',
+          borderRadius: 20,
+          background: 'rgba(4,8,14,0.66)',
           boxShadow: '0 10px 40px rgba(0,0,0,0.35)',
           transform: `translateY(${(1 - k) * 10}px)`,
           textShadow: '0 2px 10px rgba(0,0,0,0.6)',

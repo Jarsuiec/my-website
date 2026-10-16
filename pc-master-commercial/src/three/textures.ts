@@ -309,6 +309,42 @@ export const dustTexture = () =>
     return toTex(c, false, true);
   });
 
+// Плотный слой пыли (войлок на входной стороне радиатора).
+export const dustDenseTexture = () =>
+  memo('dustDense', () => {
+    const c = canvas(512, 512);
+    const g = c.getContext('2d')!;
+    const r = rng(29);
+    g.fillStyle = 'rgb(150,150,150)';
+    g.fillRect(0, 0, 512, 512);
+    for (let i = 0; i < 2600; i++) {
+      const x = r() * 512;
+      const y = r() * 512;
+      const rad = 3 + r() * 18;
+      const v = r() < 0.5 ? 255 : 40;
+      const grad = g.createRadialGradient(x, y, 0, x, y, rad);
+      grad.addColorStop(0, `rgba(${v},${v},${v},${0.18 + r() * 0.25})`);
+      grad.addColorStop(1, `rgba(${v},${v},${v},0)`);
+      g.fillStyle = grad;
+      g.fillRect(x - rad, y - rad, rad * 2, rad * 2);
+    }
+    g.strokeStyle = 'rgba(255,255,255,0.5)';
+    for (let i = 0; i < 500; i++) {
+      g.lineWidth = 0.6 + r() * 1.4;
+      g.beginPath();
+      let x = r() * 512;
+      let y = r() * 512;
+      g.moveTo(x, y);
+      for (let s = 0; s < 6; s++) {
+        x += (r() - 0.5) * 26;
+        y += (r() - 0.5) * 26;
+        g.lineTo(x, y);
+      }
+      g.stroke();
+    }
+    return toTex(c, false, true);
+  });
+
 // Наклейка на M.2 SSD — без чужих брендов, только формат.
 export const ssdLabelTexture = () =>
   memo('ssdLabel', () => {
@@ -384,6 +420,41 @@ export const hubTexture = () =>
     g.fillText('PC', 256, 245);
     g.font = '700 46px "Inter Display", sans-serif';
     g.fillText('MASTER', 256, 305);
+    return toTex(c);
+  });
+
+// Крышка процессора: светлый никель с лазерной гравировкой (нейтральные обозначения, без брендов).
+export const ihsTexture = () =>
+  memo('ihs', () => {
+    const c = canvas(1024, 1024);
+    const g = c.getContext('2d')!;
+    const r = rng(41);
+    g.fillStyle = '#dfe2e6';
+    g.fillRect(0, 0, 1024, 1024);
+    for (let i = 0; i < 1800; i++) {
+      const y = r() * 1024;
+      const v = Math.floor(200 + r() * 40);
+      g.strokeStyle = `rgba(${v},${v},${v + 4},${0.25 + r() * 0.3})`;
+      g.lineWidth = 0.6 + r();
+      g.beginPath();
+      g.moveTo(0, y);
+      g.lineTo(1024, y + (r() - 0.5) * 3);
+      g.stroke();
+    }
+    g.fillStyle = 'rgba(70,74,80,0.55)';
+    g.font = '600 64px "JetBrains Mono", monospace';
+    g.fillText('PCM-8C16T', 120, 260);
+    g.font = '500 44px "JetBrains Mono", monospace';
+    g.fillText('X3-2611  4.6GHz', 120, 340);
+    g.fillText('8A20F17  SAMPLE', 120, 410);
+    g.strokeStyle = 'rgba(70,74,80,0.45)';
+    g.lineWidth = 6;
+    g.beginPath();
+    g.moveTo(120, 820);
+    g.lineTo(200, 900);
+    g.lineTo(120, 900);
+    g.closePath();
+    g.stroke();
     return toTex(c);
   });
 

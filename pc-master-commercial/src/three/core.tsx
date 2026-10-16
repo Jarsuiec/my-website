@@ -6,24 +6,27 @@ import {RenderPass} from 'three/examples/jsm/postprocessing/RenderPass.js';
 import {UnrealBloomPass} from 'three/examples/jsm/postprocessing/UnrealBloomPass.js';
 import {BokehPass} from 'three/examples/jsm/postprocessing/BokehPass.js';
 import {OutputPass} from 'three/examples/jsm/postprocessing/OutputPass.js';
+import {ShaderPass} from 'three/examples/jsm/postprocessing/ShaderPass.js';
 import {boardTraces, BOARD_W, BOARD_H, softDot, rng} from './textures';
 
 export type V3 = [number, number, number];
 
 // Камера задаётся покадрово: позиция, точка взгляда, фокусное, крен.
-export const Cam: React.FC<{pos: V3; target: V3; fov?: number; roll?: number; near?: number; far?: number}> = ({
+export const Cam: React.FC<{pos: V3; target: V3; fov?: number; roll?: number; near?: number; far?: number; up?: V3}> = ({
   pos,
   target,
   fov = 35,
   roll = 0,
   near = 0.1,
   far = 400,
+  up,
 }) => {
   const {camera} = useThree();
   useLayoutEffect(() => {
     const cam = camera as THREE.PerspectiveCamera;
     cam.position.set(...pos);
-    cam.up.set(Math.sin(roll), Math.cos(roll), 0);
+    if (up) cam.up.set(...up);
+    else cam.up.set(Math.sin(roll), Math.cos(roll), 0);
     cam.lookAt(...target);
     cam.fov = fov;
     cam.near = near;
@@ -35,7 +38,7 @@ export const Cam: React.FC<{pos: V3; target: V3; fov?: number; roll?: number; ne
 
 // Студийное окружение для отражений: тёмная комната с софтбоксами.
 // mood: cold — голубые полосы света, hot — оранжевые (перегрев), neutral — белые.
-export type Mood = 'cold' | 'hot' | 'neutral';
+export type Mood = 'cold' | 'hot' | 'neutral' | 'studio';
 export const StudioEnv: React.FC<{mood?: Mood; intensity?: number}> = ({mood = 'cold', intensity = 1}) => {
   const {gl, scene} = useThree();
   const tex = useMemo(() => {
@@ -52,8 +55,9 @@ export const StudioEnv: React.FC<{mood?: Mood; intensity?: number}> = ({mood = '
     };
     // Мир сцены — Z вверх (плата лежит в плоскости XY), поэтому софтбоксы расставлены относительно +Z.
     const key = mood === 'hot' ? '#ffd2b0' : mood === 'cold' ? '#e6f6ff' : '#ffffff';
-    const rim = mood === 'hot' ? '#ff6a2a' : '#21bfff';
-    const rim2 = mood === 'hot' ? '#ffb070' : '#67e8ff';
+    // studio — нейтральная предметная съёмка: без цветных полос, металл остаётся серебристым
+    const rim = mood === 'hot' ? '#ff6a2a' : mood === 'studio' ? '#d9dee6' : '#21bfff';
+    const rim2 = mood === 'hot' ? '#ffb070' : mood === 'studio' ? '#f2f2f2' : '#67e8ff';
     panel(9, 4, key, 0.85, [0, 0, 10]); // верхний софтбокс
     panel(16, 1.6, '#ffffff', 1.3, [0, -10, 5]); // полоса спереди-сверху — блики на горизонтальном металле
     panel(16, 1.6, key, 0.9, [0, 10, 5]);
@@ -74,7 +78,26 @@ export const StudioEnv: React.FC<{mood?: Mood; intensity?: number}> = ({mood = '
   return null;
 };
 
-// Постобработка: bloom для свечения и, при необходимости, глубина резкости.
+// Радиальное размытие движения (zoom blur) для резких наездов камеры и speed ramp.
+const ZoomBlurShader = {
+  uniforms: {tDiffuse: {value: null}, strength: {value: 0}, center: {value: new THREE.Vector2(0.5, 0.5)}},
+  vertexShader: 'varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }',
+  fragmentShader: `
+    uniform sampler2D tDiffuse; uniform float strength; uniform vec2 center; varying vec2 vUv;
+    void main(){
+      vec2 dir = vUv - center;
+      vec4 acc = vec4(0.0); float tot = 0.0;
+      for (int i = 0; i < 20; i++) {
+        float t = float(i) / 19.0;
+        float w = 1.0 - t * 0.6;
+        acc += texture2D(tDiffuse, vUv - dir * strength * t) * w;
+        tot += w;
+      }
+      gl_FragColor = acc / tot;
+    }`,
+};
+
+// Постобработка: bloom для свечения и, при необходимости, глубина резкости и zoom blur.
 export const Post: React.FC<{
   bloom?: number;
   radius?: number;
@@ -82,7 +105,9 @@ export const Post: React.FC<{
   focus?: number; // расстояние фокуса в см (0 = без DOF)
   aperture?: number;
   maxblur?: number;
-}> = ({bloom = 0.9, radius = 0.55, threshold = 0.62, focus = 0, aperture = 0.0025, maxblur = 0.012}) => {
+  zoom?: number; // сила радиального размытия 0..~0.25
+  zoomCenter?: [number, number];
+}> = ({bloom = 0.9, radius = 0.55, threshold = 0.62, focus = 0, aperture = 0.0025, maxblur = 0.012, zoom = -1, zoomCenter = [0.5, 0.5]}) => {
   const {gl, scene, camera, size} = useThree();
   const composer = useMemo(() => {
     const c = new EffectComposer(gl);
@@ -93,10 +118,11 @@ export const Post: React.FC<{
     }
     const bp = new UnrealBloomPass(new THREE.Vector2(size.width / 2, size.height / 2), bloom, radius, threshold);
     c.addPass(bp);
+    if (zoom >= 0) c.addPass(new ShaderPass(ZoomBlurShader));
     c.addPass(new OutputPass());
     return c;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [gl, scene, camera, focus > 0]);
+  }, [gl, scene, camera, focus > 0, zoom >= 0]);
   useLayoutEffect(() => {
     composer.setSize(size.width, size.height);
     composer.setPixelRatio(1);
@@ -107,6 +133,12 @@ export const Post: React.FC<{
         p.strength = bloom;
         p.radius = radius;
         p.threshold = threshold;
+      }
+      if (p instanceof ShaderPass && (p.uniforms as Record<string, {value: unknown}>).strength) {
+        const u = p.uniforms as Record<string, {value: unknown}>;
+        u.strength.value = Math.max(0, zoom);
+        (u.center.value as THREE.Vector2).set(zoomCenter[0], zoomCenter[1]);
+        p.enabled = zoom > 0.002;
       }
       if (p instanceof BokehPass) {
         const u = (p as unknown as {uniforms: Record<string, {value: number}>}).uniforms;

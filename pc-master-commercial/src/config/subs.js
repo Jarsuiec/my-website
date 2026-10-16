@@ -1,6 +1,6 @@
 // Общая логика субтитров: используется в видео (overlays.tsx) и в генераторе SRT (scripts/subtitles.mjs).
 // Фраза делится на куски ≤ 2 строк; тайминг — по словам из ElevenLabs (если есть), иначе пропорционально символам.
-export const MAX_CHARS = 34;
+export const MAX_CHARS = 32;
 
 export const chunkLine = (text) => {
   const sentences = (text.match(/[^.?!]+[.?!]?/g) || [text]).map((s) => s.trim()).filter(Boolean);

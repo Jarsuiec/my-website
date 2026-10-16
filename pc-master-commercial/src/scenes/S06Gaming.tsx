@@ -106,7 +106,7 @@ export const S06Gaming: React.FC<{dur: number}> = ({dur}) => {
       <AbsoluteFill style={{background: COLORS.cyan, opacity: flash * 0.22, mixBlendMode: 'screen'}} />
       <AbsoluteFill style={{background: COLORS.bg, opacity: 1 - ramp(t, 0, 0.3)}} />
       <ImpactTitle text={'ТВОЙ\nИГРОВОЙ ПК'} t={t} at={0.25} out={dur - 0.3} y={240} size={122} glow={COLORS.blue} exit="blur" />
-      <RevealTitle text={TEXT.gamingSub} t={t} at={2.2} out={dur - 0.3} y={1210} size={58} color={COLORS.lime} weight={800} tracking={0.18} glow={COLORS.lime} />
+      <RevealTitle text={TEXT.gamingSub} t={t} at={1.9} out={dur - 0.3} y={1205} size={60} color={COLORS.lime} weight={800} tracking={0.18} glow={COLORS.lime} />
     </AbsoluteFill>
   );
 };

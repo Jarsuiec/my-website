@@ -32,7 +32,8 @@ export const retime = (tl, durs, {GAP = 0.25, SPILL = 0.5} = {}) => {
   const l4 = tl.voice.find((v) => v.id === 'L04');
   tl.cues = tl.cues || {logoDrop: 1.5};
   if (l3 && durs.L03) {
-    const need = Math.ceil((l3.at + durs.L03 + 0.1) / 0.5) * 0.5;
+    // удар может прийтись ровно на конец фразы — «…терпеть.» БУМ
+    const need = Math.ceil((l3.at + durs.L03 - 0.03) / 0.5) * 0.5;
     if (need > tl.cues.logoDrop) {
       changes.push(`удар логотипа: ${tl.cues.logoDrop} → ${need} с от начала сцены (L03 длиннее паузы)`);
       tl.cues.logoDrop = need;
@@ -46,8 +47,8 @@ export const retime = (tl, durs, {GAP = 0.25, SPILL = 0.5} = {}) => {
     for (const v of tl.voice) {
       const d = durs[v.id] ?? v.est;
       let start = st[v.scene] + v.at;
-      if (start < prevEnd + GAP) {
-        const nat = +(prevEnd + GAP - st[v.scene]).toFixed(2);
+      if (start < prevEnd + GAP - 1e-6) {
+        const nat = Math.ceil((prevEnd + GAP - st[v.scene]) * 100 - 1e-6) / 100;
         changes.push(`${v.id}: сдвиг начала ${v.at} → ${nat} с`);
         v.at = nat;
         start = st[v.scene] + v.at;

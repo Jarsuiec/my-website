@@ -1,17 +1,18 @@
 {
-  "_comment": "15-секундная версия из основного фильма. src — откуда (сек основного ролика), dst — куда, len — длительность. Сдвиг src−dst кратен 0.5 с, чтобы ритм музыки не сбивался на склейках. voice — какие реплики и куда ставить.",
+  "_comment": "15-секундная версия из основного фильма. scene + from — откуда (сек от начала сцены), len — длительность, dst — куда. Начала сцен и from/dst кратны 0.5 с, поэтому ритм музыки не сбивается на склейках. voice — какие реплики и куда ставить.",
   "duration": 15,
   "segments": [
-    { "name": "hook",    "src": 0.0,  "len": 3.0, "dst": 0.0 },
-    { "name": "logo",    "src": 11.0, "len": 2.0, "dst": 3.0 },
-    { "name": "cooling", "src": 18.5, "len": 1.5, "dst": 5.0 },
-    { "name": "ssd",     "src": 23.0, "len": 1.5, "dst": 6.5 },
-    { "name": "gaming",  "src": 30.5, "len": 2.0, "dst": 8.0 },
-    { "name": "cta",     "src": 45.5, "len": 5.0, "dst": 10.0 }
+    { "name": "hook",     "scene": "hook",    "from": 0.0, "len": 3.0, "dst": 0.0 },
+    { "name": "logo",     "scene": "logo",    "from": 1.0, "len": 2.0, "dst": 3.0 },
+    { "name": "cleaning", "scene": "cooling", "from": 4.0, "len": 1.0, "dst": 5.0 },
+    { "name": "install",  "scene": "cooling", "from": 7.0, "len": 1.0, "dst": 6.0 },
+    { "name": "ssd",      "scene": "ssd",     "from": 1.0, "len": 1.5, "dst": 7.0 },
+    { "name": "gaming",   "scene": "gaming",  "from": 3.0, "len": 1.5, "dst": 8.5 },
+    { "name": "cta",      "scene": "cta",     "from": 0.0, "len": 5.0, "dst": 10.0 }
   ],
   "voice": [
-    { "id": "L04", "at": 3.65, "subs": true },
-    { "id": "L11", "at": 7.1,  "subs": true },
-    { "id": "L12", "at": 10.3, "subs": false }
+    { "id": "L04", "at": 3.62, "subs": true },
+    { "id": "L11", "at": 7.6,  "subs": true },
+    { "id": "L12", "at": 10.25, "subs": false }
   ]
 }

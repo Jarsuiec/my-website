@@ -11,7 +11,7 @@ import {FONT} from '../components/fonts';
 
 // Финальная карточка-постер. Контакт стоит неподвижно ≥ 4 секунд.
 const PaperPlane = () => (
-  <svg width="74" height="74" viewBox="0 0 48 48" fill="none">
+  <svg width="88" height="88" viewBox="0 0 48 48" fill="none">
     <circle cx="24" cy="24" r="24" fill="#F3F8FF" />
     <path d="M11 23.5 35 14l-4.2 20.5-7.3-5.6-3.7 3.6.5-5.5 9.3-8.4-11.6 7.1L11 23.5Z" fill={COLORS.blue} />
   </svg>
@@ -47,17 +47,18 @@ export const S10CTA: React.FC<{dur: number}> = ({dur}) => {
       {/* голубая контурная рамка постера */}
       <div style={{position: 'absolute', left: 48, right: 48, top: 200, bottom: 420, borderRadius: 44, border: `2px solid rgba(103,232,255,${0.35 * a(0.1, 0.8)})`, boxShadow: `0 0 60px rgba(33,191,255,${0.25 * a(0.1, 0.8)}), inset 0 0 60px rgba(33,191,255,${0.1 * a(0.1, 0.8)})`}} />
       <AbsoluteFill style={{opacity: 1 - fade}}>
-        <div style={{position: 'absolute', left: 0, right: 0, top: 270, display: 'flex', flexDirection: 'column', alignItems: 'center', opacity: a(0), transform: `translateY(${(1 - a(0)) * 30}px)`}}>
-          <Emblem size={150} draw={1} glow={0.8} />
-          <div style={{marginTop: 26}}>
-            <Wordmark size={124} k={1} />
+        <div style={{position: 'absolute', left: 0, right: 0, top: 255, display: 'flex', flexDirection: 'column', alignItems: 'center', opacity: a(0), transform: `translateY(${(1 - a(0)) * 30}px)`}}>
+          <Emblem size={140} draw={1} glow={0.8} />
+          <div style={{marginTop: 22}}>
+            <Wordmark size={126} k={1} />
           </div>
         </div>
-        <div style={{position: 'absolute', left: 60, right: 60, top: 690, textAlign: 'center', fontFamily: FONT.display, fontWeight: 700, fontSize: 40, lineHeight: 1.45, letterSpacing: '0.08em', color: COLORS.white, opacity: a(0.15)}}>
+        <div style={{position: 'absolute', left: 60, right: 60, top: 640, textAlign: 'center', fontFamily: FONT.display, fontWeight: 800, fontSize: 46, lineHeight: 1.38, letterSpacing: '0.06em', color: COLORS.white, opacity: a(0.15), textShadow: '0 2px 16px rgba(0,0,0,0.7)'}}>
           <div>{BRAND.services.slice(0, 3).join('  •  ')}</div>
           <div>{BRAND.services.slice(3).join('  •  ')}</div>
         </div>
-        <div style={{position: 'absolute', left: 0, right: 0, top: 838, textAlign: 'center', fontFamily: FONT.display, fontWeight: 600, fontSize: 36, letterSpacing: '0.32em', color: COLORS.cyan, opacity: a(0.25)}}>{BRAND.geo.join('  •  ')}</div>
+        <div style={{position: 'absolute', left: 0, right: 0, top: 790, textAlign: 'center', fontFamily: FONT.display, fontWeight: 700, fontSize: 42, letterSpacing: '0.26em', color: COLORS.cyan, opacity: a(0.25), textShadow: '0 2px 16px rgba(0,0,0,0.7)'}}>{BRAND.geo.join('  •  ')}</div>
+        <div style={{position: 'absolute', left: 0, right: 0, top: 892, textAlign: 'center', fontFamily: FONT.mono, fontWeight: 700, fontSize: 36, letterSpacing: '0.32em', color: 'rgba(243,248,255,0.85)', opacity: a(0.35)}}>TELEGRAM</div>
         {/* плашка Telegram */}
         <div
           style={{
@@ -65,8 +66,8 @@ export const S10CTA: React.FC<{dur: number}> = ({dur}) => {
             left: 130,
             right: 130,
             top: 950,
-            height: 176,
-            borderRadius: 88,
+            height: 196,
+            borderRadius: 98,
             background: `linear-gradient(135deg, ${COLORS.blue} 0%, #1590d6 100%)`,
             boxShadow: `0 20px 70px rgba(33,191,255,0.45), inset 0 2px 0 rgba(255,255,255,0.35)`,
             display: 'flex',
@@ -78,10 +79,9 @@ export const S10CTA: React.FC<{dur: number}> = ({dur}) => {
           }}
         >
           <PaperPlane />
-          <div style={{fontFamily: FONT.display, fontWeight: 900, fontSize: 100, color: '#fff', letterSpacing: '0.01em', lineHeight: 1}}>{BRAND.telegram}</div>
+          <div style={{fontFamily: FONT.display, fontWeight: 900, fontSize: 118, color: '#fff', letterSpacing: '0.005em', lineHeight: 1, textShadow: '0 3px 14px rgba(0,40,80,0.45)'}}>{BRAND.telegram}</div>
         </div>
-        <div style={{position: 'absolute', left: 0, right: 0, top: 1172, textAlign: 'center', fontFamily: FONT.mono, fontWeight: 700, fontSize: 28, letterSpacing: '0.3em', color: 'rgba(243,248,255,0.6)', opacity: a(0.45)}}>TELEGRAM</div>
-        <div style={{position: 'absolute', left: 40, right: 40, top: 1236, textAlign: 'center', fontFamily: FONT.display, fontWeight: 900, fontSize: 60, letterSpacing: '0.01em', color: COLORS.white, opacity: a(0.6), textShadow: `0 0 30px ${COLORS.blue}55`}}>
+        <div style={{position: 'absolute', left: 40, right: 40, top: 1200, textAlign: 'center', fontFamily: FONT.display, fontWeight: 900, fontSize: 56, letterSpacing: '0', color: COLORS.white, opacity: a(0.6), textShadow: `0 0 30px ${COLORS.blue}55`}}>
           {BRAND.ctaLine}
         </div>
       </AbsoluteFill>

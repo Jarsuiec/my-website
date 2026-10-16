@@ -198,8 +198,8 @@ export const S07Remote: React.FC<{dur: number}> = ({dur}) => {
     [
       [0, [-68, 150, 12]],
       [0.9, [0, 8, 9]],
-      [2.0, [0, 12.6, 10.6]],
-      [dur, [0, 12.8, 10.8]],
+      [2.0, [0, 12.6, 12.0]],
+      [dur, [0, 12.8, 12.2]],
     ],
     E.inOutCubic
   );
@@ -223,7 +223,7 @@ export const S07Remote: React.FC<{dur: number}> = ({dur}) => {
       </ThreeCanvas>
       <AbsoluteFill style={{background: COLORS.bg, opacity: 1 - ramp(t, 0, 0.25)}} />
       <ImpactTitle text={'УДАЛЁННАЯ\nПОМОЩЬ'} t={t} at={0.3} out={dur - 0.3} y={230} size={118} glow={COLORS.cyan} exit="blur" />
-      <RevealTitle text={TEXT.remoteSub} t={t} at={REMOTE.click} out={dur - 0.3} y={500} size={50} color={COLORS.lime} weight={800} tracking={0.16} glow={COLORS.lime} font={FONT.display} />
+      <RevealTitle text={TEXT.remoteSub} t={t} at={REMOTE.click} out={dur - 0.3} y={498} size={54} color={COLORS.lime} weight={800} tracking={0.16} glow={COLORS.lime} font={FONT.display} />
     </AbsoluteFill>
   );
 };

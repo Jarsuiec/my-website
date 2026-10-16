@@ -6,7 +6,7 @@
 // Речь не ускоряется: под фактическую длину фраз подгоняется тайминг сцен.
 import fs from 'node:fs';
 import path from 'node:path';
-import {execFileSync, spawnSync} from 'node:child_process';
+import {execFileSync} from 'node:child_process';
 import {GEN_PATH, VOICE_DIR, duration, readTL, retime, saveTL, writeGen} from './voice-lib.mjs';
 
 const src = process.argv[2];
@@ -33,36 +33,17 @@ if (fs.statSync(src).isDirectory()) {
     lines[v.id] = {dur: durs[v.id], file: `${v.id}.mp3`};
   }
 } else {
-  // ищем паузы между фразами и берём N−1 самых длинных как точки разреза
-  const det = spawnSync('ffmpeg', ['-hide_banner', '-i', src, '-af', 'silencedetect=noise=-38dB:d=0.15', '-f', 'null', '-'], {encoding: 'utf8'});
-  const text = det.stderr || '';
-  const total = duration(src);
-  const sil = [];
-  let s0 = null;
-  for (const line of text.split('\n')) {
-    const a = line.match(/silence_start: ([\d.]+)/);
-    const b = line.match(/silence_end: ([\d.]+)/);
-    if (a) s0 = parseFloat(a[1]);
-    if (b && s0 !== null) {
-      sil.push({a: s0, b: parseFloat(b[1])});
-      s0 = null;
-    }
+  // Один файл: выравниваем по тексту сценария (audio/align_voice.py) — границы каждой фразы и тайминг слов.
+  const res = JSON.parse(execFileSync('python3', ['audio/align_voice.py', src], {encoding: 'utf8', maxBuffer: 1 << 26}));
+  console.log(`Озвучка: ${res.duration.toFixed(2)} с, фрагментов речи: ${res.segments}`);
+  for (const l of res.lines) {
+    const out = path.join(VOICE_DIR, `${l.id}.mp3`);
+    cut(src, l.start, l.end, out);
+    durs[l.id] = duration(out);
+    lines[l.id] = {dur: durs[l.id], file: `${l.id}.mp3`, words: l.words};
+    const v = tl.voice.find((x) => x.id === l.id);
+    console.log(`${l.id}: ${l.start.toFixed(2)}–${l.end.toFixed(2)} (${durs[l.id].toFixed(2)} с) «${v.text}»`);
   }
-  const inner = sil.filter((x) => x.a > 0.05 && x.b < total - 0.05);
-  if (inner.length < N - 1) throw new Error(`Найдено пауз: ${inner.length}, нужно ${N - 1}. Сделай паузы между фразами чуть длиннее или импортируй папку с L01…L12.`);
-  const splits = [...inner].sort((x, y) => y.b - y.a - (x.b - x.a)).slice(0, N - 1).sort((x, y) => x.a - y.a);
-  const lead = sil.find((x) => x.a <= 0.05);
-  const tail = sil.find((x) => x.b >= total - 0.05);
-  const bounds = [lead ? lead.b : 0, ...splits.flatMap((x) => [x.a, x.b]), tail ? tail.a : total];
-  tl.voice.forEach((v, i) => {
-    const a = Math.max(0, bounds[i * 2] - 0.03);
-    const b = Math.min(total, bounds[i * 2 + 1] + 0.06);
-    const out = path.join(VOICE_DIR, `${v.id}.mp3`);
-    cut(src, a, b, out);
-    durs[v.id] = duration(out);
-    lines[v.id] = {dur: durs[v.id], file: `${v.id}.mp3`};
-    console.log(`${v.id}: ${durs[v.id].toFixed(2)} с — «${v.text}»`);
-  });
 }
 
 const changes = retime(tl, durs);

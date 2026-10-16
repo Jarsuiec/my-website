@@ -7,3 +7,7 @@ out/*
 .env
 src/config/timeline.json.bak
 __pycache__/
+!out/PC_MASTER_CINEMATIC_2026_V2.mp4
+!out/PC_MASTER_15s_2026_V2.mp4
+!out/PC_MASTER_CINEMATIC_2026_V2.srt
+!out/PC_MASTER_CINEMATIC_2026_V2.vtt

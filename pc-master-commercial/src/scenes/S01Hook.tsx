@@ -186,7 +186,7 @@ export const S01Hook: React.FC<{dur: number}> = ({dur}) => {
         <ImpactTitle text={TEXT.hook.replace(' ТОРМОЗИТ', '\nТОРМОЗИТ')} t={t} at={titleAt} out={2.85} y={540} size={136} glow={COLORS.heat} rgbSplit exit="blur" />
         {/* «сигнал» — тонкая подпись */}
         {t > titleAt + 0.4 && t < 2.85 && (
-          <div style={{position: 'absolute', left: 0, right: 0, top: 860, textAlign: 'center', fontFamily: FONT.mono, fontWeight: 700, fontSize: 38, letterSpacing: '0.3em', color: COLORS.heat, textShadow: '0 0 20px rgba(255,118,59,0.6)', opacity: (1 - ramp(t, 2.6, 2.85)) * ramp(t, titleAt + 0.4, titleAt + 0.6)}}>
+          <div style={{position: 'absolute', left: 0, right: 0, top: 860, textAlign: 'center', fontFamily: FONT.mono, fontWeight: 700, fontSize: 44, letterSpacing: '0.28em', color: COLORS.heat, textShadow: '0 0 20px rgba(255,118,59,0.6)', opacity: (1 - ramp(t, 2.6, 2.85)) * ramp(t, titleAt + 0.4, titleAt + 0.6)}}>
             ● НЕ ОТВЕЧАЕТ
           </div>
         )}

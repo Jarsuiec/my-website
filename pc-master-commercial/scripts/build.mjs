@@ -8,7 +8,8 @@ import fs from 'node:fs';
 const cut15 = process.argv.includes('--cut15');
 const audioOnly = process.argv.includes('--audio-only');
 const id = cut15 ? 'PCMaster15' : 'PCMaster';
-const name = cut15 ? 'PC_MASTER_15s_2026' : 'PC_MASTER_CINEMATIC_2026';
+// V2 — доработанная версия; оригинал v1 сохранён (git-тег pc-master-v1, out/PC_MASTER_CINEMATIC_2026.mp4)
+const name = cut15 ? 'PC_MASTER_15s_2026_V2' : 'PC_MASTER_CINEMATIC_2026_V2';
 const browser = process.env.REMOTION_BROWSER || '/opt/pw-browsers/chromium_headless_shell-1194/chrome-linux/headless_shell';
 const conc = process.env.CONCURRENCY || '3';
 const run = (cmd, args, opts = {}) => {

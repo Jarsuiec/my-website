@@ -2,7 +2,7 @@ import React from 'react';
 import {AbsoluteFill, Sequence, useCurrentFrame} from 'remotion';
 import cut from './config/cut15.json';
 import {COLORS} from './config/brand';
-import {FPS, VOICE, f} from './config/timeline';
+import {FPS, VOICE, SceneId, f, scene} from './config/timeline';
 import {buildChunks} from './config/subs.js';
 import {Film} from './Film';
 import {SubtitleBox} from './components/overlays';
@@ -25,7 +25,7 @@ export const Cut15: React.FC = () => {
     <AbsoluteFill style={{background: COLORS.bg}}>
       {cut.segments.map((s) => (
         <Sequence key={s.name} from={f(s.dst)} durationInFrames={f(s.len)} name={s.name}>
-          <Sequence from={-f(s.src)} layout="none">
+          <Sequence from={-f(scene(s.scene as SceneId).start + s.from)} layout="none">
             <Film subtitles={false} />
           </Sequence>
         </Sequence>

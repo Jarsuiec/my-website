@@ -29,8 +29,8 @@ const Item: React.FC<{t: number; at: number; n: string; label: string; icon: Rea
     <div style={{display: 'flex', alignItems: 'center', gap: 34, opacity: clamp01(k * 1.4), transform: `translateX(${(1 - k) * 80}px)`, filter: `blur(${(1 - k) * 8}px)`}}>
       <div style={{width: 150, height: 150, borderRadius: 34, background: 'rgba(33,191,255,0.1)', border: '2px solid rgba(103,232,255,0.35)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0}}>{icon}</div>
       <div>
-        <div style={{fontFamily: FONT.mono, fontWeight: 700, fontSize: 40, color: COLORS.cyan, letterSpacing: '0.12em'}}>{n} —</div>
-        <div style={{fontFamily: FONT.display, fontWeight: 900, fontSize: label.length > 12 ? 62 : 72, lineHeight: 1.05, color: COLORS.white, letterSpacing: '-0.01em', whiteSpace: 'pre-line'}}>{label}</div>
+        <div style={{fontFamily: FONT.mono, fontWeight: 700, fontSize: 46, color: COLORS.cyan, letterSpacing: '0.12em'}}>{n} —</div>
+        <div style={{fontFamily: FONT.display, fontWeight: 900, fontSize: label.length > 12 ? 66 : 78, lineHeight: 1.05, color: COLORS.white, letterSpacing: '-0.01em', whiteSpace: 'pre-line'}}>{label}</div>
       </div>
     </div>
   );
@@ -48,7 +48,7 @@ export const S08Trust: React.FC<{dur: number}> = ({dur}) => {
       <AbsoluteFill style={{opacity: 0.35, backgroundImage: 'linear-gradient(rgba(103,232,255,0.07) 1px, transparent 1px), linear-gradient(90deg, rgba(103,232,255,0.07) 1px, transparent 1px)', backgroundSize: '60px 60px', transform: `translateY(${t * 10}px)`}} />
       <AbsoluteFill style={{opacity: inK * (1 - out), transform: `scale(${1.04 - 0.04 * inK})`}}>
         <div style={{position: 'absolute', left: 90, right: 90, top: 520, padding: '70px 60px', borderRadius: 40, background: 'rgba(14,28,48,0.7)', border: '1.5px solid rgba(243,248,255,0.12)', boxShadow: '0 40px 120px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.08)'}}>
-          <div style={{fontFamily: FONT.mono, fontSize: 28, letterSpacing: '0.3em', color: 'rgba(243,248,255,0.55)', marginBottom: 54}}>КАК Я РАБОТАЮ</div>
+          <div style={{fontFamily: FONT.mono, fontWeight: 700, fontSize: 36, letterSpacing: '0.24em', color: 'rgba(243,248,255,0.72)', marginBottom: 50}}>КАК Я РАБОТАЮ</div>
           <Item t={t} at={TRUST_AT[0]} n={TEXT.trust[0].n} label={TEXT.trust[0].label} icon={<IconScan k={(t * 0.8) % 1} />} />
           <div style={{marginLeft: 74, width: 3, height: 90, background: `linear-gradient(180deg, ${COLORS.cyan} ${line * 100}%, rgba(103,232,255,0.12) ${line * 100}%)`, margin: '18px 0 18px 74px'}} />
           <Item t={t} at={TRUST_AT[1]} n={TEXT.trust[1].n} label={TEXT.trust[1].label.replace(' ЦЕНЫ', '\nЦЕНЫ')} icon={<IconDeal k={ramp(t, TRUST_AT[1] + 0.4, TRUST_AT[1] + 0.9)} />} />

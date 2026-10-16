@@ -61,7 +61,7 @@ export const ImpactTitle: React.FC<{
           ...style,
           textShadow: `0 0 ${18 + flash * 50}px ${glow}${Math.round(40 + flash * 160)
             .toString(16)
-            .padStart(2, '0')}, 0 6px 30px rgba(0,0,0,0.65)`,
+            .padStart(2, '0')}, 0 6px 30px rgba(0,0,0,0.65), 0 0 60px rgba(2,5,10,0.55)`,
         }}
       >
         {text}
@@ -102,7 +102,7 @@ export const RevealTitle: React.FC<{
           transform: `translateY(${(1 - k) * size * 0.9}px)`,
           opacity: o * clamp01(k * 1.5),
           filter: `blur(${(1 - o) * 10}px)`,
-          textShadow: glow ? `0 0 24px ${glow}88, 0 4px 24px rgba(0,0,0,0.6)` : '0 4px 24px rgba(0,0,0,0.6)',
+          textShadow: glow ? `0 0 24px ${glow}88, 0 4px 24px rgba(0,0,0,0.7), 0 0 50px rgba(2,5,10,0.5)` : '0 4px 24px rgba(0,0,0,0.7), 0 0 50px rgba(2,5,10,0.5)',
         }}
       >
         {text}
