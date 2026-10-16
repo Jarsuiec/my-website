@@ -31,7 +31,7 @@ export const S09Final: React.FC<{dur: number}> = ({dur}) => {
   const pos = keys3(
     t,
     [
-      [0, [22, 9, 13]],
+      [0, [15, 9.5, 12.5]], // между передними вентиляторами корпуса (x≈22) и кулером
       [CARD, [80, 40, 170]],
     ],
     E.inCubic
